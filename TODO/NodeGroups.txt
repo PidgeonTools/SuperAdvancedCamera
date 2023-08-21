@@ -1,0 +1,60 @@
+# Color
+White Balance (one input of a Color Picker (dont worry about how))
+Temperature
+Tint
+Saturation
+
+# Light
+Exposure
+Contrast
+Highlights
+Shadows
+Whites
+Blacks
+
+# Presets
+Looks (come up with like 20 presets) LOW PRIO
+Intensity
+
+# Adjustments
+Faded Film
+Sharpen
+Vibrance
+Saturation
+Shadow Tint
+Highlight Tint
+Tint Balance
+
+# Curves
+WRGB Curves
+
+# Hue Saturation Curves
+
+Hue vs Saturation
+Hue vs Hue
+Hue vs Luma
+Luma vs Saturation
+Saturation vs Saturation
+
+# Colorwheels
+Shadows
+Midtones
+Highlights
+
+# HSL Secondary
+# Key
+Red Yellow Green Cyan Blue Purple White
+(for each)
+Hue
+Saturation
+Luma
+
+# Refine
+Denoise
+Blur
+
+# Viginette
+Amount
+Midpoint
+Roundess
+Feather
