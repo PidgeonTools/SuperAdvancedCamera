@@ -5,9 +5,9 @@ from bpy.types import (
     Panel,
 )
 
-from . import (
-    SAC_Settings
-)
+from .SAC_Settings import SAC_Settings
+from .SAC_Operators import SAC_OT_Initialize
+
 
 # Main
 class SAC_PT_Panel:
@@ -26,6 +26,7 @@ class SAC_PT_SAC_Panel(SAC_PT_Panel, Panel):
 
     def draw(self, context: Context):
         layout = self.layout
+        layout.operator("object.superadvancedcamerainit", icon="SHADERFX")
 
 # Colorgrade
 class SAC_PT_COLORGRADE_Panel(SAC_PT_Panel, Panel):
@@ -79,7 +80,7 @@ class SAC_PT_COLORGRADE_Light_Panel(SAC_PT_Panel, Panel):
         layout.prop(settings, "Colorgrade_Light_Highlights")
         layout.prop(settings, "Colorgrade_Light_Shadows")
         layout.prop(settings, "Colorgrade_Light_Whites")
-        layout.prop(settings, "Colorgrade_Light_Blacks")
+        layout.prop(settings, "Colorgrade_Light_Darks")
 
 # Colorgrade - Presets
 class SAC_PT_COLORGRADE_Presets_Panel(SAC_PT_Panel, Panel):
@@ -115,8 +116,8 @@ class SAC_PT_COLORGRADE_Curves_Panel(SAC_PT_Panel, Panel):
         scene = context.scene
         settings: SAC_Settings = scene.sac_settings
 
-        rgb_curves_node = bpy.data.node_groups[".SAC Curves"].nodes["SAC RGB Curves"]
-        hsv_curves_node = bpy.data.node_groups[".SAC Curves"].nodes["SAC HSV Curves"]
+        rgb_curves_node = bpy.data.node_groups[".SAC Curves"].nodes["SAC Colorgrade_Curves_RGB"]
+        hsv_curves_node = bpy.data.node_groups[".SAC Curves"].nodes["SAC Colorgrade_Curves_HSV"]
 
         layout = self.layout
         layout.template_curve_mapping(rgb_curves_node, "mapping", type='COLOR')

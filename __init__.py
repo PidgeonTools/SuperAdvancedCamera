@@ -27,6 +27,10 @@ from .SAC_Panel import (
     SAC_PT_EFFECTS_Panel
 )
 
+from .SAC_Operators import (
+    SAC_OT_Initialize
+)
+
 classes = (
     SAC_PT_SAC_Panel,
     SAC_PT_COLORGRADE_Panel,
@@ -36,6 +40,8 @@ classes = (
     SAC_PT_COLORGRADE_Curves_Panel,
     SAC_PT_COLORGRADE_Colorwheels_Panel,
     SAC_PT_EFFECTS_Panel,
+
+    SAC_OT_Initialize,
 
     SAC_Settings
     )

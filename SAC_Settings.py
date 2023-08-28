@@ -106,7 +106,7 @@ class SAC_Settings(PropertyGroup):
     def update_Colorgrade_Light_Highlights(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Highlight"].nodes["SAC Colorgrade_Light_Highlights"].inputs[0].default_value = settings.Colorgrade_Light_Highlights
+        bpy.data.node_groups[".SAC Highlights"].nodes["SAC Colorgrade_Light_Highlights"].inputs[0].default_value = settings.Colorgrade_Light_Highlights
 
     Colorgrade_Light_Highlights: FloatProperty(
         name="Highlights",
@@ -147,19 +147,19 @@ class SAC_Settings(PropertyGroup):
         update=update_Colorgrade_Light_Whites
     )
 
-    # Blacks
-    def update_Colorgrade_Light_Blacks(self, context):
+    # Darks
+    def update_Colorgrade_Light_Darks(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Blacks"].nodes["SAC Colorgrade_Light_Blacks"].inputs[0].default_value = settings.Colorgrade_Light_Blacks
+        bpy.data.node_groups[".SAC Darks"].nodes["SAC Colorgrade_Light_Darks"].inputs[0].default_value = settings.Colorgrade_Light_Darks
 
-    Colorgrade_Light_Blacks: FloatProperty(
-        name="Blacks",
+    Colorgrade_Light_Darks: FloatProperty(
+        name="Darks",
         default=0,
         max=1,
         min=-1,
         subtype="FACTOR",
-        update=update_Colorgrade_Light_Blacks
+        update=update_Colorgrade_Light_Darks
     )
 
     # Presets
@@ -218,7 +218,7 @@ class SAC_Settings(PropertyGroup):
     def update_Colorgrade_Presets_Saturation(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Saturation2"].nodes["SAC Colorgrade_Presets_Saturation"].inputs[2].default_value = settings.Colorgrade_Presets_Saturation
+        bpy.data.node_groups["..SAC Saturation2"].nodes["SAC Colorgrade_Presets_Saturation"].inputs[2].default_value = settings.Colorgrade_Presets_Saturation
 
     Colorgrade_Presets_Saturation: FloatProperty(
         name="Saturation",
@@ -267,7 +267,7 @@ class SAC_Settings(PropertyGroup):
     def update_Colorgrade_Curves_RGB_Intensity(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Curves"].nodes["SAC RGB Curves"].inputs[0].default_value = settings.Colorgrade_Curves_RGB_Intensity
+        bpy.data.node_groups[".SAC Curves"].nodes["SAC Colorgrade_Curves_RGB"].inputs[0].default_value = settings.Colorgrade_Curves_RGB_Intensity
 
     Colorgrade_Curves_RGB_Intensity: FloatProperty(
         name="RGB Curves Intensity",
@@ -282,7 +282,7 @@ class SAC_Settings(PropertyGroup):
     def update_Colorgrade_Curves_HSV_Intensity(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Curves"].nodes["SAC HSV Curves"].inputs[0].default_value = settings.Colorgrade_Curves_HSV_Intensity
+        bpy.data.node_groups[".SAC Curves"].nodes["SAC Colorgrade_Curves_HSV"].inputs[0].default_value = settings.Colorgrade_Curves_HSV_Intensity
 
     Colorgrade_Curves_HSV_Intensity: FloatProperty(
         name="HSV Curves Intensity",
