@@ -3,9 +3,8 @@ from bpy.types import (
     Context,
     Operator
 )
-
 from .Groups.SuperAdvancedCamera import (
-    create_main_group
+    connect_renderLayer_node
 )
 
 
@@ -15,6 +14,6 @@ class SAC_OT_Initialize(Operator):
     bl_description = ""
 
     def execute(self, context: Context):
-        create_main_group()
+        connect_renderLayer_node()
 
         return {'FINISHED'}

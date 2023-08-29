@@ -119,3 +119,55 @@ def create_main_group() -> NodeTree:
 
     # return
     return sac_group
+
+
+def connect_renderLayer_node():
+    # Make sure the compositor is enabled for the active scene
+    bpy.context.scene.use_nodes = True
+    tree = bpy.context.scene.node_tree
+
+    # Loop through all nodes to find Render Layer nodes
+    render_layer_nodes = [node for node in tree.nodes if node.type == 'R_LAYERS']
+    super_denoiser_nodes = [node for node in tree.nodes if node.name == 'sid_node']
+
+    # Exit if no Render Layer nodes are found
+    if not render_layer_nodes:
+        print("No Render Layer nodes found.")
+        exit()
+
+    # Process each Render Layer node
+    for render_layer_node in render_layer_nodes:
+        # Check if SuperImageDenoiser is connected to this Render Layer node
+        connect_to_node = render_layer_node
+        for link in tree.links:
+            if link.from_node == render_layer_node and link.to_node in super_denoiser_nodes:
+                connect_to_node = link.to_node
+                break
+
+        # Create a new mix node
+        sac_node = tree.nodes.new(type='CompositorNodeGroup')
+        sac_node.node_tree = create_main_group()
+        sac_node.location = (render_layer_node.location.x + 300, render_layer_node.location.y)
+
+        # Collect links to be rerouted
+        to_disconnect = []
+        to_connect = []
+        for link in tree.links:
+            if link.from_node == connect_to_node:
+                # Save the links to be disconnected
+                to_disconnect.append(link)
+
+                # Save the information needed to make new connections
+                to_connect.append((sac_node.outputs[0], link.to_socket, connect_to_node.outputs[link.from_socket.name]))
+
+        # Disconnect the original links
+        for link in to_disconnect:
+            tree.links.remove(link)
+
+        # Make new connections
+        for mix_output, to_socket, from_socket in to_connect:
+            # Connect the mix node to where the connect_to_node was connected
+            tree.links.new(mix_output, to_socket)
+
+            # Connect the connect_to_node to the mix node
+            tree.links.new(from_socket, sac_node.inputs[0])
