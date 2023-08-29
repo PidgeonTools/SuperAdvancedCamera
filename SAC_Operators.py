@@ -3,7 +3,11 @@ from bpy.types import (
     Context,
     Operator
 )
-from .Groups.SuperAdvancedCamera import (create_main_group)
+
+from .Groups.SuperAdvancedCamera import (
+    create_main_group
+)
+
 
 class SAC_OT_Initialize(Operator):
     bl_idname = "object.superadvancedcamerainit"

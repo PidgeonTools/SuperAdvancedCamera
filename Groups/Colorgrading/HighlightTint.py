@@ -1,18 +1,19 @@
 import bpy
 from bpy.types import NodeTree
 
+
 def create_highlighttint_group() -> NodeTree:
 
     # Create the group
-    sac_highlighttint_group: NodeTree = bpy.data.node_groups.new(name=".SAC Highlight Tint",type="CompositorNodeTree")
+    sac_highlighttint_group: NodeTree = bpy.data.node_groups.new(name=".SAC Highlight Tint", type="CompositorNodeTree")
 
     # Create the input and output nodes
     input_node = sac_highlighttint_group.nodes.new("NodeGroupInput")
     output_node = sac_highlighttint_group.nodes.new("NodeGroupOutput")
 
     # Add the input and output sockets
-    sac_highlighttint_group.inputs.new("NodeSocketColor","Image")
-    sac_highlighttint_group.outputs.new("NodeSocketColor","Image")
+    sac_highlighttint_group.inputs.new("NodeSocketColor", "Image")
+    sac_highlighttint_group.outputs.new("NodeSocketColor", "Image")
 
     # Create the nodes
     # Math Add node
@@ -27,13 +28,13 @@ def create_highlighttint_group() -> NodeTree:
 
     # Create the links
     # link the input node to the add node
-    sac_highlighttint_group.links.new(input_node.outputs[0],add_node.inputs[0])
+    sac_highlighttint_group.links.new(input_node.outputs[0], add_node.inputs[0])
     # link the input node to the mixrgb node
-    sac_highlighttint_group.links.new(input_node.outputs[0],mixrgb_node.inputs[1])
+    sac_highlighttint_group.links.new(input_node.outputs[0], mixrgb_node.inputs[1])
     # link the add node to the mixrgb node
-    sac_highlighttint_group.links.new(add_node.outputs[0],mixrgb_node.inputs[0])
+    sac_highlighttint_group.links.new(add_node.outputs[0], mixrgb_node.inputs[0])
     # link the mixrgb node to the output node
-    sac_highlighttint_group.links.new(mixrgb_node.outputs[0],output_node.inputs[0])
+    sac_highlighttint_group.links.new(mixrgb_node.outputs[0], output_node.inputs[0])
 
     # return
-    return(sac_highlighttint_group)
+    return sac_highlighttint_group

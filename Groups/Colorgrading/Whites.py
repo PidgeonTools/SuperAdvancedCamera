@@ -1,18 +1,19 @@
 import bpy
 from bpy.types import NodeTree
 
+
 def create_whites_group() -> NodeTree:
 
     # Create the group
-    sac_whites_group: NodeTree = bpy.data.node_groups.new(name=".SAC Whites",type="CompositorNodeTree")
+    sac_whites_group: NodeTree = bpy.data.node_groups.new(name=".SAC Whites", type="CompositorNodeTree")
 
     # Create the input and output nodes
     input_node = sac_whites_group.nodes.new("NodeGroupInput")
     output_node = sac_whites_group.nodes.new("NodeGroupOutput")
 
     # Add the input and output sockets
-    sac_whites_group.inputs.new("NodeSocketColor","Image")
-    sac_whites_group.outputs.new("NodeSocketColor","Image")
+    sac_whites_group.inputs.new("NodeSocketColor", "Image")
+    sac_whites_group.outputs.new("NodeSocketColor", "Image")
 
     # Create the nodes
     # Map Range
@@ -45,9 +46,9 @@ def create_whites_group() -> NodeTree:
 
     # Two RGB Curves nodes
     rgb_curves_node_1 = sac_whites_group.nodes.new("CompositorNodeCurveRGB")
-    rgb_curves_node_1.mapping.curves[3].points[1].location = (1.0,0.25)
+    rgb_curves_node_1.mapping.curves[3].points[1].location = (1.0, 0.25)
     rgb_curves_node_2 = sac_whites_group.nodes.new("CompositorNodeCurveRGB")
-    rgb_curves_node_2.mapping.curves[3].points[1].location = (0.25,1.0)
+    rgb_curves_node_2.mapping.curves[3].points[1].location = (0.25, 1.0)
 
     # Create the links
     # link the maprange node to the multiply nodes
@@ -67,4 +68,4 @@ def create_whites_group() -> NodeTree:
     sac_whites_group.links.new(rgb_curves_node_2.outputs[0], output_node.inputs[0])
 
     # return
-    return(sac_whites_group)
+    return sac_whites_group

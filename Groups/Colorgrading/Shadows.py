@@ -1,18 +1,19 @@
 import bpy
 from bpy.types import NodeTree
 
+
 def create_shadows_group() -> NodeTree:
 
     # Create the group
-    sac_shadows_group: NodeTree = bpy.data.node_groups.new(name=".SAC Shadows",type="CompositorNodeTree")
+    sac_shadows_group: NodeTree = bpy.data.node_groups.new(name=".SAC Shadows", type="CompositorNodeTree")
 
     # Create the input and output nodes
     input_node = sac_shadows_group.nodes.new("NodeGroupInput")
     output_node = sac_shadows_group.nodes.new("NodeGroupOutput")
 
     # Add the input and output sockets
-    sac_shadows_group.inputs.new("NodeSocketColor","Image")
-    sac_shadows_group.outputs.new("NodeSocketColor","Image")
+    sac_shadows_group.inputs.new("NodeSocketColor", "Image")
+    sac_shadows_group.outputs.new("NodeSocketColor", "Image")
 
     # Create the nodes
     # Map Range
@@ -57,9 +58,9 @@ def create_shadows_group() -> NodeTree:
 
     # Two RGB Curves nodes
     rgb_curves_node_1 = sac_shadows_group.nodes.new("CompositorNodeCurveRGB")
-    rgb_curves_node_1.mapping.curves[3].points[1].location = (1.0,0.5)
+    rgb_curves_node_1.mapping.curves[3].points[1].location = (1.0, 0.5)
     rgb_curves_node_2 = sac_shadows_group.nodes.new("CompositorNodeCurveRGB")
-    rgb_curves_node_2.mapping.curves[3].points[1].location = (0.5,1.0)
+    rgb_curves_node_2.mapping.curves[3].points[1].location = (0.5, 1.0)
 
     # Create the links
     # link the maprange node to the multiply nodes
@@ -87,4 +88,4 @@ def create_shadows_group() -> NodeTree:
     sac_shadows_group.links.new(rgb_curves_node_2.outputs[0], output_node.inputs[0])
 
     # return
-    return(sac_shadows_group)
+    return sac_shadows_group

@@ -17,6 +17,7 @@ class SAC_PT_Panel:
     bl_context = "render"
     bl_options = {"DEFAULT_CLOSED"}
 
+
 class SAC_PT_SAC_Panel(SAC_PT_Panel, Panel):
     bl_label = "Super Advanced Compositor"
 
@@ -27,6 +28,7 @@ class SAC_PT_SAC_Panel(SAC_PT_Panel, Panel):
     def draw(self, context: Context):
         layout = self.layout
         layout.operator("object.superadvancedcamerainit", icon="SHADERFX")
+
 
 # Colorgrade
 class SAC_PT_COLORGRADE_Panel(SAC_PT_Panel, Panel):
@@ -40,11 +42,11 @@ class SAC_PT_COLORGRADE_Panel(SAC_PT_Panel, Panel):
     def draw(self, context: Context):
         layout = self.layout
 
+
 # Colorgrade - Color
 class SAC_PT_COLORGRADE_Color_Panel(SAC_PT_Panel, Panel):
     bl_label = "Color"
     bl_parent_id = "SAC_PT_COLORGRADE_Panel"
-
 
     def draw_header(self, context: Context):
         layout = self.layout
@@ -82,6 +84,7 @@ class SAC_PT_COLORGRADE_Light_Panel(SAC_PT_Panel, Panel):
         layout.prop(settings, "Colorgrade_Light_Whites")
         layout.prop(settings, "Colorgrade_Light_Darks")
 
+
 # Colorgrade - Presets
 class SAC_PT_COLORGRADE_Presets_Panel(SAC_PT_Panel, Panel):
     bl_label = "Presets"
@@ -102,6 +105,7 @@ class SAC_PT_COLORGRADE_Presets_Panel(SAC_PT_Panel, Panel):
         layout.prop(settings, "Colorgrade_Presets_Saturation")
         layout.prop(settings, "Colorgrade_Presets_HighlightTint")
         layout.prop(settings, "Colorgrade_Presets_ShadowTint")
+
 
 # Colorgrade - Curves
 class SAC_PT_COLORGRADE_Curves_Panel(SAC_PT_Panel, Panel):
@@ -125,6 +129,7 @@ class SAC_PT_COLORGRADE_Curves_Panel(SAC_PT_Panel, Panel):
         layout.template_curve_mapping(hsv_curves_node, "mapping", type='HUE')
         layout.prop(settings, "Colorgrade_Curves_HSV_Intensity")
 
+
 # Colorgrade - Colorwheels
 class SAC_PT_COLORGRADE_Colorwheels_Panel(SAC_PT_Panel, Panel):
     bl_label = "Colorwheels"
@@ -143,7 +148,7 @@ class SAC_PT_COLORGRADE_Colorwheels_Panel(SAC_PT_Panel, Panel):
         color_wheel_node_gain = bpy.data.node_groups[".SAC Colorwheel"].nodes["SAC Colorgrade_Colorwheel_Highlights"]
 
         layout = self.layout
-        layout.alignment="CENTER"
+        layout.alignment = "CENTER"
         layout.label(text="Shadows")
         layout.template_color_picker(color_wheel_node_lift, "lift")
         layout.prop(settings, "Colorgrade_Colorwheel_Shadows_Brightness")
@@ -156,6 +161,7 @@ class SAC_PT_COLORGRADE_Colorwheels_Panel(SAC_PT_Panel, Panel):
         layout.template_color_picker(color_wheel_node_gain, "gain")
         layout.prop(settings, "Colorgrade_Colorwheel_Highlights_Brightness")
         layout.prop(settings, "Colorgrade_Colorwheel_Highlights_Intensity")
+
 
 # Effects
 class SAC_PT_EFFECTS_Panel(SAC_PT_Panel, Panel):

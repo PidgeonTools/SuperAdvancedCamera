@@ -17,18 +17,19 @@ from .Colorgrading.ShadowTint import create_shadowtint_group
 from .Colorgrading.Curves import create_curves_group
 from .Colorgrading.Colorwheels import create_colorwheel_group
 
+
 def create_main_group() -> NodeTree:
 
     # Create the group
-    sac_group: NodeTree = bpy.data.node_groups.new(name="Super Advanced Camera",type="CompositorNodeTree")
+    sac_group: NodeTree = bpy.data.node_groups.new(name="Super Advanced Camera", type="CompositorNodeTree")
 
     # Create the input and output nodes
     input_node = sac_group.nodes.new("NodeGroupInput")
     output_node = sac_group.nodes.new("NodeGroupOutput")
 
     # Add the input and output sockets
-    sac_group.inputs.new("NodeSocketColor","Image")
-    sac_group.outputs.new("NodeSocketColor","Image")
+    sac_group.inputs.new("NodeSocketColor", "Image")
+    sac_group.outputs.new("NodeSocketColor", "Image")
 
     # Create the nodes
     # Temperature
@@ -80,7 +81,6 @@ def create_main_group() -> NodeTree:
     sac_colorwheels_group = sac_group.nodes.new("CompositorNodeGroup")
     sac_colorwheels_group.node_tree = create_colorwheel_group()
 
-
     # Create the links
     # link the input node to the temperature node
     sac_group.links.new(input_node.outputs[0], sac_temperature_group.inputs[0])
@@ -118,4 +118,4 @@ def create_main_group() -> NodeTree:
     sac_group.links.new(sac_colorwheels_group.outputs[0], output_node.inputs[0])
 
     # return
-    return(sac_group)
+    return sac_group

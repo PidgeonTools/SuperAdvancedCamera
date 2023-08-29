@@ -10,6 +10,7 @@ from bpy.props import (
     FloatVectorProperty,
 )
 
+
 class SAC_Settings(PropertyGroup):
 
     # COLOR
@@ -17,7 +18,7 @@ class SAC_Settings(PropertyGroup):
         name="White Balance",
         min=0.0,
         max=1.0,
-        default=(1.0,1.0,1.0),
+        default=(1.0, 1.0, 1.0),
         subtype="COLOR",
     )
 
@@ -180,7 +181,7 @@ class SAC_Settings(PropertyGroup):
             ),
         ),
         default='DEFAULT'
-        )
+    )
 
     # Sharpen
     def update_Colorgrade_Presets_Sharpen(self, context):
@@ -241,7 +242,7 @@ class SAC_Settings(PropertyGroup):
         name="Highlight Tint",
         min=0.0,
         max=1.0,
-        default=(1.0,1.0,1.0),
+        default=(1.0, 1.0, 1.0),
         subtype="COLOR",
         update=update_Colorgrade_Presets_HighlightTint
     )
@@ -258,7 +259,7 @@ class SAC_Settings(PropertyGroup):
         name="Shadow Tint",
         min=0.0,
         max=1.0,
-        default=(1.0,1.0,1.0),
+        default=(1.0, 1.0, 1.0),
         subtype="COLOR",
         update=update_Colorgrade_Presets_ShadowTint
     )
