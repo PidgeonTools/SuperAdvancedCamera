@@ -165,7 +165,7 @@ class SAC_PT_COLORGRADE_Colorwheels_Panel(SAC_PT_Panel, Panel):
 
 # Effects
 class SAC_PT_EFFECTS_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Effects (comming soon)"
+    bl_label = "Effects (coming soon)"
     bl_parent_id = "SAC_PT_SAC_Panel"
 
     def draw_header(self, context: Context):
