@@ -10,7 +10,7 @@ from .Groups.SuperAdvancedCamera import (
 
 class SAC_OT_Initialize(Operator):
     bl_idname = "object.superadvancedcamerainit"
-    bl_label = "Initialize SAC for this scene"
+    bl_label = "Initialize Super Advanced Camera"
     bl_description = ""
 
     def execute(self, context: Context):
