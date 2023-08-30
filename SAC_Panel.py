@@ -11,7 +11,7 @@ from .SAC_Operators import SAC_OT_Initialize
 
 # Main
 class SAC_PT_Panel:
-    bl_label = "Super Advanced Compositor"
+    bl_label = "Super Advanced Camera"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "render"
@@ -19,7 +19,7 @@ class SAC_PT_Panel:
 
 
 class SAC_PT_SAC_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Super Advanced Compositor"
+    bl_label = "Super Advanced Camera"
 
     def draw_header(self, context: Context):
         layout = self.layout
