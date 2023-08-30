@@ -19,6 +19,7 @@ def create_sharpen_group() -> NodeTree:
     # Value
     value_node = sac_sharpen_group.nodes.new("CompositorNodeValue")
     value_node.name = "SAC Colorgrade_Presets_Sharpen"
+    value_node.outputs[0].default_value = 0
 
     # Map Range
     map_range_node = sac_sharpen_group.nodes.new("CompositorNodeMapRange")
