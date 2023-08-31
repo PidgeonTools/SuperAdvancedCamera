@@ -174,3 +174,4 @@ class SAC_PT_EFFECTS_Panel(SAC_PT_Panel, Panel):
 
     def draw(self, context: Context):
         layout = self.layout
+        layout.operator("wm.url_open", text="Submit your requests", icon="URL").url = "https://go.pidgeontools.com/2023-08-29-sac-survey"
