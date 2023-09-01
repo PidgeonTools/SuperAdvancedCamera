@@ -61,6 +61,7 @@ class SAC_PT_COLORGRADE_Color_Panel(SAC_PT_Panel, Panel):
         layout.prop(settings, "Colorgrade_Color_Temperature")
         layout.prop(settings, "Colorgrade_Color_Tint")
         layout.prop(settings, "Colorgrade_Color_Saturation")
+        layout.prop(settings, "Colorgrade_Color_Hue")
 
 
 # Colorgrade - Light
@@ -175,3 +176,20 @@ class SAC_PT_EFFECTS_Panel(SAC_PT_Panel, Panel):
     def draw(self, context: Context):
         layout = self.layout
         layout.operator("wm.url_open", text="Submit your requests", icon="URL").url = "https://go.pidgeontools.com/2023-08-29-sac-survey"
+
+
+class SAC_PT_EFFECTS_Duotone_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Duotone"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="COLOR")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        SAC_Settings = context.scene.sac_settings
+
+        layout.prop(SAC_Settings, "Effects_Duotone_Color1")
+        layout.prop(SAC_Settings, "Effects_Duotone_Color2")
+        layout.prop(SAC_Settings, "Effects_Duotone_Blend")

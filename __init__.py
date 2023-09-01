@@ -34,7 +34,8 @@ from .SAC_Panel import (
     SAC_PT_COLORGRADE_Presets_Panel,
     SAC_PT_COLORGRADE_Curves_Panel,
     SAC_PT_COLORGRADE_Colorwheels_Panel,
-    SAC_PT_EFFECTS_Panel
+    SAC_PT_EFFECTS_Panel,
+    SAC_PT_EFFECTS_Duotone_Panel
 )
 
 from .SAC_Settings import (
@@ -44,7 +45,7 @@ from .SAC_Settings import (
 bl_info = {
     "name": "Super Advanced Camera",
     "author": "Kevin Lorengel, Slinc",
-    "version": (0, 0, 2),
+    "version": (0, 0, 3),
     "blender": (3, 6, 0),
     "location": "TODO",
     "description": "TODO",
@@ -63,6 +64,7 @@ classes = (
     SAC_PT_COLORGRADE_Curves_Panel,
     SAC_PT_COLORGRADE_Colorwheels_Panel,
     SAC_PT_EFFECTS_Panel,
+    SAC_PT_EFFECTS_Duotone_Panel,
 
     SAC_OT_Initialize,
 

@@ -16,6 +16,7 @@ from .Colorgrading.HighlightTint import create_highlighttint_group
 from .Colorgrading.ShadowTint import create_shadowtint_group
 from .Colorgrading.Curves import create_curves_group
 from .Colorgrading.Colorwheels import create_colorwheel_group
+from .Effects.Duotone import create_duotone_group
 
 
 def create_main_group() -> NodeTree:
@@ -80,6 +81,9 @@ def create_main_group() -> NodeTree:
     # Colorwheels
     sac_colorwheels_group = sac_group.nodes.new("CompositorNodeGroup")
     sac_colorwheels_group.node_tree = create_colorwheel_group()
+    # Duotone
+    sac_duotone_group = sac_group.nodes.new("CompositorNodeGroup")
+    sac_duotone_group.node_tree = create_duotone_group()
 
     # Create the links
     # link the input node to the temperature node
@@ -114,8 +118,10 @@ def create_main_group() -> NodeTree:
     sac_group.links.new(sac_shadowtint_group.outputs[0], sac_curves_group.inputs[0])
     # link the curves node to the colorwheels node
     sac_group.links.new(sac_curves_group.outputs[0], sac_colorwheels_group.inputs[0])
-    # link the colorwheels node to the output node
-    sac_group.links.new(sac_colorwheels_group.outputs[0], output_node.inputs[0])
+    # link the colorwheels node to the duotone node
+    sac_group.links.new(sac_colorwheels_group.outputs[0], sac_duotone_group.inputs[0])
+    # link the duotone node to the output node
+    sac_group.links.new(sac_duotone_group.outputs[0], output_node.inputs[0])
 
     # return
     return sac_group

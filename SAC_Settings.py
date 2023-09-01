@@ -67,6 +67,21 @@ class SAC_Settings(PropertyGroup):
         update=update_Colorgrade_Color_Saturation
     )
 
+    # Hue1
+    def update_Colorgrade_Color_Hue(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC Saturation"].nodes["SAC Colorgrade_Color_Saturation"].inputs[1].default_value = settings.Colorgrade_Color_Hue
+
+    Colorgrade_Color_Hue: FloatProperty(
+        name="Hue",
+        default=0.5,
+        max=1,
+        min=0,
+        subtype="FACTOR",
+        update=update_Colorgrade_Color_Hue
+    )
+
     # LIGHT
 
     # Exposure
@@ -387,4 +402,43 @@ class SAC_Settings(PropertyGroup):
         min=-1,
         subtype="FACTOR",
         update=update_Colorgrade_Colorwheel_Highlights_Intensity
+    )
+
+    # Duotone
+    def update_Effects_Duotone(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC Duotone"].nodes["SAC Effects_Duotone_Blend"].inputs[0].default_value = settings.Effects_Duotone_Blend
+        bpy.data.node_groups[".SAC Duotone"].nodes["SAC Effects_Duotone_Colors"].inputs[1].default_value[0] = settings.Effects_Duotone_Color1[0]
+        bpy.data.node_groups[".SAC Duotone"].nodes["SAC Effects_Duotone_Colors"].inputs[1].default_value[1] = settings.Effects_Duotone_Color1[1]
+        bpy.data.node_groups[".SAC Duotone"].nodes["SAC Effects_Duotone_Colors"].inputs[1].default_value[2] = settings.Effects_Duotone_Color1[2]
+        bpy.data.node_groups[".SAC Duotone"].nodes["SAC Effects_Duotone_Colors"].inputs[2].default_value[0] = settings.Effects_Duotone_Color2[0]
+        bpy.data.node_groups[".SAC Duotone"].nodes["SAC Effects_Duotone_Colors"].inputs[2].default_value[1] = settings.Effects_Duotone_Color2[1]
+        bpy.data.node_groups[".SAC Duotone"].nodes["SAC Effects_Duotone_Colors"].inputs[2].default_value[2] = settings.Effects_Duotone_Color2[2]
+
+    Effects_Duotone_Color1: FloatVectorProperty(
+        name="Color 1",
+        min=0.0,
+        max=1.0,
+        default=(1.0, 1.0, 1.0),
+        subtype="COLOR",
+        update=update_Effects_Duotone
+    )
+
+    Effects_Duotone_Color2: FloatVectorProperty(
+        name="Color 2",
+        min=0.0,
+        max=1.0,
+        default=(1.0, 1.0, 1.0),
+        subtype="COLOR",
+        update=update_Effects_Duotone
+    )
+
+    Effects_Duotone_Blend: FloatProperty(
+        name="Blend",
+        default=0,
+        max=1,
+        min=0,
+        subtype="FACTOR",
+        update=update_Effects_Duotone
     )
