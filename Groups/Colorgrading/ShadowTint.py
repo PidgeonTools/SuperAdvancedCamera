@@ -5,7 +5,7 @@ from bpy.types import NodeTree
 def create_shadowtint_group() -> NodeTree:
 
     # Create the group
-    sac_shadowtint_group: NodeTree = bpy.data.node_groups.new(name=".SAC Shadow Tint", type="CompositorNodeTree")
+    sac_shadowtint_group: NodeTree = bpy.data.node_groups.new(name=".SAC ShadowTint", type="CompositorNodeTree")
 
     # Create the input and output nodes
     input_node = sac_shadowtint_group.nodes.new("NodeGroupInput")

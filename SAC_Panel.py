@@ -188,30 +188,453 @@ class SAC_PT_COLORGRADE_Colorwheels_Panel(SAC_PT_Panel, Panel):
 
 # Effects
 class SAC_PT_EFFECTS_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Effects (coming soon)"
+    bl_label = "Effects"
     bl_parent_id = "SAC_PT_SAC_Panel"
 
     def draw_header(self, context: Context):
         layout = self.layout
-        layout.label(text="", icon="OPTIONS")
+        layout.label(text="", icon="IMAGE")
 
     def draw(self, context: Context):
         layout = self.layout
         layout.operator("wm.url_open", text="Submit your requests", icon="URL").url = "https://go.pidgeontools.com/2023-08-29-sac-survey"
 
 
+# Duotone
 class SAC_PT_EFFECTS_Duotone_Panel(SAC_PT_Panel, Panel):
     bl_label = "Duotone"
     bl_parent_id = "SAC_PT_EFFECTS_Panel"
 
     def draw_header(self, context: Context):
         layout = self.layout
-        layout.label(text="", icon="COLOR")
+        layout.label(text="", icon="MOD_TINT")
 
     def draw(self, context: Context):
         layout = self.layout
-        SAC_Settings = context.scene.sac_settings
+        settings = context.scene.sac_settings
 
-        layout.prop(SAC_Settings, "Effects_Duotone_Color1")
-        layout.prop(SAC_Settings, "Effects_Duotone_Color2")
-        layout.prop(SAC_Settings, "Effects_Duotone_Blend")
+        layout.prop(settings, "Effects_Duotone_Color1")
+        layout.prop(settings, "Effects_Duotone_Color2")
+        layout.prop(settings, "Effects_Duotone_Blend")
+
+
+# Glare
+class SAC_PT_EFFECTS_Glare_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Glare"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="CON_CAMERASOLVER")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+
+# Glare FogGlow
+class SAC_PT_EFFECTS_GLARE_FogGlow_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Fog Glow"
+    bl_parent_id = "SAC_PT_EFFECTS_Glare_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="ALIGN_FLUSH")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.prop(settings, "Effects_Glare_FogGlow_Strength")
+        layout.prop(settings, "Effects_Glare_FogGlow_Threshold")
+        layout.prop(settings, "Effects_Glare_FogGlow_Size")
+
+
+# Glare Streaks
+class SAC_PT_EFFECTS_GLARE_Streaks_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Streaks"
+    bl_parent_id = "SAC_PT_EFFECTS_Glare_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="LIGHT_SUN")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.prop(settings, "Effects_Glare_Streaks_Strength")
+        layout.prop(settings, "Effects_Glare_Streaks_Threshold")
+        layout.prop(settings, "Effects_Glare_Streaks_Count")
+        layout.prop(settings, "Effects_Glare_Streaks_Length")
+        layout.prop(settings, "Effects_Glare_Streaks_Fade")
+        layout.prop(settings, "Effects_Glare_Streaks_Angle")
+        layout.prop(settings, "Effects_Glare_Streaks_Distortion")
+
+
+# Glare Ghost
+class SAC_PT_EFFECTS_GLARE_Ghost_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Lense Ghosts"
+    bl_parent_id = "SAC_PT_EFFECTS_Glare_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="GHOST_DISABLED")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.prop(settings, "Effects_Glare_Ghosts_Strength")
+        layout.prop(settings, "Effects_Glare_Ghosts_Threshold")
+        layout.prop(settings, "Effects_Glare_Ghosts_Count")
+        layout.prop(settings, "Effects_Glare_Ghosts_Distortion")
+
+
+# Emboss
+class SAC_PT_EFFECTS_Emboss_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Emboss (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="AXIS_TOP")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="Coming soon")
+
+
+# Posterize
+class SAC_PT_EFFECTS_Posterize_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Posterize (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="IMAGE_ZDEPTH")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="Coming soon")
+
+
+# Halftone
+class SAC_PT_EFFECTS_Halftone_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Halftone (maybe coming)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="LIGHTPROBE_GRID")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="This effect is extremely complex, we might not implement it")
+
+
+# Overlay
+class SAC_PT_EFFECTS_Overlay_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Overlay (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="XRAY")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="Coming soon")
+
+
+# Bokeh
+class SAC_PT_EFFECTS_Bokeh_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Bokeh (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="ANTIALIASED")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="This effect is very resource demanding, it might not get viewport support")
+
+
+# Vignette
+class SAC_PT_EFFECTS_Vignette_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Vignette (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="CLIPUV_DEHLT")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="Coming soon")
+
+
+# Mosaic
+class SAC_PT_EFFECTS_Mosaic_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Mosaic (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="MOD_UVPROJECT")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="Coming soon")
+
+
+# Chromatic Aberration
+class SAC_PT_EFFECTS_ChromaticAberration_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Chromatic Aberration (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="MOD_EDGESPLIT")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="Coming soon")
+
+
+# Infrared
+class SAC_PT_EFFECTS_Infrared_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Infrared (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="OUTLINER_OB_LIGHT")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="Coming soon")
+
+
+# Lomo
+class SAC_PT_EFFECTS_Lomo_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Lomo (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="LIGHT_POINT")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="Coming soon")
+
+
+# Negative
+class SAC_PT_EFFECTS_Negative_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Negative (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="SELECT_DIFFERENCE")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="Coming soon")
+
+
+# Warp
+class SAC_PT_EFFECTS_Warp_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Warp (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="MOD_WARP")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="Coming soon")
+
+
+# Fish Eye
+class SAC_PT_EFFECTS_FishEye_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Fish Eye (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="MESH_UVSPHERE")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="Coming soon")
+
+
+# Perspective Shift
+class SAC_PT_EFFECTS_PerspectiveShift_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Perspective Shift (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="VIEW_PERSPECTIVE")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="Coming soon")
+
+
+# Oil Paint
+class SAC_PT_EFFECTS_OilPaint_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Oil Paint (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="MOD_FLUIDSIM")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="Coming soon")
+
+
+# Sketch
+class SAC_PT_EFFECTS_Sketch_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Sketch (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="GREASEPENCIL")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="Coming soon")
+
+
+# Watercolor
+class SAC_PT_EFFECTS_Watercolor_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Watercolor (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="BRUSHES_ALL")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="Coming soon")
+
+
+# Pointillism
+class SAC_PT_EFFECTS_Pointillism_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Pointillism (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="OUTLINER_OB_LIGHTPROBE")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="This effect is very resource demanding, it might not get viewport support")
+
+
+# ISO Noise
+class SAC_PT_EFFECTS_ISONoise_Panel(SAC_PT_Panel, Panel):
+    bl_label = "ISO Noise (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="ALIGN_FLUSH")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="Coming soon")
+
+
+# Film Grain
+class SAC_PT_EFFECTS_FilmGrain_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Film Grain (coming soon)"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="ALIGN_FLUSH")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="Coming soon")
+
+
+# Camera
+class SAC_PT_CAMERA_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Camera"
+    bl_parent_id = "SAC_PT_SAC_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="OUTLINER_DATA_CAMERA")
+
+    def draw(self, context: Context):
+        layout = self.layout
+
+
+# Tilt Shift
+class SAC_PT_CAMERA_TiltShift_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Tilt Shift (coming soon)"
+    bl_parent_id = "SAC_PT_CAMERA_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="MOD_LATTICE")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="This effect will most likely be done through camera settings")

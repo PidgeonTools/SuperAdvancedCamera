@@ -19,6 +19,9 @@ def create_duotone_group() -> NodeTree:
     # Mix node 1
     mix_node_1 = sac_duotone_group.nodes.new("CompositorNodeMixRGB")
     mix_node_1.name = "SAC Effects_Duotone_Colors"
+    mix_node_1.inputs[1].default_value = (0.01, 0.01, 0.17, 1)
+    mix_node_1.inputs[2].default_value = (1, 0.56, 0.06, 1)
+
     # Mix node 2
     mix_node_2 = sac_duotone_group.nodes.new("CompositorNodeMixRGB")
     mix_node_2.name = "SAC Effects_Duotone_Blend"

@@ -5,7 +5,7 @@ from bpy.types import NodeTree
 def create_highlighttint_group() -> NodeTree:
 
     # Create the group
-    sac_highlighttint_group: NodeTree = bpy.data.node_groups.new(name=".SAC Highlight Tint", type="CompositorNodeTree")
+    sac_highlighttint_group: NodeTree = bpy.data.node_groups.new(name=".SAC HighlightTint", type="CompositorNodeTree")
 
     # Create the input and output nodes
     input_node = sac_highlighttint_group.nodes.new("NodeGroupInput")
