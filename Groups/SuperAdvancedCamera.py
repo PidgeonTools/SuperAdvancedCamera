@@ -40,6 +40,12 @@ from .Colorgrading.Curves import create_curves_group
 from .Colorgrading.Colorwheels import create_colorwheel_group
 from .Effects.Duotone import create_duotone_group
 from .Effects.Glare import create_glare_group
+from .Effects.Emboss import create_emboss_group
+from .Effects.Posterize import create_posterize_group
+from .Effects.Overlay import create_overlay_group
+from .Effects.Pixelate import create_pixelate_group
+from .Effects.ChromaticAberration import create_chromatic_group
+from .Effects.Viginette import create_viginette_group
 
 
 def create_main_group() -> NodeTree:
@@ -56,6 +62,7 @@ def create_main_group() -> NodeTree:
     sac_group.outputs.new("NodeSocketColor", "Image")
 
     # Create the nodes
+
     # Temperature
     sac_temperature_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -65,6 +72,7 @@ def create_main_group() -> NodeTree:
         sac_temperature_group.node_tree = create_temperature_group()
     sac_temperature_group.name = "SAC Temperature"
     sac_temperature_group.mute = True
+
     # Tint
     sac_tint_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -74,6 +82,7 @@ def create_main_group() -> NodeTree:
         sac_tint_group.node_tree = create_tint_group()
     sac_tint_group.name = "SAC Tint"
     sac_tint_group.mute = True
+
     # Saturation
     sac_saturation_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -83,6 +92,7 @@ def create_main_group() -> NodeTree:
         sac_saturation_group.node_tree = create_saturation_group("SAC Colorgrade_Color_Saturation", ".SAC Saturation")
     sac_saturation_group.name = "SAC Saturation"
     sac_saturation_group.mute = True
+
     # Exposure
     sac_exposure_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -92,6 +102,7 @@ def create_main_group() -> NodeTree:
         sac_exposure_group.node_tree = create_exposure_group()
     sac_exposure_group.name = "SAC Exposure"
     sac_exposure_group.mute = True
+
     # Contrast
     sac_contrast_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -101,6 +112,7 @@ def create_main_group() -> NodeTree:
         sac_contrast_group.node_tree = create_contrast_group()
     sac_contrast_group.name = "SAC Contrast"
     sac_contrast_group.mute = True
+
     # Highlights
     sac_highlights_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -110,6 +122,7 @@ def create_main_group() -> NodeTree:
         sac_highlights_group.node_tree = create_highlights_group()
     sac_highlights_group.name = "SAC Highlights"
     sac_highlights_group.mute = True
+
     # Shadows
     sac_shadows_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -119,6 +132,7 @@ def create_main_group() -> NodeTree:
         sac_shadows_group.node_tree = create_shadows_group()
     sac_shadows_group.name = "SAC Shadows"
     sac_shadows_group.mute = True
+
     # Whites
     sac_whites_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -128,6 +142,7 @@ def create_main_group() -> NodeTree:
         sac_whites_group.node_tree = create_whites_group()
     sac_whites_group.name = "SAC Whites"
     sac_whites_group.mute = True
+
     # Darks
     sac_darks_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -137,6 +152,7 @@ def create_main_group() -> NodeTree:
         sac_darks_group.node_tree = create_darks_group()
     sac_darks_group.name = "SAC Darks"
     sac_darks_group.mute = True
+
     # Sharpen
     sac_sharpen_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -146,6 +162,7 @@ def create_main_group() -> NodeTree:
         sac_sharpen_group.node_tree = create_sharpen_group()
     sac_sharpen_group.name = "SAC Sharpen"
     sac_sharpen_group.mute = True
+
     # Vibrance
     sac_vibrance_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -155,6 +172,7 @@ def create_main_group() -> NodeTree:
         sac_vibrance_group.node_tree = create_vibrance_group()
     sac_vibrance_group.name = "SAC Vibrance"
     sac_vibrance_group.mute = True
+
     # Saturation 2
     sac_saturation_group_2 = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -164,6 +182,7 @@ def create_main_group() -> NodeTree:
         sac_saturation_group_2.node_tree = create_saturation_group("SAC Colorgrade_Presets_Saturation", ".SAC Saturation2")
     sac_saturation_group_2.name = "SAC Saturation2"
     sac_saturation_group_2.mute = True
+
     # Highlight Tint
     sac_highlighttint_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -173,6 +192,7 @@ def create_main_group() -> NodeTree:
         sac_highlighttint_group.node_tree = create_highlighttint_group()
     sac_highlighttint_group.name = "SAC HighlightTint"
     sac_highlighttint_group.mute = True
+
     # Shadow Tint
     sac_shadowtint_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -182,6 +202,7 @@ def create_main_group() -> NodeTree:
         sac_shadowtint_group.node_tree = create_shadowtint_group()
     sac_shadowtint_group.name = "SAC ShadowTint"
     sac_shadowtint_group.mute = True
+
     # Curves
     sac_curves_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -190,6 +211,7 @@ def create_main_group() -> NodeTree:
     except:
         sac_curves_group.node_tree = create_curves_group()
     sac_curves_group.name = "SAC Curves"
+
     # Colorwheels
     sac_colorwheels_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -198,6 +220,7 @@ def create_main_group() -> NodeTree:
     except:
         sac_colorwheels_group.node_tree = create_colorwheel_group()
     sac_colorwheels_group.name = "SAC Colorwheels"
+
     # Duotone
     sac_duotone_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -207,6 +230,7 @@ def create_main_group() -> NodeTree:
         sac_duotone_group.node_tree = create_duotone_group()
     sac_duotone_group.name = "SAC Duotone"
     sac_duotone_group.mute = True
+
     # Glare
     sac_glare_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
@@ -215,6 +239,66 @@ def create_main_group() -> NodeTree:
     except:
         sac_glare_group.node_tree = create_glare_group()
     sac_glare_group.name = "SAC Glare"
+
+    # Emboss
+    sac_emboss_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC Emboss"]:
+            sac_emboss_group.node_tree = bpy.data.node_groups[".SAC Emboss"]
+    except:
+        sac_emboss_group.node_tree = create_emboss_group()
+    sac_emboss_group.name = "SAC Emboss"
+    sac_emboss_group.mute = True
+
+    # Posterize
+    sac_posterize_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC Posterize"]:
+            sac_posterize_group.node_tree = bpy.data.node_groups[".SAC Posterize"]
+    except:
+        sac_posterize_group.node_tree = create_posterize_group()
+    sac_posterize_group.name = "SAC Posterize"
+    sac_posterize_group.mute = True
+
+    # Overlay
+    sac_overlay_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC Overlay"]:
+            sac_overlay_group.node_tree = bpy.data.node_groups[".SAC Overlay"]
+    except:
+        sac_overlay_group.node_tree = create_overlay_group()
+    sac_overlay_group.name = "SAC Overlay"
+    sac_overlay_group.mute = True
+
+    # Pixelate
+    sac_pixelate_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC Pixelate"]:
+            sac_pixelate_group.node_tree = bpy.data.node_groups[".SAC Pixelate"]
+    except:
+        sac_pixelate_group.node_tree = create_pixelate_group()
+    sac_pixelate_group.name = "SAC Pixelate"
+    sac_pixelate_group.mute = True
+
+    # Chromatic Aberration
+    sac_chromatic_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC ChromaticAberration"]:
+            sac_chromatic_group.node_tree = bpy.data.node_groups[".SAC ChromaticAberration"]
+    except:
+        sac_chromatic_group.node_tree = create_chromatic_group()
+    sac_chromatic_group.name = "SAC ChromaticAberration"
+    sac_chromatic_group.mute = True
+
+    # Viginette
+    sac_viginette_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC Viginette"]:
+            sac_viginette_group.node_tree = bpy.data.node_groups[".SAC Viginette"]
+    except:
+        sac_viginette_group.node_tree = create_viginette_group()
+    sac_viginette_group.name = "SAC Viginette"
+    sac_viginette_group.mute = True
 
     # Create the links
     # link the input node to the temperature node
@@ -253,8 +337,20 @@ def create_main_group() -> NodeTree:
     sac_group.links.new(sac_colorwheels_group.outputs[0], sac_duotone_group.inputs[0])
     # link the duotone node to the glare node
     sac_group.links.new(sac_duotone_group.outputs[0], sac_glare_group.inputs[0])
-    # link the glare node to the output node
-    sac_group.links.new(sac_glare_group.outputs[0], output_node.inputs[0])
+    # link the glare node to the emboss node
+    sac_group.links.new(sac_glare_group.outputs[0], sac_emboss_group.inputs[0])
+    # link the emboss node to the posterize node
+    sac_group.links.new(sac_emboss_group.outputs[0], sac_posterize_group.inputs[0])
+    # link the posterize node to the overlay node
+    sac_group.links.new(sac_posterize_group.outputs[0], sac_overlay_group.inputs[0])
+    # link the overlay node to the pixelate node
+    sac_group.links.new(sac_overlay_group.outputs[0], sac_pixelate_group.inputs[0])
+    # link the pixelate node to the chromatic node
+    sac_group.links.new(sac_pixelate_group.outputs[0], sac_chromatic_group.inputs[0])
+    # link the chromatic node to the viginette node
+    sac_group.links.new(sac_chromatic_group.outputs[0], sac_viginette_group.inputs[0])
+    # link the viginette node to the output node
+    sac_group.links.new(sac_viginette_group.outputs[0], output_node.inputs[0])
 
     # return
     return (sac_group)

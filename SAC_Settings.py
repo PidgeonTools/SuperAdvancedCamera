@@ -31,6 +31,8 @@ from bpy.props import (
     FloatProperty,
     FloatVectorProperty,
     IntProperty,
+    BoolProperty,
+    PointerProperty,
 )
 
 
@@ -777,4 +779,203 @@ class SAC_Settings(PropertyGroup):
         min=0,
         subtype="FACTOR",
         update=update_Effects_Glare_Ghosts_Strength
+    )
+
+    # Emboss
+
+    def update_Effects_Emboss_Strength(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC Emboss"].nodes["SAC Effects_Emboss"].inputs[0].default_value = settings.Effects_Emboss_Strength
+
+        if settings.Effects_Emboss_Strength == 0:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Emboss"].mute = True
+        else:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Emboss"].mute = False
+
+    Effects_Emboss_Strength: FloatProperty(
+        name="Strength",
+        default=0,
+        max=1,
+        min=-1,
+        subtype="FACTOR",
+        update=update_Effects_Emboss_Strength
+    )
+
+    # Posterize
+
+    def update_Effects_Posterize_Steps(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC Posterize"].nodes["SAC Effects_Posterize"].inputs[1].default_value = settings.Effects_Posterize_Steps
+        settings.Effects_Posterize_Toggle = True
+
+    Effects_Posterize_Steps: FloatProperty(
+        name="Steps",
+        default=128,
+        max=1024,
+        soft_max=256,
+        min=2,
+        subtype="FACTOR",
+        update=update_Effects_Posterize_Steps
+    )
+
+    def update_Effects_Posterize_Toggle(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+
+        if settings.Effects_Posterize_Toggle == 0:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Posterize"].mute = True
+        else:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Posterize"].mute = False
+
+    Effects_Posterize_Toggle: BoolProperty(
+        name="Enabled",
+        default=False,
+        update=update_Effects_Posterize_Toggle
+    )
+
+    # Overlay
+
+    def update_Effects_Overlay_Strength(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC Overlay"].nodes["SAC Effects_Overlay"].inputs[0].default_value = settings.Effects_Overlay_Strength
+
+        if settings.Effects_Overlay_Strength == 0:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Overlay"].mute = True
+        else:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Overlay"].mute = False
+
+    Effects_Overlay_Strength: FloatProperty(
+        name="Strength",
+        default=0,
+        max=1,
+        min=0,
+        subtype="FACTOR",
+        update=update_Effects_Overlay_Strength
+    )
+
+    # Pixelate
+
+    def update_Effects_Pixelate_PixelSize(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC Pixelate"].nodes["SAC Effects_Pixelate_Size"].inputs[0].default_value = settings.Effects_Pixelate_PixelSize
+
+        if settings.Effects_Pixelate_PixelSize == 0:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Pixelate"].mute = True
+        else:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Pixelate"].mute = False
+
+    Effects_Pixelate_PixelSize: FloatProperty(
+        name="Pixel Size",
+        default=0,
+        max=100,
+        soft_max=25,
+        min=0,
+        subtype="FACTOR",
+        update=update_Effects_Pixelate_PixelSize
+    )
+
+    # Chromatic Aberration
+
+    def update_Effects_ChromaticAberration_Amount(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC ChromaticAberration"].nodes["SAC Effects_ChromaticAberration"].inputs[2].default_value = settings.Effects_ChromaticAberration_Amount
+        bpy.data.node_groups[".SAC ChromaticAberration"].nodes["SAC Effects_ChromaticAberration"].inputs[1].default_value = -settings.Effects_ChromaticAberration_Amount/3.5
+
+        if settings.Effects_ChromaticAberration_Amount == 0:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC ChromaticAberration"].mute = True
+        else:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC ChromaticAberration"].mute = False
+
+    Effects_ChromaticAberration_Amount: FloatProperty(
+        name="Amount",
+        default=0,
+        max=1,
+        min=0,
+        subtype="FACTOR",
+        update=update_Effects_ChromaticAberration_Amount
+    )
+
+    # Vignette
+    # Intensity
+    def update_Effects_Vignette_Intensity(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC Viginette"].nodes["SAC Effects_Viginette_Intensity"].inputs[0].default_value = settings.Effects_Vignette_Intensity
+
+        if settings.Effects_Vignette_Intensity == 0:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Viginette"].mute = True
+        else:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Viginette"].mute = False
+
+    Effects_Vignette_Intensity: FloatProperty(
+        name="Intensity",
+        default=0,
+        max=1,
+        min=-1,
+        subtype="FACTOR",
+        update=update_Effects_Vignette_Intensity
+    )
+
+    # Roundness
+    def update_Effects_Vignette_Roundness(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC Viginette"].nodes["SAC Effects_Viginette_Roundness"].inputs[0].default_value = settings.Effects_Vignette_Roundness
+
+    Effects_Vignette_Roundness: FloatProperty(
+        name="Roundness",
+        default=0,
+        max=1,
+        min=-1,
+        subtype="FACTOR",
+        update=update_Effects_Vignette_Roundness
+    )
+
+    # Feather
+    def update_Effects_Vignette_Feather(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC Viginette"].nodes["SAC Effects_Viginette_Directional_Blur"].zoom = settings.Effects_Vignette_Feather
+        bpy.data.node_groups[".SAC Viginette"].nodes["SAC Effects_Viginette_Midpoint"].inputs[3].default_value = -settings.Effects_Vignette_Feather/4
+        bpy.data.node_groups[".SAC Viginette"].nodes["SAC Effects_Viginette_Midpoint"].inputs[1].default_value = -0.999-settings.Effects_Vignette_Feather/4
+
+        feather_value = settings.Effects_Vignette_Feather
+        node_to_update = bpy.data.node_groups[".SAC Viginette"].nodes["SAC Effects_Viginette_Directional_Blur"]
+
+        if feather_value <= 0.05:
+            node_to_update.iterations = 4
+        elif feather_value <= 0.2:
+            node_to_update.iterations = 5
+        elif feather_value <= 0.4:
+            node_to_update.iterations = 6
+        else:  # feather_value > 0.4
+            node_to_update.iterations = 7
+
+    Effects_Vignette_Feather: FloatProperty(
+        name="Feather",
+        default=0.25,
+        max=1,
+        min=0,
+        subtype="FACTOR",
+        update=update_Effects_Vignette_Feather
+    )
+
+    # Midpoint
+    def update_Effects_Vignette_Midpoint(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC Viginette"].nodes["SAC Effects_Viginette_Midpoint"].inputs[0].default_value = settings.Effects_Vignette_Midpoint
+
+    Effects_Vignette_Midpoint: FloatProperty(
+        name="Midpoint",
+        default=0,
+        max=1,
+        min=-0.998,
+        subtype="FACTOR",
+        update=update_Effects_Vignette_Midpoint
     )

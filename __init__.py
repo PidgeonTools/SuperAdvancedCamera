@@ -74,7 +74,7 @@ from .SAC_Settings import (
 bl_info = {
     "name": "Super Advanced Camera (SAC)",
     "author": "Kevin Lorengel, Slinc",
-    "version": (0, 0, 4),
+    "version": (0, 0, 5),
     "blender": (3, 6, 0),
     "description": "Adds plenty of new features to the camera and compositor",
     "warning": "",

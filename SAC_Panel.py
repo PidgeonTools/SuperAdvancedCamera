@@ -293,7 +293,7 @@ class SAC_PT_EFFECTS_GLARE_Ghost_Panel(SAC_PT_Panel, Panel):
 
 # Emboss
 class SAC_PT_EFFECTS_Emboss_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Emboss (coming soon)"
+    bl_label = "Emboss"
     bl_parent_id = "SAC_PT_EFFECTS_Panel"
 
     def draw_header(self, context: Context):
@@ -304,12 +304,12 @@ class SAC_PT_EFFECTS_Emboss_Panel(SAC_PT_Panel, Panel):
         layout = self.layout
         settings = context.scene.sac_settings
 
-        layout.label(text="Coming soon")
+        layout.prop(settings, "Effects_Emboss_Strength")
 
 
 # Posterize
 class SAC_PT_EFFECTS_Posterize_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Posterize (coming soon)"
+    bl_label = "Posterize"
     bl_parent_id = "SAC_PT_EFFECTS_Panel"
 
     def draw_header(self, context: Context):
@@ -320,7 +320,8 @@ class SAC_PT_EFFECTS_Posterize_Panel(SAC_PT_Panel, Panel):
         layout = self.layout
         settings = context.scene.sac_settings
 
-        layout.label(text="Coming soon")
+        layout.prop(settings, "Effects_Posterize_Toggle")
+        layout.prop(settings, "Effects_Posterize_Steps")
 
 
 # Halftone
@@ -341,7 +342,7 @@ class SAC_PT_EFFECTS_Halftone_Panel(SAC_PT_Panel, Panel):
 
 # Overlay
 class SAC_PT_EFFECTS_Overlay_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Overlay (coming soon)"
+    bl_label = "Overlay"
     bl_parent_id = "SAC_PT_EFFECTS_Panel"
 
     def draw_header(self, context: Context):
@@ -352,7 +353,10 @@ class SAC_PT_EFFECTS_Overlay_Panel(SAC_PT_Panel, Panel):
         layout = self.layout
         settings = context.scene.sac_settings
 
-        layout.label(text="Coming soon")
+        overlay_texture = bpy.data.node_groups[".SAC Overlay"].nodes["SAC Effects_Overlay_Texture"]
+
+        layout.template_ID(overlay_texture, "image", open="image.open")
+        layout.prop(settings, "Effects_Overlay_Strength")
 
 
 # Bokeh
@@ -373,7 +377,7 @@ class SAC_PT_EFFECTS_Bokeh_Panel(SAC_PT_Panel, Panel):
 
 # Vignette
 class SAC_PT_EFFECTS_Vignette_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Vignette (coming soon)"
+    bl_label = "Vignette"
     bl_parent_id = "SAC_PT_EFFECTS_Panel"
 
     def draw_header(self, context: Context):
@@ -384,12 +388,15 @@ class SAC_PT_EFFECTS_Vignette_Panel(SAC_PT_Panel, Panel):
         layout = self.layout
         settings = context.scene.sac_settings
 
-        layout.label(text="Coming soon")
+        layout.prop(settings, "Effects_Vignette_Intensity")
+        layout.prop(settings, "Effects_Vignette_Roundness")
+        layout.prop(settings, "Effects_Vignette_Feather")
+        layout.prop(settings, "Effects_Vignette_Midpoint")
 
 
 # Mosaic
 class SAC_PT_EFFECTS_Mosaic_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Mosaic (coming soon)"
+    bl_label = "Mosaic"
     bl_parent_id = "SAC_PT_EFFECTS_Panel"
 
     def draw_header(self, context: Context):
@@ -400,12 +407,12 @@ class SAC_PT_EFFECTS_Mosaic_Panel(SAC_PT_Panel, Panel):
         layout = self.layout
         settings = context.scene.sac_settings
 
-        layout.label(text="Coming soon")
+        layout.prop(settings, "Effects_Pixelate_PixelSize")
 
 
 # Chromatic Aberration
 class SAC_PT_EFFECTS_ChromaticAberration_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Chromatic Aberration (coming soon)"
+    bl_label = "Chromatic Aberration"
     bl_parent_id = "SAC_PT_EFFECTS_Panel"
 
     def draw_header(self, context: Context):
@@ -416,7 +423,7 @@ class SAC_PT_EFFECTS_ChromaticAberration_Panel(SAC_PT_Panel, Panel):
         layout = self.layout
         settings = context.scene.sac_settings
 
-        layout.label(text="Coming soon")
+        layout.prop(settings, "Effects_ChromaticAberration_Amount")
 
 
 # Infrared
