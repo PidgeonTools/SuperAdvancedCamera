@@ -37,15 +37,23 @@ from .SAC_Panel import (
     SAC_PT_COLORGRADE_Colorwheels_Panel,
 
     SAC_PT_EFFECTS_Panel,
+
+    SAC_PT_EFFECTS_Color_Panel,
     SAC_PT_EFFECTS_Duotone_Panel,
+
+    SAC_PT_EFFECTS_Lighting_Panel,
     SAC_PT_EFFECTS_Glare_Panel,
     SAC_PT_EFFECTS_GLARE_FogGlow_Panel,
     SAC_PT_EFFECTS_GLARE_Streaks_Panel,
     SAC_PT_EFFECTS_GLARE_Ghost_Panel,
+
+    SAC_PT_EFFECTS_Texture_Panel,
     SAC_PT_EFFECTS_Emboss_Panel,
     SAC_PT_EFFECTS_Posterize_Panel,
     SAC_PT_EFFECTS_Halftone_Panel,
     SAC_PT_EFFECTS_Overlay_Panel,
+
+    SAC_PT_EFFECTS_Special_Panel,
     SAC_PT_EFFECTS_Bokeh_Panel,
     SAC_PT_EFFECTS_Vignette_Panel,
     SAC_PT_EFFECTS_Mosaic_Panel,
@@ -53,20 +61,23 @@ from .SAC_Panel import (
     SAC_PT_EFFECTS_Infrared_Panel,
     SAC_PT_EFFECTS_Lomo_Panel,
     SAC_PT_EFFECTS_Negative_Panel,
+    SAC_PT_EFFECTS_ISONoise_Panel,
+    SAC_PT_EFFECTS_FilmGrain_Panel,
+
+    SAC_PT_EFFECTS_Geometric_Panel,
     SAC_PT_EFFECTS_Warp_Panel,
     SAC_PT_EFFECTS_FishEye_Panel,
     SAC_PT_EFFECTS_PerspectiveShift_Panel,
+
+    SAC_PT_EFFECTS_Artistic_Panel,
     SAC_PT_EFFECTS_OilPaint_Panel,
     SAC_PT_EFFECTS_Sketch_Panel,
     SAC_PT_EFFECTS_Watercolor_Panel,
     SAC_PT_EFFECTS_Pointillism_Panel,
-    SAC_PT_EFFECTS_ISONoise_Panel,
-    SAC_PT_EFFECTS_FilmGrain_Panel,
 
     SAC_PT_CAMERA_Panel,
     SAC_PT_CAMERA_TiltShift_Panel,
 )
-
 from .SAC_Settings import (
     SAC_Settings
 )
@@ -74,7 +85,7 @@ from .SAC_Settings import (
 bl_info = {
     "name": "Super Advanced Camera (SAC)",
     "author": "Kevin Lorengel, Slinc",
-    "version": (0, 0, 5),
+    "version": (0, 0, 6),
     "blender": (3, 6, 0),
     "description": "Adds plenty of new features to the camera and compositor",
     "warning": "",
@@ -94,15 +105,23 @@ classes = (
     SAC_PT_COLORGRADE_Colorwheels_Panel,
 
     SAC_PT_EFFECTS_Panel,
+
+    SAC_PT_EFFECTS_Color_Panel,
     SAC_PT_EFFECTS_Duotone_Panel,
+
+    SAC_PT_EFFECTS_Lighting_Panel,
     SAC_PT_EFFECTS_Glare_Panel,
     SAC_PT_EFFECTS_GLARE_FogGlow_Panel,
     SAC_PT_EFFECTS_GLARE_Streaks_Panel,
     SAC_PT_EFFECTS_GLARE_Ghost_Panel,
+
+    SAC_PT_EFFECTS_Texture_Panel,
     SAC_PT_EFFECTS_Emboss_Panel,
     SAC_PT_EFFECTS_Posterize_Panel,
     SAC_PT_EFFECTS_Halftone_Panel,
     SAC_PT_EFFECTS_Overlay_Panel,
+
+    SAC_PT_EFFECTS_Special_Panel,
     SAC_PT_EFFECTS_Bokeh_Panel,
     SAC_PT_EFFECTS_Vignette_Panel,
     SAC_PT_EFFECTS_Mosaic_Panel,
@@ -110,9 +129,13 @@ classes = (
     SAC_PT_EFFECTS_Infrared_Panel,
     SAC_PT_EFFECTS_Lomo_Panel,
     SAC_PT_EFFECTS_Negative_Panel,
+
+    SAC_PT_EFFECTS_Geometric_Panel,
     SAC_PT_EFFECTS_Warp_Panel,
     SAC_PT_EFFECTS_FishEye_Panel,
     SAC_PT_EFFECTS_PerspectiveShift_Panel,
+
+    SAC_PT_EFFECTS_Artistic_Panel,
     SAC_PT_EFFECTS_OilPaint_Panel,
     SAC_PT_EFFECTS_Sketch_Panel,
     SAC_PT_EFFECTS_Watercolor_Panel,

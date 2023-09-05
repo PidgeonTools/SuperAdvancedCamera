@@ -23,6 +23,7 @@
 import bpy
 from bpy.types import NodeTree
 
+from .Colorgrading.WhiteLevel import create_whitelevel_group
 from .Colorgrading.Temperature import create_temperature_group
 from .Colorgrading.Tint import create_tint_group
 from .Colorgrading.Saturation import create_saturation_group
@@ -46,6 +47,12 @@ from .Effects.Overlay import create_overlay_group
 from .Effects.Pixelate import create_pixelate_group
 from .Effects.ChromaticAberration import create_chromatic_group
 from .Effects.Viginette import create_viginette_group
+from .Effects.Infrared import create_infrared_group
+from .Effects.Negative import create_negative_group
+from .Effects.Warp import create_warp_group
+from .Effects.Fisheye import create_fisheye_group
+from .Effects.PerspectiveShift import create_perspectiveshift_group
+from .Effects.ISO import create_iso_group
 
 
 def create_main_group() -> NodeTree:
@@ -62,6 +69,16 @@ def create_main_group() -> NodeTree:
     sac_group.outputs.new("NodeSocketColor", "Image")
 
     # Create the nodes
+
+    # White Level
+    sac_whitelevel_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC WhiteLevel"]:
+            sac_whitelevel_group.node_tree = bpy.data.node_groups[".SAC WhiteLevel"]
+    except:
+        sac_whitelevel_group.node_tree = create_whitelevel_group()
+    sac_whitelevel_group.name = "SAC WhiteLevel"
+    sac_whitelevel_group.mute = True
 
     # Temperature
     sac_temperature_group = sac_group.nodes.new("CompositorNodeGroup")
@@ -300,9 +317,71 @@ def create_main_group() -> NodeTree:
     sac_viginette_group.name = "SAC Viginette"
     sac_viginette_group.mute = True
 
+    # Infrared
+    sac_infrared_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC Infrared"]:
+            sac_infrared_group.node_tree = bpy.data.node_groups[".SAC Infrared"]
+    except:
+        sac_infrared_group.node_tree = create_infrared_group()
+    sac_infrared_group.name = "SAC Infrared"
+    sac_infrared_group.mute = True
+
+    # Negative
+    sac_negative_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC Negative"]:
+            sac_negative_group.node_tree = bpy.data.node_groups[".SAC Negative"]
+    except:
+        sac_negative_group.node_tree = create_negative_group()
+    sac_negative_group.name = "SAC Negative"
+    sac_negative_group.mute = True
+
+    # Warp
+    sac_warp_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC Warp"]:
+            sac_warp_group.node_tree = bpy.data.node_groups[".SAC Warp"]
+    except:
+        sac_warp_group.node_tree = create_warp_group()
+    sac_warp_group.name = "SAC Warp"
+    sac_warp_group.mute = True
+
+    # Fisheye
+    sac_fisheye_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC Fisheye"]:
+            sac_fisheye_group.node_tree = bpy.data.node_groups[".SAC Fisheye"]
+    except:
+        sac_fisheye_group.node_tree = create_fisheye_group()
+    sac_fisheye_group.name = "SAC Fisheye"
+    sac_fisheye_group.mute = True
+
+    # Perspective Shift
+    sac_perspectiveshift_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC PerspectiveShift"]:
+            sac_perspectiveshift_group.node_tree = bpy.data.node_groups[".SAC PerspectiveShift"]
+    except:
+        sac_perspectiveshift_group.node_tree = create_perspectiveshift_group()
+    sac_perspectiveshift_group.name = "SAC PerspectiveShift"
+    sac_perspectiveshift_group.mute = True
+
+    # ISO
+    sac_iso_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC ISO"]:
+            sac_iso_group.node_tree = bpy.data.node_groups[".SAC ISO"]
+    except:
+        sac_iso_group.node_tree = create_iso_group()
+    sac_iso_group.name = "SAC ISO"
+    sac_iso_group.mute = True
+
     # Create the links
-    # link the input node to the temperature node
-    sac_group.links.new(input_node.outputs[0], sac_temperature_group.inputs[0])
+    # link the input node to the white level node
+    sac_group.links.new(input_node.outputs[0], sac_whitelevel_group.inputs[0])
+    # link the white level node to the temperature node
+    sac_group.links.new(sac_whitelevel_group.outputs[0], sac_temperature_group.inputs[0])
     # link the temperature node to the tint node
     sac_group.links.new(sac_temperature_group.outputs[0], sac_tint_group.inputs[0])
     # link the tint node to the saturation node
@@ -349,8 +428,20 @@ def create_main_group() -> NodeTree:
     sac_group.links.new(sac_pixelate_group.outputs[0], sac_chromatic_group.inputs[0])
     # link the chromatic node to the viginette node
     sac_group.links.new(sac_chromatic_group.outputs[0], sac_viginette_group.inputs[0])
-    # link the viginette node to the output node
-    sac_group.links.new(sac_viginette_group.outputs[0], output_node.inputs[0])
+    # link the viginette node to the infrared node
+    sac_group.links.new(sac_viginette_group.outputs[0], sac_infrared_group.inputs[0])
+    # link the infrared node to the negative node
+    sac_group.links.new(sac_infrared_group.outputs[0], sac_negative_group.inputs[0])
+    # link the negative node to the warp node
+    sac_group.links.new(sac_negative_group.outputs[0], sac_warp_group.inputs[0])
+    # link the warp node to the fisheye node
+    sac_group.links.new(sac_warp_group.outputs[0], sac_fisheye_group.inputs[0])
+    # link the fisheye node to the perspectiveshift node
+    sac_group.links.new(sac_fisheye_group.outputs[0], sac_perspectiveshift_group.inputs[0])
+    # link the perspectiveshift node to the iso node
+    sac_group.links.new(sac_perspectiveshift_group.outputs[0], sac_iso_group.inputs[0])
+    # link the iso node to the output node
+    sac_group.links.new(sac_iso_group.outputs[0], output_node.inputs[0])
 
     # return
     return (sac_group)
@@ -369,7 +460,7 @@ def connect_renderLayer_node():
     # Exit if no Render Layer nodes are found
     if not render_layer_nodes:
         print("No Render Layer nodes found.")
-        exit()
+        return
 
     # Process each Render Layer node
     for render_layer_node in render_layer_nodes:
