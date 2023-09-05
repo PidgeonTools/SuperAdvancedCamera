@@ -53,6 +53,9 @@ from .Effects.Warp import create_warp_group
 from .Effects.Fisheye import create_fisheye_group
 from .Effects.PerspectiveShift import create_perspectiveshift_group
 from .Effects.ISO import create_iso_group
+from .Effects.FilmGrain import create_filmgrain_group
+from .Effects.Halftone import create_halftone_group
+from .Effects.GradientMap import create_gradientmap_group
 
 
 def create_main_group() -> NodeTree:
@@ -377,6 +380,36 @@ def create_main_group() -> NodeTree:
     sac_iso_group.name = "SAC ISO"
     sac_iso_group.mute = True
 
+    # Film Grain
+    sac_filmgrain_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC FilmGrain"]:
+            sac_filmgrain_group.node_tree = bpy.data.node_groups[".SAC FilmGrain"]
+    except:
+        sac_filmgrain_group.node_tree = create_filmgrain_group()
+    sac_filmgrain_group.name = "SAC FilmGrain"
+    sac_filmgrain_group.mute = True
+
+    # Halftone
+    sac_halftone_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC Halftone"]:
+            sac_halftone_group.node_tree = bpy.data.node_groups[".SAC Halftone"]
+    except:
+        sac_halftone_group.node_tree = create_halftone_group()
+    sac_halftone_group.name = "SAC Halftone"
+    sac_halftone_group.mute = True
+
+    # Gradient Map
+    sac_gradientmap_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC GradientMap"]:
+            sac_gradientmap_group.node_tree = bpy.data.node_groups[".SAC GradientMap"]
+    except:
+        sac_gradientmap_group.node_tree = create_gradientmap_group()
+    sac_gradientmap_group.name = "SAC GradientMap"
+    sac_gradientmap_group.mute = True
+
     # Create the links
     # link the input node to the white level node
     sac_group.links.new(input_node.outputs[0], sac_whitelevel_group.inputs[0])
@@ -440,8 +473,14 @@ def create_main_group() -> NodeTree:
     sac_group.links.new(sac_fisheye_group.outputs[0], sac_perspectiveshift_group.inputs[0])
     # link the perspectiveshift node to the iso node
     sac_group.links.new(sac_perspectiveshift_group.outputs[0], sac_iso_group.inputs[0])
-    # link the iso node to the output node
-    sac_group.links.new(sac_iso_group.outputs[0], output_node.inputs[0])
+    # link the iso node to the filmgrain node
+    sac_group.links.new(sac_iso_group.outputs[0], sac_filmgrain_group.inputs[0])
+    # link the filmgrain node to the halftone node
+    sac_group.links.new(sac_filmgrain_group.outputs[0], sac_halftone_group.inputs[0])
+    # link the halftone node to the gradientmap node
+    sac_group.links.new(sac_halftone_group.outputs[0], sac_gradientmap_group.inputs[0])
+    # link the gradientmap node to the output node
+    sac_group.links.new(sac_gradientmap_group.outputs[0], output_node.inputs[0])
 
     # return
     return (sac_group)

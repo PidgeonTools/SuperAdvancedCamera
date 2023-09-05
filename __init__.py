@@ -40,9 +40,9 @@ from .SAC_Panel import (
 
     SAC_PT_EFFECTS_Color_Panel,
     SAC_PT_EFFECTS_Duotone_Panel,
+    SAC_PT_EFFECTS_GradientMap_Panel,
 
     SAC_PT_EFFECTS_Lighting_Panel,
-    SAC_PT_EFFECTS_Glare_Panel,
     SAC_PT_EFFECTS_GLARE_FogGlow_Panel,
     SAC_PT_EFFECTS_GLARE_Streaks_Panel,
     SAC_PT_EFFECTS_GLARE_Ghost_Panel,
@@ -54,12 +54,11 @@ from .SAC_Panel import (
     SAC_PT_EFFECTS_Overlay_Panel,
 
     SAC_PT_EFFECTS_Special_Panel,
-    SAC_PT_EFFECTS_Bokeh_Panel,
+    SAC_PT_CAMERA_Bokeh_Panel,
     SAC_PT_EFFECTS_Vignette_Panel,
     SAC_PT_EFFECTS_Mosaic_Panel,
     SAC_PT_EFFECTS_ChromaticAberration_Panel,
     SAC_PT_EFFECTS_Infrared_Panel,
-    SAC_PT_EFFECTS_Lomo_Panel,
     SAC_PT_EFFECTS_Negative_Panel,
     SAC_PT_EFFECTS_ISONoise_Panel,
     SAC_PT_EFFECTS_FilmGrain_Panel,
@@ -85,7 +84,7 @@ from .SAC_Settings import (
 bl_info = {
     "name": "Super Advanced Camera (SAC)",
     "author": "Kevin Lorengel, Slinc",
-    "version": (0, 0, 6),
+    "version": (0, 0, 7),
     "blender": (3, 6, 0),
     "description": "Adds plenty of new features to the camera and compositor",
     "warning": "",
@@ -108,9 +107,9 @@ classes = (
 
     SAC_PT_EFFECTS_Color_Panel,
     SAC_PT_EFFECTS_Duotone_Panel,
+    SAC_PT_EFFECTS_GradientMap_Panel,
 
     SAC_PT_EFFECTS_Lighting_Panel,
-    SAC_PT_EFFECTS_Glare_Panel,
     SAC_PT_EFFECTS_GLARE_FogGlow_Panel,
     SAC_PT_EFFECTS_GLARE_Streaks_Panel,
     SAC_PT_EFFECTS_GLARE_Ghost_Panel,
@@ -122,12 +121,10 @@ classes = (
     SAC_PT_EFFECTS_Overlay_Panel,
 
     SAC_PT_EFFECTS_Special_Panel,
-    SAC_PT_EFFECTS_Bokeh_Panel,
     SAC_PT_EFFECTS_Vignette_Panel,
     SAC_PT_EFFECTS_Mosaic_Panel,
     SAC_PT_EFFECTS_ChromaticAberration_Panel,
     SAC_PT_EFFECTS_Infrared_Panel,
-    SAC_PT_EFFECTS_Lomo_Panel,
     SAC_PT_EFFECTS_Negative_Panel,
 
     SAC_PT_EFFECTS_Geometric_Panel,
@@ -145,6 +142,7 @@ classes = (
 
     SAC_PT_CAMERA_Panel,
     SAC_PT_CAMERA_TiltShift_Panel,
+    SAC_PT_CAMERA_Bokeh_Panel,
 
     SAC_OT_Initialize,
 

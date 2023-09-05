@@ -232,6 +232,25 @@ class SAC_PT_EFFECTS_Duotone_Panel(SAC_PT_Panel, Panel):
         layout.prop(settings, "Effects_Duotone_Blend")
 
 
+# Gradient Map
+class SAC_PT_EFFECTS_GradientMap_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Gradient Map"
+    bl_parent_id = "SAC_PT_EFFECTS_Color_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="SNAP_INCREMENT")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        gradient_map_node = bpy.data.node_groups[".SAC GradientMap"].nodes["SAC Effects_GradientMap"]
+
+        layout.template_color_ramp(gradient_map_node, "color_ramp")
+        layout.prop(settings, "Effects_GradientMap_blend")
+
+
 # Effects - Lighting
 class SAC_PT_EFFECTS_Lighting_Panel(SAC_PT_Panel, Panel):
     bl_label = "Lighting Effects"
@@ -246,24 +265,10 @@ class SAC_PT_EFFECTS_Lighting_Panel(SAC_PT_Panel, Panel):
         settings = context.scene.sac_settings
 
 
-# Glare
-class SAC_PT_EFFECTS_Glare_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Glare"
-    bl_parent_id = "SAC_PT_EFFECTS_Lighting_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="CON_CAMERASOLVER")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-
 # Glare FogGlow
 class SAC_PT_EFFECTS_GLARE_FogGlow_Panel(SAC_PT_Panel, Panel):
     bl_label = "Fog Glow"
-    bl_parent_id = "SAC_PT_EFFECTS_Glare_Panel"
+    bl_parent_id = "SAC_PT_EFFECTS_Lighting_Panel"
 
     def draw_header(self, context: Context):
         layout = self.layout
@@ -281,7 +286,7 @@ class SAC_PT_EFFECTS_GLARE_FogGlow_Panel(SAC_PT_Panel, Panel):
 # Glare Streaks
 class SAC_PT_EFFECTS_GLARE_Streaks_Panel(SAC_PT_Panel, Panel):
     bl_label = "Streaks"
-    bl_parent_id = "SAC_PT_EFFECTS_Glare_Panel"
+    bl_parent_id = "SAC_PT_EFFECTS_Lighting_Panel"
 
     def draw_header(self, context: Context):
         layout = self.layout
@@ -302,8 +307,8 @@ class SAC_PT_EFFECTS_GLARE_Streaks_Panel(SAC_PT_Panel, Panel):
 
 # Glare Ghost
 class SAC_PT_EFFECTS_GLARE_Ghost_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Lense Ghosts"
-    bl_parent_id = "SAC_PT_EFFECTS_Glare_Panel"
+    bl_label = "Lens Ghosts"
+    bl_parent_id = "SAC_PT_EFFECTS_Lighting_Panel"
 
     def draw_header(self, context: Context):
         layout = self.layout
@@ -379,7 +384,10 @@ class SAC_PT_EFFECTS_Halftone_Panel(SAC_PT_Panel, Panel):
         layout = self.layout
         settings = context.scene.sac_settings
 
-        layout.label(text="This effect is extremely complex, we might not implement it")
+        layout.prop(settings, "Effects_Halftone_toggle")
+        layout.prop(settings, "Effects_Halftone_value")
+        layout.prop(settings, "Effects_Halftone_delta")
+        layout.prop(settings, "Effects_Halftone_size")
 
 
 # Overlay
@@ -413,22 +421,6 @@ class SAC_PT_EFFECTS_Special_Panel(SAC_PT_Panel, Panel):
     def draw(self, context: Context):
         layout = self.layout
         settings = context.scene.sac_settings
-
-
-# Bokeh
-class SAC_PT_EFFECTS_Bokeh_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Bokeh (coming soon)"
-    bl_parent_id = "SAC_PT_EFFECTS_Special_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="ANTIALIASED")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.label(text="This effect is very resource demanding, it might not get viewport support")
 
 
 # Vignette
@@ -499,22 +491,6 @@ class SAC_PT_EFFECTS_Infrared_Panel(SAC_PT_Panel, Panel):
         layout.prop(settings, "Effects_Infrared_Offset")
 
 
-# Lomo
-class SAC_PT_EFFECTS_Lomo_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Lomo (maybe coming)"
-    bl_parent_id = "SAC_PT_EFFECTS_Special_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="LIGHT_POINT")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.label(text="This effect is complex, we might not implement it")
-
-
 # Negative
 class SAC_PT_EFFECTS_Negative_Panel(SAC_PT_Panel, Panel):
     bl_label = "Negative"
@@ -550,7 +526,7 @@ class SAC_PT_EFFECTS_ISONoise_Panel(SAC_PT_Panel, Panel):
 
 # Film Grain
 class SAC_PT_EFFECTS_FilmGrain_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Film Grain (coming soon)"
+    bl_label = "Film Grain"
     bl_parent_id = "SAC_PT_EFFECTS_Special_Panel"
 
     def draw_header(self, context: Context):
@@ -561,7 +537,9 @@ class SAC_PT_EFFECTS_FilmGrain_Panel(SAC_PT_Panel, Panel):
         layout = self.layout
         settings = context.scene.sac_settings
 
-        layout.label(text="Coming soon")
+        layout.prop(settings, "Filmgrain_strength")
+        layout.prop(settings, "Filmgrain_dustproportion")
+        layout.prop(settings, "Filmgrain_size")
 
 
 # Effects - Geometric
@@ -732,3 +710,19 @@ class SAC_PT_CAMERA_TiltShift_Panel(SAC_PT_Panel, Panel):
         settings = context.scene.sac_settings
 
         layout.label(text="This effect will most likely be done through camera settings")
+
+
+# Bokeh
+class SAC_PT_CAMERA_Bokeh_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Bokeh (coming soon)"
+    bl_parent_id = "SAC_PT_CAMERA_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="ANTIALIASED")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        settings = context.scene.sac_settings
+
+        layout.label(text="This effect is very resource demanding, it might not get viewport support")

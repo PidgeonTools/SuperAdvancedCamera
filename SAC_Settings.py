@@ -1179,3 +1179,142 @@ class SAC_Settings(PropertyGroup):
         subtype="FACTOR",
         update=update_ISO_size
     )
+
+    # Filmgrain
+    # Strength
+
+    def update_Filmgrain_strength(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC FilmGrain"].nodes["SAC Effects_FilmGrain_Strength"].inputs[0].default_value = settings.Filmgrain_strength
+
+        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC FilmGrain"].mute = False
+        if settings.Filmgrain_strength == 0:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC FilmGrain"].mute = True
+
+    Filmgrain_strength: FloatProperty(
+        name="Strength",
+        default=0,
+        max=10,
+        min=0,
+        subtype="FACTOR",
+        update=update_Filmgrain_strength
+    )
+
+    # Dust Proportion
+
+    def update_Filmgrain_dustproportion(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC FilmGrain"].nodes["SAC Effects_FilmGrain_Blur"].sigma_color = settings.Filmgrain_dustproportion
+
+    Filmgrain_dustproportion: FloatProperty(
+        name="Dust Proportion",
+        default=0.35,
+        max=0.5,
+        min=0.01,
+        subtype="FACTOR",
+        update=update_Filmgrain_dustproportion
+    )
+
+    # Size
+
+    def update_Filmgrain_size(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC FilmGrain"].nodes["SAC Effects_FilmGrain_Blur"].iterations = settings.Filmgrain_size
+
+    Filmgrain_size: IntProperty(
+        name="Size",
+        default=3,
+        max=12,
+        min=1,
+        subtype="FACTOR",
+        update=update_Filmgrain_size
+    )
+
+    # Halftone
+    # Toggle
+
+    def update_Effects_Halftone_toggle(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Halftone"].mute = False
+        if settings.Effects_Halftone_toggle == 0:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Halftone"].mute = True
+
+    Effects_Halftone_toggle: BoolProperty(
+        name="Enabled",
+        default=False,
+        update=update_Effects_Halftone_toggle
+    )
+
+    # Value
+
+    def update_Effects_Halftone_value(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC Halftone"].nodes["SAC Effects_Halftone_Value"].outputs[0].default_value = settings.Effects_Halftone_value
+
+    Effects_Halftone_value: FloatProperty(
+        name="Value",
+        default=-0.2,
+        max=1,
+        min=-1,
+        subtype="FACTOR",
+        update=update_Effects_Halftone_value
+    )
+
+    # Delta
+
+    def update_Effects_Halftone_delta(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC Halftone"].nodes["SAC Effects_Halftone_Delta"].outputs[0].default_value = settings.Effects_Halftone_delta
+
+    Effects_Halftone_delta: FloatProperty(
+        name="Delta",
+        default=0.2,
+        max=1,
+        min=0,
+        subtype="FACTOR",
+        update=update_Effects_Halftone_delta
+    )
+
+    # Size
+
+    def update_Effects_Halftone_size(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC Halftone"].nodes["SAC Effects_Halftone_Texture"].inputs[1].default_value[0] = context.scene.render.resolution_x / (settings.Effects_Halftone_size*10)
+        bpy.data.node_groups[".SAC Halftone"].nodes["SAC Effects_Halftone_Texture"].inputs[1].default_value[1] = context.scene.render.resolution_y / (settings.Effects_Halftone_size*10)
+
+    Effects_Halftone_size: FloatProperty(
+        name="Size",
+        default=2,
+        max=10,
+        min=1,
+        subtype="FACTOR",
+        update=update_Effects_Halftone_size
+    )
+
+    # Gradient Map
+    # Blend
+
+    def update_Effects_GradientMap_blend(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC GradientMap"].nodes["SAC Effects_GradientMap_Mix"].inputs[0].default_value = settings.Effects_GradientMap_blend
+
+        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC GradientMap"].mute = False
+        if settings.Effects_GradientMap_blend == 0:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC GradientMap"].mute = True
+
+    Effects_GradientMap_blend: FloatProperty(
+        name="Blend",
+        default=0,
+        max=1,
+        min=-1,
+        subtype="FACTOR",
+        update=update_Effects_GradientMap_blend
+    )

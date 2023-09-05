@@ -38,5 +38,17 @@ class SAC_OT_Initialize(Operator):
 
     def execute(self, context: Context):
         connect_renderLayer_node()
+        create_dot_texture()
 
         return {'FINISHED'}
+
+
+def create_dot_texture():
+    texture = bpy.data.textures.get(".SAC Dot Screen")
+    if texture is None:
+        texture = bpy.data.textures.new(name=".SAC Dot Screen", type='MAGIC')
+    texture.noise_depth = 1  # Depth
+    texture.turbulence = 6.0  # Turbulence
+    texture.use_color_ramp = True
+    texture.color_ramp.interpolation = 'CONSTANT'
+    texture.color_ramp.elements[1].position = 0.65
