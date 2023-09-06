@@ -39,16 +39,45 @@ class SAC_Settings(PropertyGroup):
 
     # EffectTypes
     effect_types = [
-        ('SAC_COLORGRADE', 'Colorgrade', 'SHADERFX'),
-        ('SAC_OPTIONS', 'Options', 'OPTIONS'),
-        ('SAC_COLOR', 'Color', 'COLOR'),
+        # Chromatic Aberration
+        ('SAC_CHROMATICABERRATION', 'Chromatic Aberation', 'MOD_EDGESPLIT'),
+        # Duotone
+        ('SAC_DUOTONE', 'Duotone', 'MOD_TINT'),
+        # Emboss
+        ('SAC_EMBOSS', 'Emboss', 'AXIS_TOP'),
+        # Filmgrain
+        ('SAC_FILMGRAIN', 'Film Grain', 'ALIGN_FLUSH'),
+        # Fish Eye
+        ('SAC_FISHEYE', 'Fish Eye', 'MESH_UVSPHERE'),
+        # Fog Glow
+        ('SAC_FOGGLOW', 'Fog Glow', 'ALIGN_FLUSH'),
+        # Ghost
+        ('SAC_GHOST', 'Ghost', 'GHOST_DISABLED'),
+        # Gradient Map
+        ('SAC_GRADIENTMAP', 'Gradient Map', 'SNAP_INCREMENT'),
+        # Halftone
+        ('SAC_HALFTONE', 'Halftone', 'LIGHTPROBE_GRID'),
+        # Infrared
+        ('SAC_INFRARED', 'Infrared', 'OUTLINER_DATA_LIGHT'),
+        # ISO Noise
+        ('SAC_ISONOISE', 'ISO Noise', 'ALIGN_FLUSH'),
+        # Mosaic
+        ('SAC_MOSAIC', 'Mosaic', 'MOD_UVPROJECT'),
+        # Negative
+        ('SAC_NEGATIVE', 'Negative', 'SELECT_DIFFERENCE'),
+        # Overlay
+        ('SAC_OVERLAY', 'Overlay', 'XRAY'),
+        # Perspective Shift
+        ('SAC_PERSPECTIVESHIFT', 'Perspective Shift', 'VIEW_PERSPECTIVE'),
+        # Posterize
+        ('SAC_POSTERIZE', 'Posterize', 'IMAGE_ZDEPTH'),
+        # Streaks
+        ('SAC_STREAKS', 'Streaks', 'LIGHT_SUN'),
+        # Vignette
+        ('SAC_VIGNETTE', 'Vignette', 'CLIPUV_DEHLT'),
+        # Warp
+        ('SAC_WARP', 'Warp', 'MOD_WARP'),
     ]
-
-    bpy.types.Scene.new_item_type = EnumProperty(
-        name="New Effect",
-        items=effect_types,
-        default='SAC_COLORGRADE'
-    )
 
     # White Level
     def update_Colorgrade_Color_WhiteLevel(self, context):

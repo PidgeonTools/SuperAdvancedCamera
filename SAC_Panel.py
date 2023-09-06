@@ -216,6 +216,9 @@ class SAC_PT_List(SAC_PT_Panel, Panel):
         scene = context.scene
         # sac_list: SAC_EffectList = scene.sac_effect_list
 
+        layout = self.layout
+        layout.template_icon_view(context.scene, "new_item_type", show_labels=True)
+
         row = layout.row()
         row.template_list("SAC_UL_List", "", scene, "sac_effect_list", scene, "sac_effect_list_index")
 
@@ -227,8 +230,6 @@ class SAC_PT_List(SAC_PT_Panel, Panel):
         col.operator("sac_effect_list.move_effect_up", text="", icon='TRIA_UP')
         col.operator("sac_effect_list.move_effect_down", text="", icon='TRIA_DOWN')
 
-        # Dropdown list for selecting the type of new item
-        layout.prop(scene, "new_item_type", text="New Effect")
         layout = self.layout
         layout.operator("sac_effect_list.print_effect_groups", text="Print Effect Groups")
 

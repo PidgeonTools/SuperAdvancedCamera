@@ -253,14 +253,35 @@ def create_main_group() -> NodeTree:
     sac_duotone_group.name = "SAC Duotone"
     sac_duotone_group.mute = True
 
-    # Glare
-    sac_glare_group = sac_group.nodes.new("CompositorNodeGroup")
+    # Fog Glow
+    sac_fogglow_group = sac_group.nodes.new("CompositorNodeGroup")
     try:
-        if bpy.data.node_groups[".SAC Glare"]:
-            sac_glare_group.node_tree = bpy.data.node_groups[".SAC Glare"]
+        if bpy.data.node_groups[".SAC FogGlow"]:
+            sac_fogglow_group.node_tree = bpy.data.node_groups[".SAC FogGlow"]
     except:
-        sac_glare_group.node_tree = create_glare_group()
-    sac_glare_group.name = "SAC Glare"
+        sac_fogglow_group.node_tree = create_fogglow_group()
+    sac_fogglow_group.name = "SAC FogGlow"
+    sac_fogglow_group.mute = True
+
+    # Streaks
+    sac_streaks_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC Streaks"]:
+            sac_streaks_group.node_tree = bpy.data.node_groups[".SAC Streaks"]
+    except:
+        sac_streaks_group.node_tree = create_streaks_group()
+    sac_streaks_group.name = "SAC Streaks"
+    sac_streaks_group.mute = True
+
+    # Ghost
+    sac_ghost_group = sac_group.nodes.new("CompositorNodeGroup")
+    try:
+        if bpy.data.node_groups[".SAC Ghost"]:
+            sac_ghost_group.node_tree = bpy.data.node_groups[".SAC Ghost"]
+    except:
+        sac_ghost_group.node_tree = create_ghost_group()
+    sac_ghost_group.name = "SAC Ghost"
+    sac_ghost_group.mute = True
 
     # Emboss
     sac_emboss_group = sac_group.nodes.new("CompositorNodeGroup")
@@ -449,10 +470,14 @@ def create_main_group() -> NodeTree:
     sac_group.links.new(sac_curves_group.outputs[0], sac_colorwheels_group.inputs[0])
     # link the colorwheels node to the duotone node
     sac_group.links.new(sac_colorwheels_group.outputs[0], sac_duotone_group.inputs[0])
-    # link the duotone node to the glare node
-    sac_group.links.new(sac_duotone_group.outputs[0], sac_glare_group.inputs[0])
-    # link the glare node to the emboss node
-    sac_group.links.new(sac_glare_group.outputs[0], sac_emboss_group.inputs[0])
+    # link the duotone node to the fogglow node
+    sac_group.links.new(sac_duotone_group.outputs[0], sac_fogglow_group.inputs[0])
+    # link the fogglow node to the streaks node
+    sac_group.links.new(sac_fogglow_group.outputs[0], sac_streaks_group.inputs[0])
+    # link the streaks node to the ghost node
+    sac_group.links.new(sac_streaks_group.outputs[0], sac_ghost_group.inputs[0])
+    # link the ghost node to the emboss node
+    sac_group.links.new(sac_ghost_group.outputs[0], sac_emboss_group.inputs[0])
     # link the emboss node to the posterize node
     sac_group.links.new(sac_emboss_group.outputs[0], sac_posterize_group.inputs[0])
     # link the posterize node to the overlay node

@@ -21,6 +21,9 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+import bpy.utils.previews
+
+import os
 
 from .SAC_Operators import (
     SAC_OT_Initialize,
@@ -171,6 +174,37 @@ classes = (
 )
 
 
+def load_previews():
+    pcoll = bpy.utils.previews.new()
+    my_icons_dir = os.path.join(os.path.dirname(__file__), "icons")
+
+    for item_type, _, _ in SAC_Settings.effect_types:
+        icon_path = os.path.join(my_icons_dir, f"{item_type}.png")
+        pcoll.load(item_type, icon_path, 'IMAGE')
+
+    return pcoll
+
+
+def enum_previews_from_directory_items(self, context):
+    """Dynamic list of available previews."""
+    enum_items = []
+
+    if context is None:
+        return enum_items
+
+    pcoll = bpy.types.Scene.previews
+    for i, (item_type, name, _) in enumerate(SAC_Settings.effect_types):
+        icon = pcoll[item_type].icon_id
+        enum_items.append((item_type, name, "", icon, i))
+
+    return enum_items
+
+
+bpy.types.Scene.new_item_type = bpy.props.EnumProperty(
+    items=enum_previews_from_directory_items,
+)
+
+
 def register():
     # register the example panel, to show updater buttons
     for cls in classes:
@@ -180,6 +214,7 @@ def register():
     bpy.types.Scene.last_used_id = bpy.props.IntProperty(name="Last Used ID", default=0)
     bpy.types.Scene.sac_effect_list = bpy.props.CollectionProperty(type=SAC_EffectList)
     bpy.types.Scene.sac_effect_list_index = bpy.props.IntProperty(name="Index for sac_effect_list", default=0)
+    bpy.types.Scene.previews = load_previews()
 
 
 def unregister():
@@ -191,6 +226,8 @@ def unregister():
     del bpy.types.Scene.sac_effect_list
     del bpy.types.Scene.sac_effect_list_index
     del bpy.types.Scene.last_used_id
+
+    bpy.utils.previews.remove(bpy.types.Scene.previews)
 
 
 if __name__ == "__main__":
