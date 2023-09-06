@@ -37,6 +37,19 @@ from bpy.props import (
 
 class SAC_Settings(PropertyGroup):
 
+    # EffectTypes
+    effect_types = [
+        ('SAC_COLORGRADE', 'Colorgrade', 'SHADERFX'),
+        ('SAC_OPTIONS', 'Options', 'OPTIONS'),
+        ('SAC_COLOR', 'Color', 'COLOR'),
+    ]
+
+    bpy.types.Scene.new_item_type = EnumProperty(
+        name="New Effect",
+        items=effect_types,
+        default='SAC_COLORGRADE'
+    )
+
     # White Level
     def update_Colorgrade_Color_WhiteLevel(self, context):
         scene = bpy.context.scene
@@ -564,218 +577,216 @@ class SAC_Settings(PropertyGroup):
         update=update_Effects_DuotoneBlend
     )
 
-    # Glare
-
     # Fog Glow
-    def update_Effects_Glare_FogGlow_Threshold(self, context):
+    def update_Effects_FogGlow_Threshold(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_FogGlow"].threshold = settings.Effects_Glare_FogGlow_Threshold
+        bpy.data.node_groups[".SAC FogGlow"].nodes["SAC Effects_FogGlow"].threshold = settings.Effects_FogGlow_Threshold
 
-    Effects_Glare_FogGlow_Threshold: FloatProperty(
+    Effects_FogGlow_Threshold: FloatProperty(
         name="Threshold",
         default=1,
         max=1000,
         min=0,
         subtype="NONE",
-        update=update_Effects_Glare_FogGlow_Threshold
+        update=update_Effects_FogGlow_Threshold
     )
 
-    def update_Effects_Glare_FogGlow_Size(self, context):
+    def update_Effects_FogGlow_Size(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_FogGlow"].size = settings.Effects_Glare_FogGlow_Size + 5
+        bpy.data.node_groups[".SAC FogGlow"].nodes["SAC Effects_FogGlow"].size = settings.Effects_FogGlow_Size + 5
 
-    Effects_Glare_FogGlow_Size: IntProperty(
+    Effects_FogGlow_Size: IntProperty(
         name="Size",
         default=2,
         max=4,
         min=1,
         subtype="FACTOR",
-        update=update_Effects_Glare_FogGlow_Size
+        update=update_Effects_FogGlow_Size
     )
 
-    def update_Effects_Glare_FogGlow_Strength(self, context):
+    def update_Effects_FogGlow_Strength(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_FogGlowStrength"].inputs[0].default_value = settings.Effects_Glare_FogGlow_Strength
+        bpy.data.node_groups[".SAC FogGlow"].nodes["SAC Effects_FogGlowStrength"].inputs[0].default_value = settings.Effects_FogGlow_Strength
 
-        bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_FogGlowStrength"].mute = False
-        if settings.Effects_Glare_FogGlow_Strength == 0:
-            bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_FogGlowStrength"].mute = True
+        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC FogGlow"].mute = False
+        if settings.Effects_FogGlow_Strength == 0:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC FogGlow"].mute = True
 
-    Effects_Glare_FogGlow_Strength: FloatProperty(
+    Effects_FogGlow_Strength: FloatProperty(
         name="Strength",
         default=0,
         max=1,
         min=0,
         subtype="FACTOR",
-        update=update_Effects_Glare_FogGlow_Strength
+        update=update_Effects_FogGlow_Strength
     )
     # Streaks
 
-    def update_Effects_Glare_Streaks_Threshold(self, context):
+    def update_Effects_Streaks_Threshold(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_Streaks"].threshold = settings.Effects_Glare_Streaks_Threshold
+        bpy.data.node_groups[".SAC Streaks"].nodes["SAC Effects_Streaks"].threshold = settings.Effects_Streaks_Threshold
 
-    Effects_Glare_Streaks_Threshold: FloatProperty(
+    Effects_Streaks_Threshold: FloatProperty(
         name="Threshold",
         default=1,
         max=1000,
         min=0,
         subtype="NONE",
-        update=update_Effects_Glare_Streaks_Threshold
+        update=update_Effects_Streaks_Threshold
     )
 
-    def update_Effects_Glare_Streaks_Count(self, context):
+    def update_Effects_Streaks_Count(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_Streaks"].streaks = settings.Effects_Glare_Streaks_Count
+        bpy.data.node_groups[".SAC Streaks"].nodes["SAC Effects_Streaks"].streaks = settings.Effects_Streaks_Count
 
-    Effects_Glare_Streaks_Count: IntProperty(
+    Effects_Streaks_Count: IntProperty(
         name="Count",
         default=6,
         max=16,
         min=1,
         subtype="FACTOR",
-        update=update_Effects_Glare_Streaks_Count
+        update=update_Effects_Streaks_Count
     )
 
-    def update_Effects_Glare_Streaks_Angle(self, context):
+    def update_Effects_Streaks_Angle(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_Streaks"].angle_offset = settings.Effects_Glare_Streaks_Angle
+        bpy.data.node_groups[".SAC Streaks"].nodes["SAC Effects_Streaks"].angle_offset = settings.Effects_Streaks_Angle
 
-    Effects_Glare_Streaks_Angle: FloatProperty(
+    Effects_Streaks_Angle: FloatProperty(
         name="Angle",
         default=0.1963495,  # 11.25 degrees
         max=3.1415,  # 180 degrees
         min=0,
         subtype="ANGLE",
-        update=update_Effects_Glare_Streaks_Angle
+        update=update_Effects_Streaks_Angle
     )
 
-    def update_Effects_Glare_Streaks_Distortion(self, context):
+    def update_Effects_Streaks_Distortion(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_Streaks"].color_modulation = settings.Effects_Glare_Streaks_Distortion
+        bpy.data.node_groups[".SAC Streaks"].nodes["SAC Effects_Streaks"].color_modulation = settings.Effects_Streaks_Distortion
 
-    Effects_Glare_Streaks_Distortion: FloatProperty(
+    Effects_Streaks_Distortion: FloatProperty(
         name="Distortion",
         default=0.25,
         max=1,
         min=0,
         subtype="FACTOR",
-        update=update_Effects_Glare_Streaks_Distortion
+        update=update_Effects_Streaks_Distortion
     )
 
-    def update_Effects_Glare_Streaks_Fade(self, context):
+    def update_Effects_Streaks_Fade(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_Streaks"].fade = settings.Effects_Glare_Streaks_Fade
+        bpy.data.node_groups[".SAC Streaks"].nodes["SAC Effects_Streaks"].fade = settings.Effects_Streaks_Fade
 
-    Effects_Glare_Streaks_Fade: FloatProperty(
+    Effects_Streaks_Fade: FloatProperty(
         name="Fade",
         default=0.85,
         max=1,
         min=0.75,
         subtype="FACTOR",
-        update=update_Effects_Glare_Streaks_Fade
+        update=update_Effects_Streaks_Fade
     )
 
-    def update_Effects_Glare_Streaks_Length(self, context):
+    def update_Effects_Streaks_Length(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_Streaks"].iterations = settings.Effects_Glare_Streaks_Length + 1
+        bpy.data.node_groups[".SAC Streaks"].nodes["SAC Effects_Streaks"].iterations = settings.Effects_Streaks_Length + 1
 
-    Effects_Glare_Streaks_Length: IntProperty(
+    Effects_Streaks_Length: IntProperty(
         name="Length",
         default=2,
         max=4,
         min=1,
         subtype="FACTOR",
-        update=update_Effects_Glare_Streaks_Length
+        update=update_Effects_Streaks_Length
     )
 
-    def update_Effects_Glare_Streaks_Strength(self, context):
+    def update_Effects_Streaks_Strength(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_StreaksStrength"].inputs[0].default_value = settings.Effects_Glare_Streaks_Strength
+        bpy.data.node_groups[".SAC Streaks"].nodes["SAC Effects_StreaksStrength"].inputs[0].default_value = settings.Effects_Streaks_Strength
 
-        bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_StreaksStrength"].mute = False
-        if settings.Effects_Glare_Streaks_Strength == 0:
-            bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_StreaksStrength"].mute = True
+        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Streaks"].mute = False
+        if settings.Effects_Streaks_Strength == 0:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Streaks"].mute = True
 
-    Effects_Glare_Streaks_Strength: FloatProperty(
+    Effects_Streaks_Strength: FloatProperty(
         name="Strength",
         default=0,
         max=1,
         min=0,
         subtype="FACTOR",
-        update=update_Effects_Glare_Streaks_Strength
+        update=update_Effects_Streaks_Strength
     )
 
     # Ghosts
 
-    def update_Effects_Glare_Ghosts_Threshold(self, context):
+    def update_Effects_Ghosts_Threshold(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_Ghosts"].threshold = settings.Effects_Glare_Ghosts_Threshold
+        bpy.data.node_groups[".SAC Ghost"].nodes["SAC Effects_Ghosts"].threshold = settings.Effects_Ghosts_Threshold
 
-    Effects_Glare_Ghosts_Threshold: FloatProperty(
+    Effects_Ghosts_Threshold: FloatProperty(
         name="Threshold",
         default=1,
         max=1000,
         min=0,
         subtype="NONE",
-        update=update_Effects_Glare_Ghosts_Threshold
+        update=update_Effects_Ghosts_Threshold
     )
 
-    def update_Effects_Glare_Ghosts_Distortion(self, context):
+    def update_Effects_Ghosts_Distortion(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_Ghosts"].color_modulation = settings.Effects_Glare_Ghosts_Distortion
+        bpy.data.node_groups[".SAC Ghost"].nodes["SAC Effects_Ghosts"].color_modulation = settings.Effects_Ghosts_Distortion
 
-    Effects_Glare_Ghosts_Distortion: FloatProperty(
+    Effects_Ghosts_Distortion: FloatProperty(
         name="Distortion",
         default=0.1,
         max=1,
         min=0,
         subtype="FACTOR",
-        update=update_Effects_Glare_Ghosts_Distortion
+        update=update_Effects_Ghosts_Distortion
     )
 
-    def update_Effects_Glare_Ghosts_Count(self, context):
+    def update_Effects_Ghosts_Count(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_Ghosts"].iterations = settings.Effects_Glare_Ghosts_Count
+        bpy.data.node_groups[".SAC Ghost"].nodes["SAC Effects_Ghosts"].iterations = settings.Effects_Ghosts_Count
 
-    Effects_Glare_Ghosts_Count: IntProperty(
+    Effects_Ghosts_Count: IntProperty(
         name="Count",
         default=3,
         max=5,
         min=2,
         subtype="FACTOR",
-        update=update_Effects_Glare_Ghosts_Count
+        update=update_Effects_Ghosts_Count
     )
 
-    def update_Effects_Glare_Ghosts_Strength(self, context):
+    def update_Effects_Ghosts_Strength(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_GhostsStrength"].inputs[0].default_value = settings.Effects_Glare_Ghosts_Strength
+        bpy.data.node_groups[".SAC Ghost"].nodes["SAC Effects_GhostsStrength"].inputs[0].default_value = settings.Effect_Ghosts_Strength
 
-        bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_GhostsStrength"].mute = False
-        if settings.Effects_Glare_Ghosts_Strength == 0:
-            bpy.data.node_groups[".SAC Glare"].nodes["SAC Effects_GhostsStrength"].mute = True
+        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Ghost"].mute = False
+        if settings.Effects_Ghosts_Strength == 0:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Ghost"].mute = True
 
-    Effects_Glare_Ghosts_Strength: FloatProperty(
+    Effects_Ghosts_Strength: FloatProperty(
         name="Strength",
         default=0,
         max=1,
         min=0,
         subtype="FACTOR",
-        update=update_Effects_Glare_Ghosts_Strength
+        update=update_Effects_Ghosts_Strength
     )
 
     # Emboss

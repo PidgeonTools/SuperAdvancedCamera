@@ -29,6 +29,7 @@ from bpy.types import (
 
 from .SAC_Settings import SAC_Settings
 from .SAC_Operators import SAC_OT_Initialize
+from .SAC_List import SAC_EffectList, SAC_UL_List
 
 
 # Main
@@ -51,8 +52,9 @@ class SAC_PT_SAC_Panel(SAC_PT_Panel, Panel):
         layout = self.layout
         layout.operator("object.superadvancedcamerainit", icon="SHADERFX")
 
-
 # Colorgrade
+
+
 class SAC_PT_COLORGRADE_Panel(SAC_PT_Panel, Panel):
     bl_label = "Color Grading"
     bl_parent_id = "SAC_PT_SAC_Panel"
@@ -200,6 +202,37 @@ class SAC_PT_EFFECTS_Panel(SAC_PT_Panel, Panel):
         layout.operator("wm.url_open", text="Submit your requests", icon="URL").url = "https://go.pidgeontools.com/2023-08-29-sac-survey"
 
 
+# Effects - List
+class SAC_PT_List(SAC_PT_Panel, Panel):
+    bl_label = "Effect List"
+    bl_parent_id = "SAC_PT_EFFECTS_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="LONGDISPLAY")
+
+    def draw(self, context):
+        layout = self.layout
+        scene = context.scene
+        # sac_list: SAC_EffectList = scene.sac_effect_list
+
+        row = layout.row()
+        row.template_list("SAC_UL_List", "", scene, "sac_effect_list", scene, "sac_effect_list_index")
+
+        col = row.column(align=True)
+        col.scale_x = 1  # Set a fixed width
+        col.operator("sac_effect_list.add_effect", text="", icon='ADD')
+        col.operator("sac_effect_list.remove_effect", text="", icon='REMOVE')
+        col.separator()
+        col.operator("sac_effect_list.move_effect_up", text="", icon='TRIA_UP')
+        col.operator("sac_effect_list.move_effect_down", text="", icon='TRIA_DOWN')
+
+        # Dropdown list for selecting the type of new item
+        layout.prop(scene, "new_item_type", text="New Effect")
+        layout = self.layout
+        layout.operator("sac_effect_list.print_effect_groups", text="Print Effect Groups")
+
+
 # Effects - Color
 class SAC_PT_EFFECTS_Color_Panel(SAC_PT_Panel, Panel):
     bl_label = "Color Effects"
@@ -265,8 +298,8 @@ class SAC_PT_EFFECTS_Lighting_Panel(SAC_PT_Panel, Panel):
         settings = context.scene.sac_settings
 
 
-# Glare FogGlow
-class SAC_PT_EFFECTS_GLARE_FogGlow_Panel(SAC_PT_Panel, Panel):
+# Effects - FogGlow
+class SAC_PT_EFFECTS_FogGlow_Panel(SAC_PT_Panel, Panel):
     bl_label = "Fog Glow"
     bl_parent_id = "SAC_PT_EFFECTS_Lighting_Panel"
 
@@ -278,13 +311,13 @@ class SAC_PT_EFFECTS_GLARE_FogGlow_Panel(SAC_PT_Panel, Panel):
         layout = self.layout
         settings = context.scene.sac_settings
 
-        layout.prop(settings, "Effects_Glare_FogGlow_Strength")
-        layout.prop(settings, "Effects_Glare_FogGlow_Threshold")
-        layout.prop(settings, "Effects_Glare_FogGlow_Size")
+        layout.prop(settings, "Effects_FogGlow_Strength")
+        layout.prop(settings, "Effects_FogGlow_Threshold")
+        layout.prop(settings, "Effects_FogGlow_Size")
 
 
-# Glare Streaks
-class SAC_PT_EFFECTS_GLARE_Streaks_Panel(SAC_PT_Panel, Panel):
+# Effects - Streaks
+class SAC_PT_EFFECTS_Streaks_Panel(SAC_PT_Panel, Panel):
     bl_label = "Streaks"
     bl_parent_id = "SAC_PT_EFFECTS_Lighting_Panel"
 
@@ -296,17 +329,17 @@ class SAC_PT_EFFECTS_GLARE_Streaks_Panel(SAC_PT_Panel, Panel):
         layout = self.layout
         settings = context.scene.sac_settings
 
-        layout.prop(settings, "Effects_Glare_Streaks_Strength")
-        layout.prop(settings, "Effects_Glare_Streaks_Threshold")
-        layout.prop(settings, "Effects_Glare_Streaks_Count")
-        layout.prop(settings, "Effects_Glare_Streaks_Length")
-        layout.prop(settings, "Effects_Glare_Streaks_Fade")
-        layout.prop(settings, "Effects_Glare_Streaks_Angle")
-        layout.prop(settings, "Effects_Glare_Streaks_Distortion")
+        layout.prop(settings, "Effects_Streaks_Strength")
+        layout.prop(settings, "Effects_Streaks_Threshold")
+        layout.prop(settings, "Effects_Streaks_Count")
+        layout.prop(settings, "Effects_Streaks_Length")
+        layout.prop(settings, "Effects_Streaks_Fade")
+        layout.prop(settings, "Effects_Streaks_Angle")
+        layout.prop(settings, "Effects_Streaks_Distortion")
 
 
-# Glare Ghost
-class SAC_PT_EFFECTS_GLARE_Ghost_Panel(SAC_PT_Panel, Panel):
+# Effects - Ghost
+class SAC_PT_EFFECTS_Ghost_Panel(SAC_PT_Panel, Panel):
     bl_label = "Lens Ghosts"
     bl_parent_id = "SAC_PT_EFFECTS_Lighting_Panel"
 
@@ -318,10 +351,10 @@ class SAC_PT_EFFECTS_GLARE_Ghost_Panel(SAC_PT_Panel, Panel):
         layout = self.layout
         settings = context.scene.sac_settings
 
-        layout.prop(settings, "Effects_Glare_Ghosts_Strength")
-        layout.prop(settings, "Effects_Glare_Ghosts_Threshold")
-        layout.prop(settings, "Effects_Glare_Ghosts_Count")
-        layout.prop(settings, "Effects_Glare_Ghosts_Distortion")
+        layout.prop(settings, "Effects_Ghosts_Strength")
+        layout.prop(settings, "Effects_Ghosts_Threshold")
+        layout.prop(settings, "Effects_Ghosts_Count")
+        layout.prop(settings, "Effects_Ghosts_Distortion")
 
 
 # Effects - Texture

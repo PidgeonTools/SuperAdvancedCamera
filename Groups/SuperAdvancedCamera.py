@@ -40,7 +40,9 @@ from .Colorgrading.ShadowTint import create_shadowtint_group
 from .Colorgrading.Curves import create_curves_group
 from .Colorgrading.Colorwheels import create_colorwheel_group
 from .Effects.Duotone import create_duotone_group
-from .Effects.Glare import create_glare_group
+from .Effects.FogGlow import create_fogglow_group
+from .Effects.Streaks import create_streaks_group
+from .Effects.Ghost import create_ghost_group
 from .Effects.Emboss import create_emboss_group
 from .Effects.Posterize import create_posterize_group
 from .Effects.Overlay import create_overlay_group

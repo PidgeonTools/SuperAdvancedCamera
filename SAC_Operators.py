@@ -29,6 +29,7 @@ from bpy.types import (
 from .Groups.SuperAdvancedCamera import (
     connect_renderLayer_node
 )
+from .SAC_Settings import SAC_Settings
 
 
 class SAC_OT_Initialize(Operator):
@@ -52,3 +53,85 @@ def create_dot_texture():
     texture.use_color_ramp = True
     texture.color_ramp.interpolation = 'CONSTANT'
     texture.color_ramp.elements[1].position = 0.65
+
+
+class SAC_OT_AddEffect(Operator):
+    bl_idname = "sac_effect_list.add_effect"
+    bl_label = "Add a new effect to the list"
+
+    def execute(self, context):
+        item = context.scene.sac_effect_list.add()
+        new_item_type = context.scene.new_item_type
+        settings: SAC_Settings = context.scene.sac_settings
+
+        # Create the item_type_info dictionary from item_types
+        item_type_info = {internal: (name, icon, internal) for internal, name, icon in settings.effect_types}
+
+        item.name, item.icon, item.EffectGroup = item_type_info.get(new_item_type, ('Untitled', 'NONE', ''))
+        # Set the ID using the Scene property and increment it
+        item.ID = str(context.scene.last_used_id).zfill(2)
+        context.scene.last_used_id += 1
+
+        context.scene.sac_effect_list_index = len(context.scene.sac_effect_list) - 1
+        return {'FINISHED'}
+
+
+class SAC_OT_RemoveEffect(Operator):
+    bl_idname = "sac_effect_list.remove_effect"
+    bl_label = "Remove the selected effect from the list"
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene.sac_effect_list
+
+    def execute(self, context):
+        list = context.scene.sac_effect_list
+        index = context.scene.sac_effect_list_index
+
+        list.remove(index)
+        context.scene.sac_effect_list_index = min(max(0, index - 1), len(list) - 1)
+        return {'FINISHED'}
+
+
+class SAC_OT_MoveEffectUp(Operator):
+    bl_idname = "sac_effect_list.move_effect_up"
+    bl_label = "Move the selected effect up in the list"
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene.sac_effect_list_index > 0
+
+    def execute(self, context):
+        list = context.scene.sac_effect_list
+        index = context.scene.sac_effect_list_index
+
+        list.move(index, index-1)
+        context.scene.sac_effect_list_index = index - 1
+        return {'FINISHED'}
+
+
+class SAC_OT_MoveEffectDown(Operator):
+    bl_idname = "sac_effect_list.move_effect_down"
+    bl_label = "Move the selected effect down in the list"
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene.sac_effect_list_index < len(context.scene.sac_effect_list) - 1
+
+    def execute(self, context):
+        list = context.scene.sac_effect_list
+        index = context.scene.sac_effect_list_index
+
+        list.move(index, index+1)
+        context.scene.sac_effect_list_index = index + 1
+        return {'FINISHED'}
+
+
+class SAC_OT_PrintEffectGroups(Operator):
+    bl_idname = "sac_effect_list.print_effect_groups"
+    bl_label = "Print Effect Groups"
+
+    def execute(self, context):
+        for item in context.scene.sac_effect_list:
+            print(f"{item.EffectGroup}{item.ID}")
+        return {'FINISHED'}

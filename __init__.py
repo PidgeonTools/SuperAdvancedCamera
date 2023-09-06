@@ -23,11 +23,23 @@
 import bpy
 
 from .SAC_Operators import (
-    SAC_OT_Initialize
+    SAC_OT_Initialize,
+    SAC_OT_AddEffect,
+    SAC_OT_RemoveEffect,
+    SAC_OT_MoveEffectUp,
+    SAC_OT_MoveEffectDown,
+    SAC_OT_PrintEffectGroups
+)
+
+from .SAC_List import (
+    SAC_EffectList,
+    SAC_UL_List
 )
 
 from .SAC_Panel import (
     SAC_PT_SAC_Panel,
+
+    SAC_PT_List,
 
     SAC_PT_COLORGRADE_Panel,
     SAC_PT_COLORGRADE_Color_Panel,
@@ -43,9 +55,9 @@ from .SAC_Panel import (
     SAC_PT_EFFECTS_GradientMap_Panel,
 
     SAC_PT_EFFECTS_Lighting_Panel,
-    SAC_PT_EFFECTS_GLARE_FogGlow_Panel,
-    SAC_PT_EFFECTS_GLARE_Streaks_Panel,
-    SAC_PT_EFFECTS_GLARE_Ghost_Panel,
+    SAC_PT_EFFECTS_FogGlow_Panel,
+    SAC_PT_EFFECTS_Streaks_Panel,
+    SAC_PT_EFFECTS_Ghost_Panel,
 
     SAC_PT_EFFECTS_Texture_Panel,
     SAC_PT_EFFECTS_Emboss_Panel,
@@ -105,14 +117,18 @@ classes = (
 
     SAC_PT_EFFECTS_Panel,
 
+    SAC_PT_List,
+    SAC_EffectList,
+    SAC_UL_List,
+
     SAC_PT_EFFECTS_Color_Panel,
     SAC_PT_EFFECTS_Duotone_Panel,
     SAC_PT_EFFECTS_GradientMap_Panel,
 
     SAC_PT_EFFECTS_Lighting_Panel,
-    SAC_PT_EFFECTS_GLARE_FogGlow_Panel,
-    SAC_PT_EFFECTS_GLARE_Streaks_Panel,
-    SAC_PT_EFFECTS_GLARE_Ghost_Panel,
+    SAC_PT_EFFECTS_FogGlow_Panel,
+    SAC_PT_EFFECTS_Streaks_Panel,
+    SAC_PT_EFFECTS_Ghost_Panel,
 
     SAC_PT_EFFECTS_Texture_Panel,
     SAC_PT_EFFECTS_Emboss_Panel,
@@ -145,6 +161,11 @@ classes = (
     SAC_PT_CAMERA_Bokeh_Panel,
 
     SAC_OT_Initialize,
+    SAC_OT_AddEffect,
+    SAC_OT_RemoveEffect,
+    SAC_OT_MoveEffectUp,
+    SAC_OT_MoveEffectDown,
+    SAC_OT_PrintEffectGroups,
 
     SAC_Settings
 )
@@ -154,14 +175,22 @@ def register():
     # register the example panel, to show updater buttons
     for cls in classes:
         bpy.utils.register_class(cls)
+
     bpy.types.Scene.sac_settings = bpy.props.PointerProperty(type=SAC_Settings)
+    bpy.types.Scene.last_used_id = bpy.props.IntProperty(name="Last Used ID", default=0)
+    bpy.types.Scene.sac_effect_list = bpy.props.CollectionProperty(type=SAC_EffectList)
+    bpy.types.Scene.sac_effect_list_index = bpy.props.IntProperty(name="Index for sac_effect_list", default=0)
 
 
 def unregister():
     # register the example panel, to show updater buttons
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
+
     del bpy.types.Scene.sac_settings
+    del bpy.types.Scene.sac_effect_list
+    del bpy.types.Scene.sac_effect_list_index
+    del bpy.types.Scene.last_used_id
 
 
 if __name__ == "__main__":
