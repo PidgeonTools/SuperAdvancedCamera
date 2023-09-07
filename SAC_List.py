@@ -28,10 +28,14 @@ from bpy.types import (
 )
 
 
+def mute_update(self, context):
+    bpy.data.node_groups[".SAC Effects"].nodes[f"{self.EffectGroup}_{self.ID}"].mute = self.mute
+
+
 class SAC_EffectList(PropertyGroup):
     name: bpy.props.StringProperty(name="Name", default="Untitled")
     icon: bpy.props.StringProperty(name="Icon", default="NONE")
-    mute: bpy.props.BoolProperty(name="Mute", default=False)
+    mute: bpy.props.BoolProperty(name="Mute", default=False, update=mute_update)
     EffectGroup: bpy.props.StringProperty(name="Effect Group", default="")
     ID: bpy.props.StringProperty(name="ID", default="")
 

@@ -54,34 +54,7 @@ from .SAC_Panel import (
     SAC_PT_EFFECTS_Panel,
 
     SAC_PT_EFFECTS_Color_Panel,
-    SAC_PT_EFFECTS_Duotone_Panel,
-    SAC_PT_EFFECTS_GradientMap_Panel,
-
-    SAC_PT_EFFECTS_Lighting_Panel,
-    SAC_PT_EFFECTS_FogGlow_Panel,
-    SAC_PT_EFFECTS_Streaks_Panel,
-    SAC_PT_EFFECTS_Ghost_Panel,
-
-    SAC_PT_EFFECTS_Texture_Panel,
-    SAC_PT_EFFECTS_Emboss_Panel,
-    SAC_PT_EFFECTS_Posterize_Panel,
-    SAC_PT_EFFECTS_Halftone_Panel,
-    SAC_PT_EFFECTS_Overlay_Panel,
-
-    SAC_PT_EFFECTS_Special_Panel,
     SAC_PT_CAMERA_Bokeh_Panel,
-    SAC_PT_EFFECTS_Vignette_Panel,
-    SAC_PT_EFFECTS_Mosaic_Panel,
-    SAC_PT_EFFECTS_ChromaticAberration_Panel,
-    SAC_PT_EFFECTS_Infrared_Panel,
-    SAC_PT_EFFECTS_Negative_Panel,
-    SAC_PT_EFFECTS_ISONoise_Panel,
-    SAC_PT_EFFECTS_FilmGrain_Panel,
-
-    SAC_PT_EFFECTS_Geometric_Panel,
-    SAC_PT_EFFECTS_Warp_Panel,
-    SAC_PT_EFFECTS_FishEye_Panel,
-    SAC_PT_EFFECTS_PerspectiveShift_Panel,
 
     SAC_PT_EFFECTS_Artistic_Panel,
     SAC_PT_EFFECTS_OilPaint_Panel,
@@ -125,39 +98,12 @@ classes = (
     SAC_UL_List,
 
     SAC_PT_EFFECTS_Color_Panel,
-    SAC_PT_EFFECTS_Duotone_Panel,
-    SAC_PT_EFFECTS_GradientMap_Panel,
-
-    SAC_PT_EFFECTS_Lighting_Panel,
-    SAC_PT_EFFECTS_FogGlow_Panel,
-    SAC_PT_EFFECTS_Streaks_Panel,
-    SAC_PT_EFFECTS_Ghost_Panel,
-
-    SAC_PT_EFFECTS_Texture_Panel,
-    SAC_PT_EFFECTS_Emboss_Panel,
-    SAC_PT_EFFECTS_Posterize_Panel,
-    SAC_PT_EFFECTS_Halftone_Panel,
-    SAC_PT_EFFECTS_Overlay_Panel,
-
-    SAC_PT_EFFECTS_Special_Panel,
-    SAC_PT_EFFECTS_Vignette_Panel,
-    SAC_PT_EFFECTS_Mosaic_Panel,
-    SAC_PT_EFFECTS_ChromaticAberration_Panel,
-    SAC_PT_EFFECTS_Infrared_Panel,
-    SAC_PT_EFFECTS_Negative_Panel,
-
-    SAC_PT_EFFECTS_Geometric_Panel,
-    SAC_PT_EFFECTS_Warp_Panel,
-    SAC_PT_EFFECTS_FishEye_Panel,
-    SAC_PT_EFFECTS_PerspectiveShift_Panel,
 
     SAC_PT_EFFECTS_Artistic_Panel,
     SAC_PT_EFFECTS_OilPaint_Panel,
     SAC_PT_EFFECTS_Sketch_Panel,
     SAC_PT_EFFECTS_Watercolor_Panel,
     SAC_PT_EFFECTS_Pointillism_Panel,
-    SAC_PT_EFFECTS_ISONoise_Panel,
-    SAC_PT_EFFECTS_FilmGrain_Panel,
 
     SAC_PT_CAMERA_Panel,
     SAC_PT_CAMERA_TiltShift_Panel,
@@ -213,7 +159,7 @@ def register():
     bpy.types.Scene.sac_settings = bpy.props.PointerProperty(type=SAC_Settings)
     bpy.types.Scene.last_used_id = bpy.props.IntProperty(name="Last Used ID", default=0)
     bpy.types.Scene.sac_effect_list = bpy.props.CollectionProperty(type=SAC_EffectList)
-    bpy.types.Scene.sac_effect_list_index = bpy.props.IntProperty(name="Index for sac_effect_list", default=0)
+    bpy.types.Scene.sac_effect_list_index = bpy.props.IntProperty(name="Index for sac_effect_list", default=0, update=SAC_Panel.active_effect_update)
     bpy.types.Scene.previews = load_previews()
 
 

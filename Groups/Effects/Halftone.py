@@ -38,6 +38,9 @@ def create_halftone_group() -> NodeTree:
     sac_halftone_group.outputs.new("NodeSocketColor", "Image")
 
     # Create the nodes
+    # value node
+    value_node = sac_halftone_group.nodes.new("CompositorNodeValue")
+    value_node.name = "SAC Effects_Halftone_SizeSave"
     # separate rgb node
     separate_rgb_node = sac_halftone_group.nodes.new("CompositorNodeSeparateColor")
     # rgb to bw node

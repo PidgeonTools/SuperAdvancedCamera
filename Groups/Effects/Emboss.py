@@ -42,6 +42,7 @@ def create_emboss_group() -> NodeTree:
     emboss_node = sac_emboss_group.nodes.new("CompositorNodeFilter")
     emboss_node.filter_type = "SHADOW"
     emboss_node.name = "SAC Effects_Emboss"
+    emboss_node.inputs[0].default_value = 0
 
     # Create the links
     # Link the input node to the filter node

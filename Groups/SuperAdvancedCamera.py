@@ -62,6 +62,13 @@ from .Effects.GradientMap import create_gradientmap_group
 
 def create_main_group() -> NodeTree:
 
+    # Delete the group if it already exists
+    try:
+        if bpy.data.node_groups["Super Advanced Camera"]:
+            bpy.data.node_groups.remove(bpy.data.node_groups["Super Advanced Camera"])
+    except:
+        pass
+
     # Create the group
     sac_group: NodeTree = bpy.data.node_groups.new(name="Super Advanced Camera", type="CompositorNodeTree")
 
@@ -73,441 +80,127 @@ def create_main_group() -> NodeTree:
     sac_group.inputs.new("NodeSocketColor", "Image")
     sac_group.outputs.new("NodeSocketColor", "Image")
 
-    # Create the nodes
+    def create_and_link_colorgrade_group(sac_group, previous_node, node_name, node_key, creation_function, *args):
+        new_group = sac_group.nodes.new("CompositorNodeGroup")
+        try:
+            if bpy.data.node_groups[node_key]:
+                new_group.node_tree = bpy.data.node_groups[node_key]
+        except:
+            new_group.node_tree = creation_function(*args)
+        new_group.name = node_name
+        new_group.mute = True
 
-    # White Level
-    sac_whitelevel_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC WhiteLevel"]:
-            sac_whitelevel_group.node_tree = bpy.data.node_groups[".SAC WhiteLevel"]
-    except:
-        sac_whitelevel_group.node_tree = create_whitelevel_group()
-    sac_whitelevel_group.name = "SAC WhiteLevel"
-    sac_whitelevel_group.mute = True
+        sac_group.links.new(previous_node.outputs[0], new_group.inputs[0])
+        return new_group
 
-    # Temperature
-    sac_temperature_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Temperature"]:
-            sac_temperature_group.node_tree = bpy.data.node_groups[".SAC Temperature"]
-    except:
-        sac_temperature_group.node_tree = create_temperature_group()
-    sac_temperature_group.name = "SAC Temperature"
-    sac_temperature_group.mute = True
+    # Create and link groups
+    node_configurations = [
+        ("SAC WhiteLevel", ".SAC WhiteLevel", create_whitelevel_group),
+        ("SAC Temperature", ".SAC Temperature", create_temperature_group),
+        ("SAC Tint", ".SAC Tint", create_tint_group),
+        ("SAC Saturation", ".SAC Saturation", create_saturation_group, "SAC Colorgrade_Color_Saturation", ".SAC Saturation"),
+        ("SAC Exposure", ".SAC Exposure", create_exposure_group),
+        ("SAC Contrast", ".SAC Contrast", create_contrast_group),
+        ("SAC Highlights", ".SAC Highlights", create_highlights_group),
+        ("SAC Shadows", ".SAC Shadows", create_shadows_group),
+        ("SAC Whites", ".SAC Whites", create_whites_group),
+        ("SAC Darks", ".SAC Darks", create_darks_group),
+        ("SAC Sharpen", ".SAC Sharpen", create_sharpen_group),
+        ("SAC Vibrance", ".SAC Vibrance", create_vibrance_group),
+        ("SAC Saturation2", ".SAC Saturation2", create_saturation_group, "SAC Colorgrade_Presets_Saturation", ".SAC Saturation2"),
+        ("SAC HighlightTint", ".SAC HighlightTint", create_highlighttint_group),
+        ("SAC ShadowTint", ".SAC ShadowTint", create_shadowtint_group),
+        ("SAC Curves", ".SAC Curves", create_curves_group),
+        ("SAC Colorwheel", ".SAC Colorwheel", create_colorwheel_group)
+    ]
 
-    # Tint
-    sac_tint_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Tint"]:
-            sac_tint_group.node_tree = bpy.data.node_groups[".SAC Tint"]
-    except:
-        sac_tint_group.node_tree = create_tint_group()
-    sac_tint_group.name = "SAC Tint"
-    sac_tint_group.mute = True
+    previous_node = input_node
+    for node_name, node_key, creation_function, *args in node_configurations:
+        previous_node = create_and_link_colorgrade_group(sac_group, previous_node, node_name, node_key, creation_function, *args)
 
-    # Saturation
-    sac_saturation_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Saturation"]:
-            sac_saturation_group.node_tree = bpy.data.node_groups[".SAC Saturation"]
-    except:
-        sac_saturation_group.node_tree = create_saturation_group("SAC Colorgrade_Color_Saturation", ".SAC Saturation")
-    sac_saturation_group.name = "SAC Saturation"
-    sac_saturation_group.mute = True
+    # Effects
 
-    # Exposure
-    sac_exposure_group = sac_group.nodes.new("CompositorNodeGroup")
+    # Delete the group tree if it already exists
     try:
-        if bpy.data.node_groups[".SAC Exposure"]:
-            sac_exposure_group.node_tree = bpy.data.node_groups[".SAC Exposure"]
+        if bpy.data.node_groups[".SAC Effects"]:
+            bpy.data.node_groups.remove(bpy.data.node_groups[".SAC Effects"])
     except:
-        sac_exposure_group.node_tree = create_exposure_group()
-    sac_exposure_group.name = "SAC Exposure"
-    sac_exposure_group.mute = True
+        pass
 
-    # Contrast
-    sac_contrast_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Contrast"]:
-            sac_contrast_group.node_tree = bpy.data.node_groups[".SAC Contrast"]
-    except:
-        sac_contrast_group.node_tree = create_contrast_group()
-    sac_contrast_group.name = "SAC Contrast"
-    sac_contrast_group.mute = True
+    # Create the group
+    effects_node = sac_group.nodes.new("CompositorNodeGroup")
+    effects_group: NodeTree = bpy.data.node_groups.new(name=".SAC Effects", type="CompositorNodeTree")
+    effects_node.node_tree = effects_group
 
-    # Highlights
-    sac_highlights_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Highlights"]:
-            sac_highlights_group.node_tree = bpy.data.node_groups[".SAC Highlights"]
-    except:
-        sac_highlights_group.node_tree = create_highlights_group()
-    sac_highlights_group.name = "SAC Highlights"
-    sac_highlights_group.mute = True
+    # Create the input and output nodes
+    effects_input_node = effects_group.nodes.new("NodeGroupInput")
+    effects_output_node = effects_group.nodes.new("NodeGroupOutput")
 
-    # Shadows
-    sac_shadows_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Shadows"]:
-            sac_shadows_group.node_tree = bpy.data.node_groups[".SAC Shadows"]
-    except:
-        sac_shadows_group.node_tree = create_shadows_group()
-    sac_shadows_group.name = "SAC Shadows"
-    sac_shadows_group.mute = True
+    # Add the input and output sockets
+    effects_group.inputs.new("NodeSocketColor", "Image")
+    effects_group.outputs.new("NodeSocketColor", "Image")
 
-    # Whites
-    sac_whites_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Whites"]:
-            sac_whites_group.node_tree = bpy.data.node_groups[".SAC Whites"]
-    except:
-        sac_whites_group.node_tree = create_whites_group()
-    sac_whites_group.name = "SAC Whites"
-    sac_whites_group.mute = True
+    sac_group.links.new(previous_node.outputs[0], effects_node.inputs[0])
 
-    # Darks
-    sac_darks_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Darks"]:
-            sac_darks_group.node_tree = bpy.data.node_groups[".SAC Darks"]
-    except:
-        sac_darks_group.node_tree = create_darks_group()
-    sac_darks_group.name = "SAC Darks"
-    sac_darks_group.mute = True
+    def create_and_link_group(effects_group, previous_node, node_name, creation_function, unique_id):
+        new_group = effects_group.nodes.new("CompositorNodeGroup")
+        try:
+            if bpy.data.node_groups[f".{node_name}_{unique_id}"]:
+                new_group.node_tree = bpy.data.node_groups[f".{node_name}_{unique_id}"]
+        except:
+            new_group.node_tree = creation_function()
 
-    # Sharpen
-    sac_sharpen_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Sharpen"]:
-            sac_sharpen_group.node_tree = bpy.data.node_groups[".SAC Sharpen"]
-    except:
-        sac_sharpen_group.node_tree = create_sharpen_group()
-    sac_sharpen_group.name = "SAC Sharpen"
-    sac_sharpen_group.mute = True
+        # Rename the node_tree to include the unique_id
+        new_group.node_tree.name = f".{node_name}_{unique_id}"
 
-    # Vibrance
-    sac_vibrance_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Vibrance"]:
-            sac_vibrance_group.node_tree = bpy.data.node_groups[".SAC Vibrance"]
-    except:
-        sac_vibrance_group.node_tree = create_vibrance_group()
-    sac_vibrance_group.name = "SAC Vibrance"
-    sac_vibrance_group.mute = True
+        new_group.name = f"{node_name}_{unique_id}"
 
-    # Saturation 2
-    sac_saturation_group_2 = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Saturation2"]:
-            sac_saturation_group_2.node_tree = bpy.data.node_groups[".SAC Saturation2"]
-    except:
-        sac_saturation_group_2.node_tree = create_saturation_group("SAC Colorgrade_Presets_Saturation", ".SAC Saturation2")
-    sac_saturation_group_2.name = "SAC Saturation2"
-    sac_saturation_group_2.mute = True
+        effects_group.links.new(previous_node.outputs[0], new_group.inputs[0])
+        return new_group
 
-    # Highlight Tint
-    sac_highlighttint_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC HighlightTint"]:
-            sac_highlighttint_group.node_tree = bpy.data.node_groups[".SAC HighlightTint"]
-    except:
-        sac_highlighttint_group.node_tree = create_highlighttint_group()
-    sac_highlighttint_group.name = "SAC HighlightTint"
-    sac_highlighttint_group.mute = True
+    node_mapping = {
+        "SAC_CHROMATICABERRATION": create_chromatic_group,
+        "SAC_DUOTONE": create_duotone_group,
+        "SAC_EMBOSS": create_emboss_group,
+        "SAC_FILMGRAIN": create_filmgrain_group,
+        "SAC_FISHEYE": create_fisheye_group,
+        "SAC_FOGGLOW": create_fogglow_group,
+        "SAC_GHOST": create_ghost_group,
+        "SAC_GRADIENTMAP": create_gradientmap_group,
+        "SAC_HALFTONE": create_halftone_group,
+        "SAC_INFRARED": create_infrared_group,
+        "SAC_ISONOISE": create_iso_group,
+        "SAC_NEGATIVE": create_negative_group,
+        "SAC_OVERLAY": create_overlay_group,
+        "SAC_PERSPECTIVESHIFT": create_perspectiveshift_group,
+        "SAC_MOSAIC": create_pixelate_group,
+        "SAC_POSTERIZE": create_posterize_group,
+        "SAC_STREAKS": create_streaks_group,
+        "SAC_VIGNETTE": create_viginette_group,
+        "SAC_WARP": create_warp_group,
+    }
 
-    # Shadow Tint
-    sac_shadowtint_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC ShadowTint"]:
-            sac_shadowtint_group.node_tree = bpy.data.node_groups[".SAC ShadowTint"]
-    except:
-        sac_shadowtint_group.node_tree = create_shadowtint_group()
-    sac_shadowtint_group.name = "SAC ShadowTint"
-    sac_shadowtint_group.mute = True
+    effect_array = []
 
-    # Curves
-    sac_curves_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Curves"]:
-            sac_curves_group.node_tree = bpy.data.node_groups[".SAC Curves"]
-    except:
-        sac_curves_group.node_tree = create_curves_group()
-    sac_curves_group.name = "SAC Curves"
+    for item in bpy.context.scene.sac_effect_list:
+        # add (effect, unique_id) to the effect_array
+        effect_array.append((item.EffectGroup, item.ID))
 
-    # Colorwheels
-    sac_colorwheels_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Colorwheel"]:
-            sac_colorwheels_group.node_tree = bpy.data.node_groups[".SAC Colorwheel"]
-    except:
-        sac_colorwheels_group.node_tree = create_colorwheel_group()
-    sac_colorwheels_group.name = "SAC Colorwheels"
+    previous_node = effects_input_node
+    for effect, unique_id in effect_array:
+        creation_function = node_mapping.get(effect)
+        if creation_function:
+            previous_node = create_and_link_group(effects_group, previous_node, effect, creation_function, unique_id)
 
-    # Duotone
-    sac_duotone_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Duotone"]:
-            sac_duotone_group.node_tree = bpy.data.node_groups[".SAC Duotone"]
-    except:
-        sac_duotone_group.node_tree = create_duotone_group()
-    sac_duotone_group.name = "SAC Duotone"
-    sac_duotone_group.mute = True
-
-    # Fog Glow
-    sac_fogglow_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC FogGlow"]:
-            sac_fogglow_group.node_tree = bpy.data.node_groups[".SAC FogGlow"]
-    except:
-        sac_fogglow_group.node_tree = create_fogglow_group()
-    sac_fogglow_group.name = "SAC FogGlow"
-    sac_fogglow_group.mute = True
-
-    # Streaks
-    sac_streaks_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Streaks"]:
-            sac_streaks_group.node_tree = bpy.data.node_groups[".SAC Streaks"]
-    except:
-        sac_streaks_group.node_tree = create_streaks_group()
-    sac_streaks_group.name = "SAC Streaks"
-    sac_streaks_group.mute = True
-
-    # Ghost
-    sac_ghost_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Ghost"]:
-            sac_ghost_group.node_tree = bpy.data.node_groups[".SAC Ghost"]
-    except:
-        sac_ghost_group.node_tree = create_ghost_group()
-    sac_ghost_group.name = "SAC Ghost"
-    sac_ghost_group.mute = True
-
-    # Emboss
-    sac_emboss_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Emboss"]:
-            sac_emboss_group.node_tree = bpy.data.node_groups[".SAC Emboss"]
-    except:
-        sac_emboss_group.node_tree = create_emboss_group()
-    sac_emboss_group.name = "SAC Emboss"
-    sac_emboss_group.mute = True
-
-    # Posterize
-    sac_posterize_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Posterize"]:
-            sac_posterize_group.node_tree = bpy.data.node_groups[".SAC Posterize"]
-    except:
-        sac_posterize_group.node_tree = create_posterize_group()
-    sac_posterize_group.name = "SAC Posterize"
-    sac_posterize_group.mute = True
-
-    # Overlay
-    sac_overlay_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Overlay"]:
-            sac_overlay_group.node_tree = bpy.data.node_groups[".SAC Overlay"]
-    except:
-        sac_overlay_group.node_tree = create_overlay_group()
-    sac_overlay_group.name = "SAC Overlay"
-    sac_overlay_group.mute = True
-
-    # Pixelate
-    sac_pixelate_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Pixelate"]:
-            sac_pixelate_group.node_tree = bpy.data.node_groups[".SAC Pixelate"]
-    except:
-        sac_pixelate_group.node_tree = create_pixelate_group()
-    sac_pixelate_group.name = "SAC Pixelate"
-    sac_pixelate_group.mute = True
-
-    # Chromatic Aberration
-    sac_chromatic_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC ChromaticAberration"]:
-            sac_chromatic_group.node_tree = bpy.data.node_groups[".SAC ChromaticAberration"]
-    except:
-        sac_chromatic_group.node_tree = create_chromatic_group()
-    sac_chromatic_group.name = "SAC ChromaticAberration"
-    sac_chromatic_group.mute = True
-
-    # Viginette
-    sac_viginette_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Viginette"]:
-            sac_viginette_group.node_tree = bpy.data.node_groups[".SAC Viginette"]
-    except:
-        sac_viginette_group.node_tree = create_viginette_group()
-    sac_viginette_group.name = "SAC Viginette"
-    sac_viginette_group.mute = True
-
-    # Infrared
-    sac_infrared_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Infrared"]:
-            sac_infrared_group.node_tree = bpy.data.node_groups[".SAC Infrared"]
-    except:
-        sac_infrared_group.node_tree = create_infrared_group()
-    sac_infrared_group.name = "SAC Infrared"
-    sac_infrared_group.mute = True
-
-    # Negative
-    sac_negative_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Negative"]:
-            sac_negative_group.node_tree = bpy.data.node_groups[".SAC Negative"]
-    except:
-        sac_negative_group.node_tree = create_negative_group()
-    sac_negative_group.name = "SAC Negative"
-    sac_negative_group.mute = True
-
-    # Warp
-    sac_warp_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Warp"]:
-            sac_warp_group.node_tree = bpy.data.node_groups[".SAC Warp"]
-    except:
-        sac_warp_group.node_tree = create_warp_group()
-    sac_warp_group.name = "SAC Warp"
-    sac_warp_group.mute = True
-
-    # Fisheye
-    sac_fisheye_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Fisheye"]:
-            sac_fisheye_group.node_tree = bpy.data.node_groups[".SAC Fisheye"]
-    except:
-        sac_fisheye_group.node_tree = create_fisheye_group()
-    sac_fisheye_group.name = "SAC Fisheye"
-    sac_fisheye_group.mute = True
-
-    # Perspective Shift
-    sac_perspectiveshift_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC PerspectiveShift"]:
-            sac_perspectiveshift_group.node_tree = bpy.data.node_groups[".SAC PerspectiveShift"]
-    except:
-        sac_perspectiveshift_group.node_tree = create_perspectiveshift_group()
-    sac_perspectiveshift_group.name = "SAC PerspectiveShift"
-    sac_perspectiveshift_group.mute = True
-
-    # ISO
-    sac_iso_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC ISO"]:
-            sac_iso_group.node_tree = bpy.data.node_groups[".SAC ISO"]
-    except:
-        sac_iso_group.node_tree = create_iso_group()
-    sac_iso_group.name = "SAC ISO"
-    sac_iso_group.mute = True
-
-    # Film Grain
-    sac_filmgrain_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC FilmGrain"]:
-            sac_filmgrain_group.node_tree = bpy.data.node_groups[".SAC FilmGrain"]
-    except:
-        sac_filmgrain_group.node_tree = create_filmgrain_group()
-    sac_filmgrain_group.name = "SAC FilmGrain"
-    sac_filmgrain_group.mute = True
-
-    # Halftone
-    sac_halftone_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC Halftone"]:
-            sac_halftone_group.node_tree = bpy.data.node_groups[".SAC Halftone"]
-    except:
-        sac_halftone_group.node_tree = create_halftone_group()
-    sac_halftone_group.name = "SAC Halftone"
-    sac_halftone_group.mute = True
-
-    # Gradient Map
-    sac_gradientmap_group = sac_group.nodes.new("CompositorNodeGroup")
-    try:
-        if bpy.data.node_groups[".SAC GradientMap"]:
-            sac_gradientmap_group.node_tree = bpy.data.node_groups[".SAC GradientMap"]
-    except:
-        sac_gradientmap_group.node_tree = create_gradientmap_group()
-    sac_gradientmap_group.name = "SAC GradientMap"
-    sac_gradientmap_group.mute = True
+    for item in bpy.context.scene.sac_effect_list:
+        # set the mute stage of the node based on the mute property
+        effects_group.nodes[f"{item.EffectGroup}_{item.ID}"].mute = item.mute
 
     # Create the links
-    # link the input node to the white level node
-    sac_group.links.new(input_node.outputs[0], sac_whitelevel_group.inputs[0])
-    # link the white level node to the temperature node
-    sac_group.links.new(sac_whitelevel_group.outputs[0], sac_temperature_group.inputs[0])
-    # link the temperature node to the tint node
-    sac_group.links.new(sac_temperature_group.outputs[0], sac_tint_group.inputs[0])
-    # link the tint node to the saturation node
-    sac_group.links.new(sac_tint_group.outputs[0], sac_saturation_group.inputs[0])
-    # link the saturation node to the exposure node
-    sac_group.links.new(sac_saturation_group.outputs[0], sac_exposure_group.inputs[0])
-    # link the exposure node to the contrast node
-    sac_group.links.new(sac_exposure_group.outputs[0], sac_contrast_group.inputs[0])
-    # link the contrast node to the highlights node
-    sac_group.links.new(sac_contrast_group.outputs[0], sac_highlights_group.inputs[0])
-    # link the highlights node to the shadows node
-    sac_group.links.new(sac_highlights_group.outputs[0], sac_shadows_group.inputs[0])
-    # link the shadows node to the whites node
-    sac_group.links.new(sac_shadows_group.outputs[0], sac_whites_group.inputs[0])
-    # link the whites node to the darks node
-    sac_group.links.new(sac_whites_group.outputs[0], sac_darks_group.inputs[0])
-    # link the darks node to the sharpen node
-    sac_group.links.new(sac_darks_group.outputs[0], sac_sharpen_group.inputs[0])
-    # link the sharpen node to the vibrance node
-    sac_group.links.new(sac_sharpen_group.outputs[0], sac_vibrance_group.inputs[0])
-    # link the vibrance node to the saturation2 node
-    sac_group.links.new(sac_vibrance_group.outputs[0], sac_saturation_group_2.inputs[0])
-    # link the saturation2 node to the highlighttint node
-    sac_group.links.new(sac_saturation_group_2.outputs[0], sac_highlighttint_group.inputs[0])
-    # link the highlighttint node to the shadowtint node
-    sac_group.links.new(sac_highlighttint_group.outputs[0], sac_shadowtint_group.inputs[0])
-    # link the shadowtint node to the curves node
-    sac_group.links.new(sac_shadowtint_group.outputs[0], sac_curves_group.inputs[0])
-    # link the curves node to the colorwheels node
-    sac_group.links.new(sac_curves_group.outputs[0], sac_colorwheels_group.inputs[0])
-    # link the colorwheels node to the duotone node
-    sac_group.links.new(sac_colorwheels_group.outputs[0], sac_duotone_group.inputs[0])
-    # link the duotone node to the fogglow node
-    sac_group.links.new(sac_duotone_group.outputs[0], sac_fogglow_group.inputs[0])
-    # link the fogglow node to the streaks node
-    sac_group.links.new(sac_fogglow_group.outputs[0], sac_streaks_group.inputs[0])
-    # link the streaks node to the ghost node
-    sac_group.links.new(sac_streaks_group.outputs[0], sac_ghost_group.inputs[0])
-    # link the ghost node to the emboss node
-    sac_group.links.new(sac_ghost_group.outputs[0], sac_emboss_group.inputs[0])
-    # link the emboss node to the posterize node
-    sac_group.links.new(sac_emboss_group.outputs[0], sac_posterize_group.inputs[0])
-    # link the posterize node to the overlay node
-    sac_group.links.new(sac_posterize_group.outputs[0], sac_overlay_group.inputs[0])
-    # link the overlay node to the pixelate node
-    sac_group.links.new(sac_overlay_group.outputs[0], sac_pixelate_group.inputs[0])
-    # link the pixelate node to the chromatic node
-    sac_group.links.new(sac_pixelate_group.outputs[0], sac_chromatic_group.inputs[0])
-    # link the chromatic node to the viginette node
-    sac_group.links.new(sac_chromatic_group.outputs[0], sac_viginette_group.inputs[0])
-    # link the viginette node to the infrared node
-    sac_group.links.new(sac_viginette_group.outputs[0], sac_infrared_group.inputs[0])
-    # link the infrared node to the negative node
-    sac_group.links.new(sac_infrared_group.outputs[0], sac_negative_group.inputs[0])
-    # link the negative node to the warp node
-    sac_group.links.new(sac_negative_group.outputs[0], sac_warp_group.inputs[0])
-    # link the warp node to the fisheye node
-    sac_group.links.new(sac_warp_group.outputs[0], sac_fisheye_group.inputs[0])
-    # link the fisheye node to the perspectiveshift node
-    sac_group.links.new(sac_fisheye_group.outputs[0], sac_perspectiveshift_group.inputs[0])
-    # link the perspectiveshift node to the iso node
-    sac_group.links.new(sac_perspectiveshift_group.outputs[0], sac_iso_group.inputs[0])
-    # link the iso node to the filmgrain node
-    sac_group.links.new(sac_iso_group.outputs[0], sac_filmgrain_group.inputs[0])
-    # link the filmgrain node to the halftone node
-    sac_group.links.new(sac_filmgrain_group.outputs[0], sac_halftone_group.inputs[0])
-    # link the halftone node to the gradientmap node
-    sac_group.links.new(sac_halftone_group.outputs[0], sac_gradientmap_group.inputs[0])
-    # link the gradientmap node to the output node
-    sac_group.links.new(sac_gradientmap_group.outputs[0], output_node.inputs[0])
+    effects_group.links.new(previous_node.outputs[0], effects_output_node.inputs[0])
+
+    # link the effects node to the output node
+    sac_group.links.new(effects_node.outputs[0], output_node.inputs[0])
 
     # return
     return (sac_group)
@@ -536,15 +229,21 @@ def connect_renderLayer_node():
             if link.from_node == render_layer_node and link.to_node in super_denoiser_nodes:
                 connect_to_node = link.to_node
                 break
-
-        # Create a new mix node
-        sac_node = tree.nodes.new(type='CompositorNodeGroup')
-        try:
-            if bpy.data.node_groups["Super Advanced Camera"]:
-                sac_node.node_tree = bpy.data.node_groups["Super Advanced Camera"]
-        except:
+        # Check if Super Advanced Camera node exists in the compositor, if it does, update the node tree, if not, create it
+        sac_node = None
+        for node in tree.nodes:
+            if node.name == "Super Advanced Camera":
+                sac_node = node
+                break
+        if not sac_node:
+            sac_node = tree.nodes.new("CompositorNodeGroup")
+            sac_node.name = "Super Advanced Camera"
             sac_node.node_tree = create_main_group()
-        sac_node.location = (render_layer_node.location.x + 300, render_layer_node.location.y)
+            sac_node.location = (render_layer_node.location.x + 300, render_layer_node.location.y)
+            tree.links.new(connect_to_node.outputs[0], sac_node.inputs[0])
+            tree.links.new(sac_node.outputs[0], tree.nodes["Composite"].inputs[0])
+        else:
+            sac_node.node_tree = create_main_group()
 
         # Collect links to be rerouted
         to_disconnect = []

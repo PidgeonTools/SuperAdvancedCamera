@@ -41,10 +41,12 @@ def create_curves_group() -> NodeTree:
     # RGB Curves node
     rgb_curves_node = sac_curves_group.nodes.new("CompositorNodeCurveRGB")
     rgb_curves_node.name = "SAC Colorgrade_Curves_RGB"
+    rgb_curves_node.inputs[0].default_value = 0
 
     # HSV Curves node
     hsv_curves_node = sac_curves_group.nodes.new("CompositorNodeHueCorrect")
     hsv_curves_node.name = "SAC Colorgrade_Curves_HSV"
+    hsv_curves_node.inputs[0].default_value = 0
 
     # Create the links
     # link the input node to the rgb curves node

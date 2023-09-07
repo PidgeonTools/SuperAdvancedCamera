@@ -44,6 +44,7 @@ def create_gradientmap_group() -> NodeTree:
     # color mix node
     colormix_node = sac_gradientmap_group.nodes.new("CompositorNodeMixRGB")
     colormix_node.name = "SAC Effects_GradientMap_Mix"
+    colormix_node.inputs[0].default_value = 0
 
     # Create the links
     # Link the input node to the color ramp node

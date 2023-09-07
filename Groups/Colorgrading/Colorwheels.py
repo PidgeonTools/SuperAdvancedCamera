@@ -41,6 +41,7 @@ def create_colorwheel_group() -> NodeTree:
     # Color Balance node 1
     color_balance_node_1 = sac_colorwheel_group.nodes.new("CompositorNodeColorBalance")
     color_balance_node_1.name = "SAC Colorgrade_Colorwheel_Shadows"
+    color_balance_node_1.inputs[0].default_value = 0
     # gamma node 1
     gamma_node_1 = sac_colorwheel_group.nodes.new("CompositorNodeGamma")
     # map range node 1
@@ -55,6 +56,7 @@ def create_colorwheel_group() -> NodeTree:
     # Color Balance node 2
     color_balance_node_2 = sac_colorwheel_group.nodes.new("CompositorNodeColorBalance")
     color_balance_node_2.name = "SAC Colorgrade_Colorwheel_Midtones"
+    color_balance_node_2.inputs[0].default_value = 0
     # gamma node 2
     gamma_node_2 = sac_colorwheel_group.nodes.new("CompositorNodeGamma")
     # map range node 2
@@ -69,6 +71,7 @@ def create_colorwheel_group() -> NodeTree:
     # Color Balance node 3
     color_balance_node_3 = sac_colorwheel_group.nodes.new("CompositorNodeColorBalance")
     color_balance_node_3.name = "SAC Colorgrade_Colorwheel_Highlights"
+    color_balance_node_3.inputs[0].default_value = 0
     # exposure node
     exposure_node = sac_colorwheel_group.nodes.new("CompositorNodeExposure")
     # map range node 3

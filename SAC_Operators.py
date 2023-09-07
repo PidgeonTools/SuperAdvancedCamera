@@ -73,6 +73,7 @@ class SAC_OT_AddEffect(Operator):
         context.scene.last_used_id += 1
 
         context.scene.sac_effect_list_index = len(context.scene.sac_effect_list) - 1
+        connect_renderLayer_node()
         return {'FINISHED'}
 
 
@@ -90,6 +91,7 @@ class SAC_OT_RemoveEffect(Operator):
 
         list.remove(index)
         context.scene.sac_effect_list_index = min(max(0, index - 1), len(list) - 1)
+        connect_renderLayer_node()
         return {'FINISHED'}
 
 
@@ -107,6 +109,7 @@ class SAC_OT_MoveEffectUp(Operator):
 
         list.move(index, index-1)
         context.scene.sac_effect_list_index = index - 1
+        connect_renderLayer_node()
         return {'FINISHED'}
 
 
@@ -124,6 +127,7 @@ class SAC_OT_MoveEffectDown(Operator):
 
         list.move(index, index+1)
         context.scene.sac_effect_list_index = index + 1
+        connect_renderLayer_node()
         return {'FINISHED'}
 
 
@@ -133,5 +137,5 @@ class SAC_OT_PrintEffectGroups(Operator):
 
     def execute(self, context):
         for item in context.scene.sac_effect_list:
-            print(f"{item.EffectGroup}{item.ID}")
+            print(f"{item.EffectGroup}_{item.ID}")
         return {'FINISHED'}

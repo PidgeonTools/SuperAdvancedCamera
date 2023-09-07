@@ -79,6 +79,8 @@ class SAC_Settings(PropertyGroup):
         ('SAC_WARP', 'Warp', 'MOD_WARP'),
     ]
 
+    # region Colorgrade
+
     # White Level
     def update_Colorgrade_Color_WhiteLevel(self, context):
         scene = bpy.context.scene
@@ -436,9 +438,13 @@ class SAC_Settings(PropertyGroup):
         settings: SAC_Settings = scene.sac_settings
         bpy.data.node_groups[".SAC Curves"].nodes["SAC Colorgrade_Curves_RGB"].inputs[0].default_value = settings.Colorgrade_Curves_RGB_Intensity
 
+        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Curves"].mute = False
+        if (settings.Colorgrade_Curves_RGB_Intensity == 0) and (settings.Colorgrade_Curves_HSV_Intensity == 0):
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Curves"].mute = True
+
     Colorgrade_Curves_RGB_Intensity: FloatProperty(
         name="RGB Curves Intensity",
-        default=1,
+        default=0,
         max=1,
         min=0,
         subtype="FACTOR",
@@ -451,9 +457,13 @@ class SAC_Settings(PropertyGroup):
         settings: SAC_Settings = scene.sac_settings
         bpy.data.node_groups[".SAC Curves"].nodes["SAC Colorgrade_Curves_HSV"].inputs[0].default_value = settings.Colorgrade_Curves_HSV_Intensity
 
+        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Curves"].mute = False
+        if (settings.Colorgrade_Curves_RGB_Intensity == 0) and (settings.Colorgrade_Curves_HSV_Intensity == 0):
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Curves"].mute = True
+
     Colorgrade_Curves_HSV_Intensity: FloatProperty(
         name="HSV Curves Intensity",
-        default=1,
+        default=0,
         max=1,
         min=0,
         subtype="FACTOR",
@@ -484,9 +494,14 @@ class SAC_Settings(PropertyGroup):
         settings: SAC_Settings = scene.sac_settings
         bpy.data.node_groups[".SAC Colorwheel"].nodes["SAC Colorgrade_Colorwheel_Shadows"].inputs[0].default_value = settings.Colorgrade_Colorwheel_Shadows_Intensity
 
+        if (settings.Colorgrade_Colorwheel_Highlights_Intensity == 0) and (settings.Colorgrade_Colorwheel_Midtones_Intensity == 0) and (settings.Colorgrade_Colorwheel_Shadows_Intensity == 0):
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Colorwheel"].mute = True
+        else:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Colorwheel"].mute = False
+
     Colorgrade_Colorwheel_Shadows_Intensity: FloatProperty(
         name="Shadows Colorwheel Intensity",
-        default=1,
+        default=0,
         max=1,
         min=-1,
         subtype="FACTOR",
@@ -515,9 +530,14 @@ class SAC_Settings(PropertyGroup):
         settings: SAC_Settings = scene.sac_settings
         bpy.data.node_groups[".SAC Colorwheel"].nodes["SAC Colorgrade_Colorwheel_Midtones"].inputs[0].default_value = settings.Colorgrade_Colorwheel_Midtones_Intensity
 
+        if (settings.Colorgrade_Colorwheel_Highlights_Intensity == 0) and (settings.Colorgrade_Colorwheel_Midtones_Intensity == 0) and (settings.Colorgrade_Colorwheel_Shadows_Intensity == 0):
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Colorwheel"].mute = True
+        else:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Colorwheel"].mute = False
+
     Colorgrade_Colorwheel_Midtones_Intensity: FloatProperty(
         name="Midtones Colorwheel Intensity",
-        default=1,
+        default=0,
         max=1,
         min=-1,
         subtype="FACTOR",
@@ -546,22 +566,35 @@ class SAC_Settings(PropertyGroup):
         settings: SAC_Settings = scene.sac_settings
         bpy.data.node_groups[".SAC Colorwheel"].nodes["SAC Colorgrade_Colorwheel_Highlights"].inputs[0].default_value = settings.Colorgrade_Colorwheel_Highlights_Intensity
 
+        if (settings.Colorgrade_Colorwheel_Highlights_Intensity == 0) and (settings.Colorgrade_Colorwheel_Midtones_Intensity == 0) and (settings.Colorgrade_Colorwheel_Shadows_Intensity == 0):
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Colorwheel"].mute = True
+        else:
+            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Colorwheel"].mute = False
+
     Colorgrade_Colorwheel_Highlights_Intensity: FloatProperty(
         name="Highlights Colorwheel Intensity",
-        default=1,
+        default=0,
         max=1,
         min=-1,
         subtype="FACTOR",
         update=update_Colorgrade_Colorwheel_Highlights_Intensity
     )
 
+    # endregion Colorgrade
+
+    # region Effects
+
     # Duotone
     def update_Effects_DuotoneColor1(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Duotone"].nodes["SAC Effects_Duotone_Colors"].inputs[1].default_value[0] = settings.Effects_Duotone_Color1[0]
-        bpy.data.node_groups[".SAC Duotone"].nodes["SAC Effects_Duotone_Colors"].inputs[1].default_value[1] = settings.Effects_Duotone_Color1[1]
-        bpy.data.node_groups[".SAC Duotone"].nodes["SAC Effects_Duotone_Colors"].inputs[1].default_value[2] = settings.Effects_Duotone_Color1[2]
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Duotone_Colors"].inputs[1].default_value[0] = settings.Effects_Duotone_Color1[0]
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Duotone_Colors"].inputs[1].default_value[1] = settings.Effects_Duotone_Color1[1]
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Duotone_Colors"].inputs[1].default_value[2] = settings.Effects_Duotone_Color1[2]
 
     Effects_Duotone_Color1: FloatVectorProperty(
         name="Color 1",
@@ -575,9 +608,13 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_DuotoneColor2(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Duotone"].nodes["SAC Effects_Duotone_Colors"].inputs[2].default_value[0] = settings.Effects_Duotone_Color2[0]
-        bpy.data.node_groups[".SAC Duotone"].nodes["SAC Effects_Duotone_Colors"].inputs[2].default_value[1] = settings.Effects_Duotone_Color2[1]
-        bpy.data.node_groups[".SAC Duotone"].nodes["SAC Effects_Duotone_Colors"].inputs[2].default_value[2] = settings.Effects_Duotone_Color2[2]
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Duotone_Colors"].inputs[2].default_value[0] = settings.Effects_Duotone_Color2[0]
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Duotone_Colors"].inputs[2].default_value[1] = settings.Effects_Duotone_Color2[1]
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Duotone_Colors"].inputs[2].default_value[2] = settings.Effects_Duotone_Color2[2]
 
     Effects_Duotone_Color2: FloatVectorProperty(
         name="Color 2",
@@ -591,11 +628,16 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_DuotoneBlend(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Duotone"].nodes["SAC Effects_Duotone_Blend"].inputs[0].default_value = settings.Effects_Duotone_Blend
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Duotone_Blend"].inputs[0].default_value = settings.Effects_Duotone_Blend
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Duotone"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if settings.Effects_Duotone_Blend == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Duotone"].mute = True
+            bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
     Effects_Duotone_Blend: FloatProperty(
         name="Blend",
@@ -610,7 +652,11 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_FogGlow_Threshold(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC FogGlow"].nodes["SAC Effects_FogGlow"].threshold = settings.Effects_FogGlow_Threshold
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_FogGlow"].threshold = settings.Effects_FogGlow_Threshold
 
     Effects_FogGlow_Threshold: FloatProperty(
         name="Threshold",
@@ -624,7 +670,11 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_FogGlow_Size(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC FogGlow"].nodes["SAC Effects_FogGlow"].size = settings.Effects_FogGlow_Size + 5
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_FogGlow"].size = settings.Effects_FogGlow_Size + 5
 
     Effects_FogGlow_Size: IntProperty(
         name="Size",
@@ -638,11 +688,16 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_FogGlow_Strength(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC FogGlow"].nodes["SAC Effects_FogGlowStrength"].inputs[0].default_value = settings.Effects_FogGlow_Strength
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_FogGlowStrength"].inputs[0].default_value = settings.Effects_FogGlow_Strength
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC FogGlow"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if settings.Effects_FogGlow_Strength == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC FogGlow"].mute = True
+            bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
     Effects_FogGlow_Strength: FloatProperty(
         name="Strength",
@@ -657,7 +712,11 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Streaks_Threshold(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Streaks"].nodes["SAC Effects_Streaks"].threshold = settings.Effects_Streaks_Threshold
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Streaks"].threshold = settings.Effects_Streaks_Threshold
 
     Effects_Streaks_Threshold: FloatProperty(
         name="Threshold",
@@ -671,7 +730,11 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Streaks_Count(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Streaks"].nodes["SAC Effects_Streaks"].streaks = settings.Effects_Streaks_Count
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Streaks"].streaks = settings.Effects_Streaks_Count
 
     Effects_Streaks_Count: IntProperty(
         name="Count",
@@ -685,7 +748,11 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Streaks_Angle(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Streaks"].nodes["SAC Effects_Streaks"].angle_offset = settings.Effects_Streaks_Angle
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Streaks"].angle_offset = settings.Effects_Streaks_Angle
 
     Effects_Streaks_Angle: FloatProperty(
         name="Angle",
@@ -699,7 +766,11 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Streaks_Distortion(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Streaks"].nodes["SAC Effects_Streaks"].color_modulation = settings.Effects_Streaks_Distortion
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Streaks"].color_modulation = settings.Effects_Streaks_Distortion
 
     Effects_Streaks_Distortion: FloatProperty(
         name="Distortion",
@@ -713,7 +784,11 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Streaks_Fade(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Streaks"].nodes["SAC Effects_Streaks"].fade = settings.Effects_Streaks_Fade
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Streaks"].fade = settings.Effects_Streaks_Fade
 
     Effects_Streaks_Fade: FloatProperty(
         name="Fade",
@@ -727,7 +802,11 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Streaks_Length(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Streaks"].nodes["SAC Effects_Streaks"].iterations = settings.Effects_Streaks_Length + 1
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Streaks"].iterations = settings.Effects_Streaks_Length + 1
 
     Effects_Streaks_Length: IntProperty(
         name="Length",
@@ -741,11 +820,16 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Streaks_Strength(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Streaks"].nodes["SAC Effects_StreaksStrength"].inputs[0].default_value = settings.Effects_Streaks_Strength
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_StreaksStrength"].inputs[0].default_value = settings.Effects_Streaks_Strength
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Streaks"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if settings.Effects_Streaks_Strength == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Streaks"].mute = True
+            bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
     Effects_Streaks_Strength: FloatProperty(
         name="Strength",
@@ -761,7 +845,11 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Ghosts_Threshold(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Ghost"].nodes["SAC Effects_Ghosts"].threshold = settings.Effects_Ghosts_Threshold
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Ghosts"].threshold = settings.Effects_Ghosts_Threshold
 
     Effects_Ghosts_Threshold: FloatProperty(
         name="Threshold",
@@ -775,7 +863,11 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Ghosts_Distortion(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Ghost"].nodes["SAC Effects_Ghosts"].color_modulation = settings.Effects_Ghosts_Distortion
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Ghosts"].color_modulation = settings.Effects_Ghosts_Distortion
 
     Effects_Ghosts_Distortion: FloatProperty(
         name="Distortion",
@@ -789,7 +881,11 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Ghosts_Count(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Ghost"].nodes["SAC Effects_Ghosts"].iterations = settings.Effects_Ghosts_Count
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Ghosts"].iterations = settings.Effects_Ghosts_Count
 
     Effects_Ghosts_Count: IntProperty(
         name="Count",
@@ -803,11 +899,16 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Ghosts_Strength(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Ghost"].nodes["SAC Effects_GhostsStrength"].inputs[0].default_value = settings.Effect_Ghosts_Strength
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_GhostsStrength"].inputs[0].default_value = settings.Effects_Ghosts_Strength
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Ghost"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if settings.Effects_Ghosts_Strength == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Ghost"].mute = True
+            bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
     Effects_Ghosts_Strength: FloatProperty(
         name="Strength",
@@ -823,11 +924,16 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Emboss_Strength(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Emboss"].nodes["SAC Effects_Emboss"].inputs[0].default_value = settings.Effects_Emboss_Strength
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Emboss"].inputs[0].default_value = settings.Effects_Emboss_Strength
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Emboss"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if settings.Effects_Emboss_Strength == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Emboss"].mute = True
+            bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
     Effects_Emboss_Strength: FloatProperty(
         name="Strength",
@@ -843,7 +949,11 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Posterize_Steps(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Posterize"].nodes["SAC Effects_Posterize"].inputs[1].default_value = settings.Effects_Posterize_Steps
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Posterize"].inputs[1].default_value = settings.Effects_Posterize_Steps
         settings.Effects_Posterize_Toggle = True
 
     Effects_Posterize_Steps: FloatProperty(
@@ -856,30 +966,21 @@ class SAC_Settings(PropertyGroup):
         update=update_Effects_Posterize_Steps
     )
 
-    def update_Effects_Posterize_Toggle(self, context):
-        scene = bpy.context.scene
-        settings: SAC_Settings = scene.sac_settings
-
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Posterize"].mute = False
-        if settings.Effects_Posterize_Toggle == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Posterize"].mute = True
-
-    Effects_Posterize_Toggle: BoolProperty(
-        name="Enabled",
-        default=False,
-        update=update_Effects_Posterize_Toggle
-    )
-
     # Overlay
 
     def update_Effects_Overlay_Strength(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Overlay"].nodes["SAC Effects_Overlay"].inputs[0].default_value = settings.Effects_Overlay_Strength
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Overlay"].inputs[0].default_value = settings.Effects_Overlay_Strength
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Overlay"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if settings.Effects_Overlay_Strength == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Overlay"].mute = True
+            bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
     Effects_Overlay_Strength: FloatProperty(
         name="Strength",
@@ -895,11 +996,16 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Pixelate_PixelSize(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Pixelate"].nodes["SAC Effects_Pixelate_Size"].inputs[0].default_value = settings.Effects_Pixelate_PixelSize
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Pixelate_Size"].inputs[0].default_value = settings.Effects_Pixelate_PixelSize
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Pixelate"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if settings.Effects_Pixelate_PixelSize == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Pixelate"].mute = True
+            bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
     Effects_Pixelate_PixelSize: FloatProperty(
         name="Pixel Size",
@@ -916,12 +1022,17 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_ChromaticAberration_Amount(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC ChromaticAberration"].nodes["SAC Effects_ChromaticAberration"].inputs[2].default_value = settings.Effects_ChromaticAberration_Amount
-        bpy.data.node_groups[".SAC ChromaticAberration"].nodes["SAC Effects_ChromaticAberration"].inputs[1].default_value = -settings.Effects_ChromaticAberration_Amount/3.5
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_ChromaticAberration"].inputs[2].default_value = settings.Effects_ChromaticAberration_Amount
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_ChromaticAberration"].inputs[1].default_value = -settings.Effects_ChromaticAberration_Amount/3.5
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC ChromaticAberration"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if settings.Effects_ChromaticAberration_Amount == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC ChromaticAberration"].mute = True
+            bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
     Effects_ChromaticAberration_Amount: FloatProperty(
         name="Amount",
@@ -937,11 +1048,16 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Vignette_Intensity(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Viginette"].nodes["SAC Effects_Viginette_Intensity"].inputs[0].default_value = settings.Effects_Vignette_Intensity
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Viginette_Intensity"].inputs[0].default_value = settings.Effects_Vignette_Intensity
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Viginette"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if settings.Effects_Vignette_Intensity == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Viginette"].mute = True
+            bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
     Effects_Vignette_Intensity: FloatProperty(
         name="Intensity",
@@ -956,7 +1072,11 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Vignette_Roundness(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Viginette"].nodes["SAC Effects_Viginette_Roundness"].inputs[0].default_value = settings.Effects_Vignette_Roundness
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Viginette_Roundness"].inputs[0].default_value = settings.Effects_Vignette_Roundness
 
     Effects_Vignette_Roundness: FloatProperty(
         name="Roundness",
@@ -971,12 +1091,16 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Vignette_Feather(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Viginette"].nodes["SAC Effects_Viginette_Directional_Blur"].zoom = settings.Effects_Vignette_Feather
-        bpy.data.node_groups[".SAC Viginette"].nodes["SAC Effects_Viginette_Midpoint"].inputs[3].default_value = -settings.Effects_Vignette_Feather/4
-        bpy.data.node_groups[".SAC Viginette"].nodes["SAC Effects_Viginette_Midpoint"].inputs[1].default_value = -0.999-settings.Effects_Vignette_Feather/4
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Viginette_Directional_Blur"].zoom = settings.Effects_Vignette_Feather
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Viginette_Midpoint"].inputs[3].default_value = -settings.Effects_Vignette_Feather/4
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Viginette_Midpoint"].inputs[1].default_value = -0.999-settings.Effects_Vignette_Feather/4
 
         feather_value = settings.Effects_Vignette_Feather
-        node_to_update = bpy.data.node_groups[".SAC Viginette"].nodes["SAC Effects_Viginette_Directional_Blur"]
+        node_to_update = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Viginette_Directional_Blur"]
 
         if feather_value <= 0.05:
             node_to_update.iterations = 4
@@ -1000,7 +1124,11 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Vignette_Midpoint(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Viginette"].nodes["SAC Effects_Viginette_Midpoint"].inputs[0].default_value = settings.Effects_Vignette_Midpoint
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Viginette_Midpoint"].inputs[0].default_value = settings.Effects_Vignette_Midpoint
 
     Effects_Vignette_Midpoint: FloatProperty(
         name="Midpoint",
@@ -1016,11 +1144,16 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Infrared_Blend(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Infrared"].nodes["SAC Effects_Infrared_Mix"].inputs[0].default_value = settings.Effects_Infrared_Blend
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Infrared_Mix"].inputs[0].default_value = settings.Effects_Infrared_Blend
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Infrared"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if settings.Effects_Infrared_Blend == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Infrared"].mute = True
+            bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
     Effects_Infrared_Blend: FloatProperty(
         name="Blend",
@@ -1035,7 +1168,11 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Infrared_Offset(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Infrared"].nodes["SAC Effects_Infrared_Add"].inputs[1].default_value = settings.Effects_Infrared_Offset
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Infrared_Add"].inputs[1].default_value = settings.Effects_Infrared_Offset
 
     Effects_Infrared_Offset: FloatProperty(
         name="Offset",
@@ -1051,11 +1188,16 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Negative(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Negative"].nodes["SAC Effects_Negative"].inputs[0].default_value = settings.Effects_Negative
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Negative"].inputs[0].default_value = settings.Effects_Negative
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Negative"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if settings.Effects_Negative == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Negative"].mute = True
+            bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
     Effects_Negative: FloatProperty(
         name="Negative",
@@ -1071,12 +1213,17 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Warp(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        warp_node = bpy.data.node_groups[".SAC Warp"].nodes["SAC Effects_Warp"]
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
+        warp_node = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Warp"]
         warp_node.zoom = settings.Effects_Warp
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Warp"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if settings.Effects_Warp == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Warp"].mute = True
+            bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
         warp_value = settings.Effects_Warp
 
@@ -1103,11 +1250,16 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Fisheye(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Fisheye"].nodes["SAC Effects_Fisheye"].inputs[1].default_value = settings.Effects_Fisheye
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Fisheye"].inputs[1].default_value = settings.Effects_Fisheye
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Fisheye"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if settings.Effects_Fisheye == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Fisheye"].mute = True
+            bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
     Effects_Fisheye: FloatProperty(
         name="Fisheye",
@@ -1123,25 +1275,30 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_PerspectiveShift_Horizontal(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
         horizontal_shift = settings.Effects_PerspectiveShift_Horizontal / 2
         if settings.Effects_PerspectiveShift_Horizontal > 0:
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[1].default_value[0] = horizontal_shift
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[2].default_value[0] = 1 - horizontal_shift
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_Scale"].inputs[1].default_value = 1/(1-horizontal_shift*2)
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[1].default_value[0] = horizontal_shift
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[2].default_value[0] = 1 - horizontal_shift
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_Scale"].inputs[1].default_value = 1/(1-horizontal_shift*2)
         elif settings.Effects_PerspectiveShift_Horizontal < 0:
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[3].default_value[0] = -horizontal_shift
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[4].default_value[0] = 1 - (-horizontal_shift)
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_Scale"].inputs[1].default_value = 1/(1-horizontal_shift*-2)
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[3].default_value[0] = -horizontal_shift
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[4].default_value[0] = 1 - (-horizontal_shift)
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_Scale"].inputs[1].default_value = 1/(1-horizontal_shift*-2)
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC PerspectiveShift"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if (settings.Effects_PerspectiveShift_Horizontal == 0):
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[1].default_value[0] = 0
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[2].default_value[0] = 1
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[3].default_value[0] = 0
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[4].default_value[0] = 1
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_Scale"].inputs[1].default_value = 1
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[1].default_value[0] = 0
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[2].default_value[0] = 1
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[3].default_value[0] = 0
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[4].default_value[0] = 1
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_Scale"].inputs[1].default_value = 1
             if (settings.Effects_PerspectiveShift_Vertical == 0):
-                bpy.data.node_groups["Super Advanced Camera"].nodes["SAC PerspectiveShift"].mute = True
+                bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
     Effects_PerspectiveShift_Horizontal: FloatProperty(
         name="Horizontal",
@@ -1156,25 +1313,30 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_PerspectiveShift_Vertical(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
         vertical_shift = settings.Effects_PerspectiveShift_Vertical / 2
         if settings.Effects_PerspectiveShift_Vertical > 0:
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[1].default_value[1] = 1 - vertical_shift
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[3].default_value[1] = vertical_shift
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_Scale"].inputs[2].default_value = 1/(1-vertical_shift*2)
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[1].default_value[1] = 1 - vertical_shift
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[3].default_value[1] = vertical_shift
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_Scale"].inputs[2].default_value = 1/(1-vertical_shift*2)
         elif settings.Effects_PerspectiveShift_Vertical < 0:
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[2].default_value[1] = 1 - (-vertical_shift)
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[4].default_value[1] = -vertical_shift
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_Scale"].inputs[2].default_value = 1/(1-vertical_shift*-2)
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[2].default_value[1] = 1 - (-vertical_shift)
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[4].default_value[1] = -vertical_shift
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_Scale"].inputs[2].default_value = 1/(1-vertical_shift*-2)
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC PerspectiveShift"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if settings.Effects_PerspectiveShift_Vertical == 0:
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[1].default_value[1] = 1
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[2].default_value[1] = 1
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[3].default_value[1] = 0
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[4].default_value[1] = 0
-            bpy.data.node_groups[".SAC PerspectiveShift"].nodes["SAC Effects_PerspectiveShift_Scale"].inputs[2].default_value = 1
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[1].default_value[1] = 1
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[2].default_value[1] = 1
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[3].default_value[1] = 0
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[4].default_value[1] = 0
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_Scale"].inputs[2].default_value = 1
             if settings.Effects_PerspectiveShift_Horizontal == 0:
-                bpy.data.node_groups["Super Advanced Camera"].nodes["SAC PerspectiveShift"].mute = True
+                bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
     Effects_PerspectiveShift_Vertical: FloatProperty(
         name="Vertical",
@@ -1190,11 +1352,16 @@ class SAC_Settings(PropertyGroup):
     def update_ISO_strength(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC ISO"].nodes["SAC Effects_ISO_Add"].inputs[0].default_value = settings.ISO_strength
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_ISO_Add"].inputs[0].default_value = settings.ISO_strength
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC ISO"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if settings.ISO_strength == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC ISO"].mute = True
+            bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
     ISO_strength: FloatProperty(
         name="Strength",
@@ -1209,7 +1376,11 @@ class SAC_Settings(PropertyGroup):
     def update_ISO_size(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC ISO"].nodes["SAC Effects_ISO_Despeckle"].inputs[0].default_value = settings.ISO_size
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_ISO_Despeckle"].inputs[0].default_value = settings.ISO_size
 
     ISO_size: FloatProperty(
         name="Size",
@@ -1226,11 +1397,16 @@ class SAC_Settings(PropertyGroup):
     def update_Filmgrain_strength(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC FilmGrain"].nodes["SAC Effects_FilmGrain_Strength"].inputs[0].default_value = settings.Filmgrain_strength
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_FilmGrain_Strength"].inputs[0].default_value = settings.Filmgrain_strength
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC FilmGrain"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if settings.Filmgrain_strength == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC FilmGrain"].mute = True
+            bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
     Filmgrain_strength: FloatProperty(
         name="Strength",
@@ -1246,7 +1422,11 @@ class SAC_Settings(PropertyGroup):
     def update_Filmgrain_dustproportion(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC FilmGrain"].nodes["SAC Effects_FilmGrain_Blur"].sigma_color = settings.Filmgrain_dustproportion
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_FilmGrain_Blur"].sigma_color = settings.Filmgrain_dustproportion
 
     Filmgrain_dustproportion: FloatProperty(
         name="Dust Proportion",
@@ -1262,7 +1442,11 @@ class SAC_Settings(PropertyGroup):
     def update_Filmgrain_size(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC FilmGrain"].nodes["SAC Effects_FilmGrain_Blur"].iterations = settings.Filmgrain_size
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_FilmGrain_Blur"].iterations = settings.Filmgrain_size
 
     Filmgrain_size: IntProperty(
         name="Size",
@@ -1274,27 +1458,16 @@ class SAC_Settings(PropertyGroup):
     )
 
     # Halftone
-    # Toggle
-
-    def update_Effects_Halftone_toggle(self, context):
-        scene = bpy.context.scene
-        settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Halftone"].mute = False
-        if settings.Effects_Halftone_toggle == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC Halftone"].mute = True
-
-    Effects_Halftone_toggle: BoolProperty(
-        name="Enabled",
-        default=False,
-        update=update_Effects_Halftone_toggle
-    )
-
     # Value
 
     def update_Effects_Halftone_value(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Halftone"].nodes["SAC Effects_Halftone_Value"].outputs[0].default_value = settings.Effects_Halftone_value
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Halftone_Value"].outputs[0].default_value = settings.Effects_Halftone_value
 
     Effects_Halftone_value: FloatProperty(
         name="Value",
@@ -1310,7 +1483,11 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Halftone_delta(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Halftone"].nodes["SAC Effects_Halftone_Delta"].outputs[0].default_value = settings.Effects_Halftone_delta
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Halftone_Delta"].outputs[0].default_value = settings.Effects_Halftone_delta
 
     Effects_Halftone_delta: FloatProperty(
         name="Delta",
@@ -1326,8 +1503,13 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_Halftone_size(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC Halftone"].nodes["SAC Effects_Halftone_Texture"].inputs[1].default_value[0] = context.scene.render.resolution_x / (settings.Effects_Halftone_size*10)
-        bpy.data.node_groups[".SAC Halftone"].nodes["SAC Effects_Halftone_Texture"].inputs[1].default_value[1] = context.scene.render.resolution_y / (settings.Effects_Halftone_size*10)
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Halftone_Texture"].inputs[1].default_value[0] = context.scene.render.resolution_x / (settings.Effects_Halftone_size*10)
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Halftone_Texture"].inputs[1].default_value[1] = context.scene.render.resolution_y / (settings.Effects_Halftone_size*10)
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Halftone_SizeSave"].outputs[0].default_value = settings.Effects_Halftone_size
 
     Effects_Halftone_size: FloatProperty(
         name="Size",
@@ -1344,11 +1526,16 @@ class SAC_Settings(PropertyGroup):
     def update_Effects_GradientMap_blend(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
-        bpy.data.node_groups[".SAC GradientMap"].nodes["SAC Effects_GradientMap_Mix"].inputs[0].default_value = settings.Effects_GradientMap_blend
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_name = f"{item.EffectGroup}_{item.ID}"
+        node_group_name = f".{node_name}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_GradientMap_Mix"].inputs[0].default_value = settings.Effects_GradientMap_blend
 
-        bpy.data.node_groups["Super Advanced Camera"].nodes["SAC GradientMap"].mute = False
+        bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = False
         if settings.Effects_GradientMap_blend == 0:
-            bpy.data.node_groups["Super Advanced Camera"].nodes["SAC GradientMap"].mute = True
+            bpy.data.node_groups[".SAC Effects"].nodes[node_name].mute = True
 
     Effects_GradientMap_blend: FloatProperty(
         name="Blend",
@@ -1358,3 +1545,4 @@ class SAC_Settings(PropertyGroup):
         subtype="FACTOR",
         update=update_Effects_GradientMap_blend
     )
+# endregion Effects

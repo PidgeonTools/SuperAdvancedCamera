@@ -42,6 +42,7 @@ def create_overlay_group() -> NodeTree:
     mix_node = sac_overlay_group.nodes.new("CompositorNodeMixRGB")
     mix_node.blend_type = "OVERLAY"
     mix_node.name = "SAC Effects_Overlay"
+    mix_node.inputs[0].default_value = 0
     # Texture node
     texture_node = sac_overlay_group.nodes.new("CompositorNodeImage")
     texture_node.name = "SAC Effects_Overlay_Texture"

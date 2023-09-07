@@ -32,6 +32,108 @@ from .SAC_Operators import SAC_OT_Initialize
 from .SAC_List import SAC_EffectList, SAC_UL_List
 
 
+def active_effect_update(self, context):
+    settings = context.scene.sac_settings
+    # using the index, we can get the item from the list
+    item = context.scene.sac_effect_list[self.sac_effect_list_index]
+    node_name = f"{item.EffectGroup}_{item.ID}"
+    node_group_name = f".{node_name}"
+    # Chromatic Aberration
+    if item.EffectGroup == "SAC_CHROMATICABERRATION":
+        settings.Effects_ChromaticAberration_Amount = bpy.data.node_groups[node_group_name].nodes["SAC Effects_ChromaticAberration"].inputs[2].default_value
+    # Duotone
+    elif item.EffectGroup == "SAC_DUOTONE":
+        # Color 1
+        settings.Effects_Duotone_Color1[0] = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Duotone_Colors"].inputs[1].default_value[0]
+        settings.Effects_Duotone_Color1[1] = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Duotone_Colors"].inputs[1].default_value[1]
+        settings.Effects_Duotone_Color1[2] = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Duotone_Colors"].inputs[1].default_value[2]
+        # Color 2
+        settings.Effects_Duotone_Color2[0] = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Duotone_Colors"].inputs[2].default_value[0]
+        settings.Effects_Duotone_Color2[1] = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Duotone_Colors"].inputs[2].default_value[1]
+        settings.Effects_Duotone_Color2[2] = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Duotone_Colors"].inputs[2].default_value[2]
+        # Blend
+        settings.Effects_Duotone_Blend = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Duotone_Blend"].inputs[0].default_value
+    # Emboss
+    elif item.EffectGroup == "SAC_EMBOSS":
+        settings.Effects_Emboss_Strength = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Emboss"].inputs[0].default_value
+    # Film Grain
+    elif item.EffectGroup == "SAC_FILMGRAIN":
+        settings.Filmgrain_strength = bpy.data.node_groups[node_group_name].nodes["SAC Effects_FilmGrain_Strength"].inputs[0].default_value
+        settings.Filmgrain_dustproportion = bpy.data.node_groups[node_group_name].nodes["SAC Effects_FilmGrain_Blur"].sigma_color
+        settings.Filmgrain_size = bpy.data.node_groups[node_group_name].nodes["SAC Effects_FilmGrain_Blur"].iterations
+    # Fish Eye
+    elif item.EffectGroup == "SAC_FISHEYE":
+        settings.Effects_Fisheye = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Fisheye"].inputs[1].default_value
+    # Fog Glow
+    elif item.EffectGroup == "SAC_FOGGLOW":
+        settings.Effects_FogGlow_Strength = bpy.data.node_groups[node_group_name].nodes["SAC Effects_FogGlowStrength"].inputs[0].default_value
+        settings.Effects_FogGlow_Threshold = bpy.data.node_groups[node_group_name].nodes["SAC Effects_FogGlow"].threshold
+        settings.Effects_FogGlow_Size = bpy.data.node_groups[node_group_name].nodes["SAC Effects_FogGlow"].size
+    # Ghost
+    elif item.EffectGroup == "SAC_GHOST":
+        settings.Effects_Ghosts_Strength = bpy.data.node_groups[node_group_name].nodes["SAC Effects_GhostsStrength"].inputs[0].default_value
+        settings.Effects_Ghosts_Threshold = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Ghosts"].threshold
+        settings.Effects_Ghosts_Count = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Ghosts"].iterations
+        settings.Effects_Ghosts_Distortion = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Ghosts"].color_modulation
+    # Gradient Map
+    elif item.EffectGroup == "SAC_GRADIENTMAP":
+        settings.Effects_GradientMap_blend = bpy.data.node_groups[node_group_name].nodes["SAC Effects_GradientMap_Mix"].inputs[0].default_value
+    # Halftone
+    elif item.EffectGroup == "SAC_HALFTONE":
+        settings.Effects_Halftone_value = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Halftone_Value"].outputs[0].default_value
+        settings.Effects_Halftone_delta = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Halftone_Delta"].outputs[0].default_value
+        settings.Effects_Halftone_size = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Halftone_SizeSave"].outputs[0].default_value
+    # Infrared
+    elif item.EffectGroup == "SAC_INFRARED":
+        settings.Effects_Infrared_Blend = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Infrared_Mix"].inputs[0].default_value
+        settings.Effects_Infrared_Offset = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Infrared_Add"].inputs[1].default_value
+    # ISO Noise
+    elif item.EffectGroup == "SAC_ISONOISE":
+        settings.ISO_strength = bpy.data.node_groups[node_group_name].nodes["SAC Effects_ISO_Add"].inputs[0].default_value
+        settings.ISO_size = bpy.data.node_groups[node_group_name].nodes["SAC Effects_ISO_Despeckle"].inputs[0].default_value
+    # Mosaic
+    elif item.EffectGroup == "SAC_MOSAIC":
+        settings.Effects_Pixelate_PixelSize = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Pixelate_Size"].inputs[0].default_value
+    # Negative
+    elif item.EffectGroup == "SAC_NEGATIVE":
+        settings.Effects_Negative = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Negative"].inputs[0].default_value
+    # Overlay
+    elif item.EffectGroup == "SAC_OVERLAY":
+        settings.Effects_Overlay_Strength = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Overlay"].inputs[0].default_value
+    # Perspective Shift
+    elif item.EffectGroup == "SAC_PERSPECTIVESHIFT":
+        if bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[1].default_value[0] > 0:
+            settings.Effects_PerspectiveShift_Horizontal = bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[1].default_value[0] * 2
+        else:
+            settings.Effects_PerspectiveShift_Horizontal = -bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[3].default_value[0] * 2
+
+        if bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[3].default_value[1] > 0:
+            settings.Effects_PerspectiveShift_Vertical = bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[3].default_value[1] * 2
+        else:
+            settings.Effects_PerspectiveShift_Vertical = -bpy.data.node_groups[node_group_name].nodes["SAC Effects_PerspectiveShift_CornerPin"].inputs[4].default_value[1] * 2
+    # Posterize
+    elif item.EffectGroup == "SAC_POSTERIZE":
+        settings.Effects_Posterize_Steps = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Posterize"].inputs[1].default_value
+    # Streaks
+    elif item.EffectGroup == "SAC_STREAKS":
+        settings.Effects_Streaks_Strength = bpy.data.node_groups[node_group_name].nodes["SAC Effects_StreaksStrength"].inputs[0].default_value
+        settings.Effects_Streaks_Threshold = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Streaks"].threshold
+        settings.Effects_Streaks_Count = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Streaks"].streaks
+        settings.Effects_Streaks_Length = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Streaks"].iterations
+        settings.Effects_Streaks_Fade = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Streaks"].fade
+        settings.Effects_Streaks_Angle = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Streaks"].angle_offset
+        settings.Effects_Streaks_Distortion = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Streaks"].color_modulation
+    # Vignette
+    elif item.EffectGroup == "SAC_VIGNETTE":
+        settings.Effects_Vignette_Intensity = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Viginette_Intensity"].inputs[0].default_value
+        settings.Effects_Vignette_Roundness = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Viginette_Roundness"].inputs[0].default_value
+        settings.Effects_Vignette_Feather = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Viginette_Directional_Blur"].zoom
+        settings.Effects_Vignette_Midpoint = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Viginette_Midpoint"].inputs[0].default_value
+    # Warp
+    elif item.EffectGroup == "SAC_WARP":
+        settings.Effects_Warp = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Warp"].zoom
+
+
 # Main
 class SAC_PT_Panel:
     bl_label = "Super Advanced Camera"
@@ -52,9 +154,10 @@ class SAC_PT_SAC_Panel(SAC_PT_Panel, Panel):
         layout = self.layout
         layout.operator("object.superadvancedcamerainit", icon="SHADERFX")
 
+
 # Colorgrade
 
-
+# region ColorGrade
 class SAC_PT_COLORGRADE_Panel(SAC_PT_Panel, Panel):
     bl_label = "Color Grading"
     bl_parent_id = "SAC_PT_SAC_Panel"
@@ -186,6 +289,7 @@ class SAC_PT_COLORGRADE_Colorwheels_Panel(SAC_PT_Panel, Panel):
         layout.template_color_picker(color_wheel_node_gain, "gain")
         layout.prop(settings, "Colorgrade_Colorwheel_Highlights_Brightness")
         layout.prop(settings, "Colorgrade_Colorwheel_Highlights_Intensity")
+# endregion ColorGrade
 
 
 # Effects
@@ -214,10 +318,9 @@ class SAC_PT_List(SAC_PT_Panel, Panel):
     def draw(self, context):
         layout = self.layout
         scene = context.scene
-        # sac_list: SAC_EffectList = scene.sac_effect_list
 
         layout = self.layout
-        layout.template_icon_view(context.scene, "new_item_type", show_labels=True)
+        layout.template_icon_view(context.scene, "new_item_type", show_labels=True, scale=8.0, scale_popup=8.0)
 
         row = layout.row()
         row.template_list("SAC_UL_List", "", scene, "sac_effect_list", scene, "sac_effect_list_index")
@@ -236,407 +339,118 @@ class SAC_PT_List(SAC_PT_Panel, Panel):
 
 # Effects - Color
 class SAC_PT_EFFECTS_Color_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Color Effects"
+    bl_label = "Effect Properties"
     bl_parent_id = "SAC_PT_EFFECTS_Panel"
 
     def draw_header(self, context: Context):
         layout = self.layout
-        layout.label(text="", icon="COLOR")
+        layout.label(text="", icon="PROPERTIES")
 
     def draw(self, context: Context):
         layout = self.layout
         settings = context.scene.sac_settings
 
-
-# Duotone
-class SAC_PT_EFFECTS_Duotone_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Duotone"
-    bl_parent_id = "SAC_PT_EFFECTS_Color_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="MOD_TINT")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.prop(settings, "Effects_Duotone_Color1")
-        layout.prop(settings, "Effects_Duotone_Color2")
-        layout.prop(settings, "Effects_Duotone_Blend")
-
-
-# Gradient Map
-class SAC_PT_EFFECTS_GradientMap_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Gradient Map"
-    bl_parent_id = "SAC_PT_EFFECTS_Color_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="SNAP_INCREMENT")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        gradient_map_node = bpy.data.node_groups[".SAC GradientMap"].nodes["SAC Effects_GradientMap"]
-
-        layout.template_color_ramp(gradient_map_node, "color_ramp")
-        layout.prop(settings, "Effects_GradientMap_blend")
-
-
-# Effects - Lighting
-class SAC_PT_EFFECTS_Lighting_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Lighting Effects"
-    bl_parent_id = "SAC_PT_EFFECTS_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="OUTLINER_OB_LIGHT")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-
-# Effects - FogGlow
-class SAC_PT_EFFECTS_FogGlow_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Fog Glow"
-    bl_parent_id = "SAC_PT_EFFECTS_Lighting_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="ALIGN_FLUSH")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.prop(settings, "Effects_FogGlow_Strength")
-        layout.prop(settings, "Effects_FogGlow_Threshold")
-        layout.prop(settings, "Effects_FogGlow_Size")
-
-
-# Effects - Streaks
-class SAC_PT_EFFECTS_Streaks_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Streaks"
-    bl_parent_id = "SAC_PT_EFFECTS_Lighting_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="LIGHT_SUN")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.prop(settings, "Effects_Streaks_Strength")
-        layout.prop(settings, "Effects_Streaks_Threshold")
-        layout.prop(settings, "Effects_Streaks_Count")
-        layout.prop(settings, "Effects_Streaks_Length")
-        layout.prop(settings, "Effects_Streaks_Fade")
-        layout.prop(settings, "Effects_Streaks_Angle")
-        layout.prop(settings, "Effects_Streaks_Distortion")
-
-
-# Effects - Ghost
-class SAC_PT_EFFECTS_Ghost_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Lens Ghosts"
-    bl_parent_id = "SAC_PT_EFFECTS_Lighting_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="GHOST_DISABLED")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.prop(settings, "Effects_Ghosts_Strength")
-        layout.prop(settings, "Effects_Ghosts_Threshold")
-        layout.prop(settings, "Effects_Ghosts_Count")
-        layout.prop(settings, "Effects_Ghosts_Distortion")
-
-
-# Effects - Texture
-class SAC_PT_EFFECTS_Texture_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Texture Effects"
-    bl_parent_id = "SAC_PT_EFFECTS_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="NODE_TEXTURE")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-
-# Emboss
-class SAC_PT_EFFECTS_Emboss_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Emboss"
-    bl_parent_id = "SAC_PT_EFFECTS_Texture_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="AXIS_TOP")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.prop(settings, "Effects_Emboss_Strength")
-
-
-# Posterize
-class SAC_PT_EFFECTS_Posterize_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Posterize"
-    bl_parent_id = "SAC_PT_EFFECTS_Texture_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="IMAGE_ZDEPTH")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.prop(settings, "Effects_Posterize_Toggle")
-        layout.prop(settings, "Effects_Posterize_Steps")
-
-
-# Halftone
-class SAC_PT_EFFECTS_Halftone_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Halftone (maybe coming)"
-    bl_parent_id = "SAC_PT_EFFECTS_Texture_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="LIGHTPROBE_GRID")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.prop(settings, "Effects_Halftone_toggle")
-        layout.prop(settings, "Effects_Halftone_value")
-        layout.prop(settings, "Effects_Halftone_delta")
-        layout.prop(settings, "Effects_Halftone_size")
-
-
-# Overlay
-class SAC_PT_EFFECTS_Overlay_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Overlay"
-    bl_parent_id = "SAC_PT_EFFECTS_Texture_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="XRAY")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        overlay_texture = bpy.data.node_groups[".SAC Overlay"].nodes["SAC Effects_Overlay_Texture"]
-
-        layout.template_ID(overlay_texture, "image", open="image.open")
-        layout.prop(settings, "Effects_Overlay_Strength")
-
-
-# Effects - Special
-class SAC_PT_EFFECTS_Special_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Special Effects"
-    bl_parent_id = "SAC_PT_EFFECTS_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="FREEZE")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-
-# Vignette
-class SAC_PT_EFFECTS_Vignette_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Vignette"
-    bl_parent_id = "SAC_PT_EFFECTS_Special_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="CLIPUV_DEHLT")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.prop(settings, "Effects_Vignette_Intensity")
-        layout.prop(settings, "Effects_Vignette_Roundness")
-        layout.prop(settings, "Effects_Vignette_Feather")
-        layout.prop(settings, "Effects_Vignette_Midpoint")
-
-
-# Mosaic
-class SAC_PT_EFFECTS_Mosaic_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Mosaic"
-    bl_parent_id = "SAC_PT_EFFECTS_Special_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="MOD_UVPROJECT")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.prop(settings, "Effects_Pixelate_PixelSize")
-
-
-# Chromatic Aberration
-class SAC_PT_EFFECTS_ChromaticAberration_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Chromatic Aberration"
-    bl_parent_id = "SAC_PT_EFFECTS_Special_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="MOD_EDGESPLIT")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.prop(settings, "Effects_ChromaticAberration_Amount")
-
-
-# Infrared
-class SAC_PT_EFFECTS_Infrared_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Infrared"
-    bl_parent_id = "SAC_PT_EFFECTS_Special_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="OUTLINER_DATA_LIGHT")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.prop(settings, "Effects_Infrared_Blend")
-        layout.prop(settings, "Effects_Infrared_Offset")
-
-
-# Negative
-class SAC_PT_EFFECTS_Negative_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Negative"
-    bl_parent_id = "SAC_PT_EFFECTS_Special_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="SELECT_DIFFERENCE")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.prop(settings, "Effects_Negative")
-
-
-# ISO Noise
-class SAC_PT_EFFECTS_ISONoise_Panel(SAC_PT_Panel, Panel):
-    bl_label = "ISO Noise"
-    bl_parent_id = "SAC_PT_EFFECTS_Special_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="ALIGN_FLUSH")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.prop(settings, "ISO_strength")
-        layout.prop(settings, "ISO_size")
-
-
-# Film Grain
-class SAC_PT_EFFECTS_FilmGrain_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Film Grain"
-    bl_parent_id = "SAC_PT_EFFECTS_Special_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="ALIGN_FLUSH")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.prop(settings, "Filmgrain_strength")
-        layout.prop(settings, "Filmgrain_dustproportion")
-        layout.prop(settings, "Filmgrain_size")
-
-
-# Effects - Geometric
-class SAC_PT_EFFECTS_Geometric_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Geometric Effects"
-    bl_parent_id = "SAC_PT_EFFECTS_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="MESH_ICOSPHERE")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-
-# Warp
-class SAC_PT_EFFECTS_Warp_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Warp"
-    bl_parent_id = "SAC_PT_EFFECTS_Geometric_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="MOD_WARP")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.prop(settings, "Effects_Warp")
-
-
-# Fish Eye
-class SAC_PT_EFFECTS_FishEye_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Fish Eye"
-    bl_parent_id = "SAC_PT_EFFECTS_Geometric_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="MESH_UVSPHERE")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.prop(settings, "Effects_Fisheye")
-
-
-# Perspective Shift
-class SAC_PT_EFFECTS_PerspectiveShift_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Perspective Shift"
-    bl_parent_id = "SAC_PT_EFFECTS_Geometric_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="VIEW_PERSPECTIVE")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.prop(settings, "Effects_PerspectiveShift_Horizontal")
-        layout.prop(settings, "Effects_PerspectiveShift_Vertical")
+        # Get the current item from the list
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        if item is None:
+            return
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+
+        if item is not None:
+            layout.label(text=f"These are settings for {item.name}.")
+            # Chromatic Aberration
+            if item.EffectGroup == "SAC_CHROMATICABERRATION":
+                layout.prop(settings, "Effects_ChromaticAberration_Amount")
+            # Duotone
+            elif item.EffectGroup == "SAC_DUOTONE":
+                layout.prop(settings, "Effects_Duotone_Color1")
+                layout.prop(settings, "Effects_Duotone_Color2")
+                layout.prop(settings, "Effects_Duotone_Blend")
+            # Emboss
+            elif item.EffectGroup == "SAC_EMBOSS":
+                layout.prop(settings, "Effects_Emboss_Strength")
+            # Film Grain
+            elif item.EffectGroup == "SAC_FILMGRAIN":
+                layout.prop(settings, "Filmgrain_strength")
+                layout.prop(settings, "Filmgrain_dustproportion")
+                layout.prop(settings, "Filmgrain_size")
+            # Fish Eye
+            elif item.EffectGroup == "SAC_FISHEYE":
+                layout.prop(settings, "Effects_Fisheye")
+            # Fog Glow
+            elif item.EffectGroup == "SAC_FOGGLOW":
+                layout.prop(settings, "Effects_FogGlow_Strength")
+                layout.prop(settings, "Effects_FogGlow_Threshold")
+                layout.prop(settings, "Effects_FogGlow_Size")
+            # Ghost
+            elif item.EffectGroup == "SAC_GHOST":
+                layout.prop(settings, "Effects_Ghosts_Strength")
+                layout.prop(settings, "Effects_Ghosts_Threshold")
+                layout.prop(settings, "Effects_Ghosts_Count")
+                layout.prop(settings, "Effects_Ghosts_Distortion")
+            # Gradient Map
+            elif item.EffectGroup == "SAC_GRADIENTMAP":
+                gradient_map_node = bpy.data.node_groups[node_group_name].nodes["SAC Effects_GradientMap"]
+                layout.template_color_ramp(gradient_map_node, "color_ramp")
+                layout.prop(settings, "Effects_GradientMap_blend")
+            # Halftone
+            elif item.EffectGroup == "SAC_HALFTONE":
+                layout.prop(settings, "Effects_Halftone_value")
+                layout.prop(settings, "Effects_Halftone_delta")
+                layout.prop(settings, "Effects_Halftone_size")
+            # Infrared
+            elif item.EffectGroup == "SAC_INFRARED":
+                layout.prop(settings, "Effects_Infrared_Blend")
+                layout.prop(settings, "Effects_Infrared_Offset")
+            # ISO Noise
+            elif item.EffectGroup == "SAC_ISONOISE":
+                layout.prop(settings, "ISO_strength")
+                layout.prop(settings, "ISO_size")
+            # Mosaic
+            elif item.EffectGroup == "SAC_MOSAIC":
+                layout.prop(settings, "Effects_Pixelate_PixelSize")
+            # Negative
+            elif item.EffectGroup == "SAC_NEGATIVE":
+                layout.prop(settings, "Effects_Negative")
+            # Overlay
+            elif item.EffectGroup == "SAC_OVERLAY":
+                overlay_texture = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Overlay_Texture"]
+                layout.template_ID(overlay_texture, "image", open="image.open")
+                layout.prop(settings, "Effects_Overlay_Strength")
+            # Perspective Shift
+            elif item.EffectGroup == "SAC_PERSPECTIVESHIFT":
+                layout.prop(settings, "Effects_PerspectiveShift_Horizontal")
+                layout.prop(settings, "Effects_PerspectiveShift_Vertical")
+            # Posterize
+            elif item.EffectGroup == "SAC_POSTERIZE":
+                layout.prop(settings, "Effects_Posterize_Steps")
+            # Streaks
+            elif item.EffectGroup == "SAC_STREAKS":
+                layout.prop(settings, "Effects_Streaks_Strength")
+                layout.prop(settings, "Effects_Streaks_Threshold")
+                layout.prop(settings, "Effects_Streaks_Count")
+                layout.prop(settings, "Effects_Streaks_Length")
+                layout.prop(settings, "Effects_Streaks_Fade")
+                layout.prop(settings, "Effects_Streaks_Angle")
+                layout.prop(settings, "Effects_Streaks_Distortion")
+            # Vignette
+            elif item.EffectGroup == "SAC_VIGNETTE":
+                layout.prop(settings, "Effects_Vignette_Intensity")
+                layout.prop(settings, "Effects_Vignette_Roundness")
+                layout.prop(settings, "Effects_Vignette_Feather")
+                layout.prop(settings, "Effects_Vignette_Midpoint")
+            # Warp
+            elif item.EffectGroup == "SAC_WARP":
+                layout.prop(settings, "Effects_Warp")
+            # Error
+            else:
+                layout.label(text="Oops, that's not supposed to happen.")
+                layout.label(text=f"Effect: {item.EffectGroup} was selected.")
+                layout.label(text="Please report this to us.")
+                layout.operator("wm.url_open", text="Our Discord", icon="URL").url = "https://discord.gg/cnFdGQP"
+        else:
+            layout.label(text="No item selected.")
 
 
 # Effects - Artistic
