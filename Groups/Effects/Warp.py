@@ -1,6 +1,6 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
-#  <one line to give the program's name and a brief idea of what it does.>
+#  <Adds plenty of new features to Blenders camera and compositor>
 #    Copyright (C) <2023>  <Kevin Lorengel>
 #
 #  This program is free software; you can redistribute it and/or
