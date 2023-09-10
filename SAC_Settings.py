@@ -21,6 +21,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+import math
+import mathutils
 
 from bpy.types import (
     PropertyGroup,
@@ -34,8 +36,28 @@ from bpy.props import (
     BoolProperty,
 )
 
+previous_tilt_shift_amountx = None
+previous_tilt_shift_amounty = None
+original_rotation_x = None
+original_rotation_z = None
+original_shift_y = None
+original_shift_x = None
+
+capture_original_state_x = True
+capture_original_state_y = True
+
 
 class SAC_Settings(PropertyGroup):
+
+    def linear_interpolation(args, input):
+        input = abs(input)
+
+        start_position_1, end_position_1 = 0, 40
+        start_position_2, end_position_2 = 50, 30
+
+        # Linear interpolation formula
+        y = end_position_1 + ((input - start_position_1) / (start_position_2 - start_position_1)) * (end_position_2 - end_position_1)
+        return y
 
     # EffectTypes
     effect_types = [
@@ -77,6 +99,16 @@ class SAC_Settings(PropertyGroup):
         ('SAC_VIGNETTE', 'Vignette', 'CLIPUV_DEHLT'),
         # Warp
         ('SAC_WARP', 'Warp', 'MOD_WARP'),
+        # Glitch
+        ('SAC_GLITCH', 'Glitch', 'LIBRARY_DATA_BROKEN'),
+        # Oil Paint
+        ('SAC_OILPAINT', 'Oil Paint', 'MOD_FLUIDSIM'),
+        # Pointillism
+        ('SAC_POINTILLISM', 'Pointillism', 'PARTICLE_POINT'),
+        # Sketch
+        ('SAC_SKETCH', 'Sketch', 'GREASEPENCIL'),
+        # Watercolor
+        ('SAC_WATERCOLOR', 'Watercolor', 'BRUSHES_ALL'),
     ]
 
     # region Colorgrade
@@ -1546,3 +1578,166 @@ class SAC_Settings(PropertyGroup):
         update=update_Effects_GradientMap_blend
     )
 # endregion Effects
+
+    # region Camera
+
+    # Tilt Shift
+    # Amount X
+
+    def set_tilt_shift_x(self, context, tilt_shift_amount):
+        global previous_tilt_shift_amountx, original_rotation_x, original_shift_y  # Declare as global to modify them
+
+        camera = bpy.context.scene.camera
+        camera_data = bpy.data.cameras[camera.name]
+
+        k = round((self.linear_interpolation(tilt_shift_amount)/(camera_data.lens/50)), 3)
+
+        # If tilt_shift_amount is zero, reset to original state
+        if tilt_shift_amount == 0:
+            if original_rotation_x is not None and original_shift_y is not None:
+                camera.rotation_euler.x = original_rotation_x
+                camera_data.shift_y = original_shift_y
+            return
+
+        # Store the original state if this is the first change
+        if original_rotation_x is None or original_shift_y is None or tilt_shift_amount == 0:
+            original_rotation_x = camera.rotation_euler.x
+            original_shift_y = camera_data.shift_y
+
+        # Calculate the difference in tilt_shift_amount
+        if previous_tilt_shift_amountx is None:
+            delta_tilt_shift = 0  # No previous value, so no change
+        else:
+            delta_tilt_shift = tilt_shift_amount - previous_tilt_shift_amountx
+
+        # Update previous_tilt_shift_amountx
+        previous_tilt_shift_amountx = tilt_shift_amount
+
+        # Get the current rotation of the camera in radians
+        current_rotation_x = camera.rotation_euler.x
+
+        # Set the tilt (rotation on X-axis)
+        tilt = math.radians(delta_tilt_shift)  # Convert tilt amount to radians
+        camera.rotation_euler.x = current_rotation_x + tilt  # Add to the current rotation
+
+        # Get the current shift of the camera
+        current_shift_y = camera_data.shift_y
+
+        # Set the shift (translation on Y-axis)
+        shift = delta_tilt_shift / k  # Shift in Blender units
+        camera_data.shift_y = current_shift_y - shift  # Add to the current shift
+
+    def update_Camera_TiltShift_AmountX(self, context):
+        global capture_original_state_x  # Declare as global to modify
+
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        camera = bpy.context.scene.camera
+        camera_data = bpy.data.cameras[camera.name]
+
+        if settings.Camera_TiltShift_AmountX == 0:
+            # Enable capturing of the original state the next time the value moves away from zero
+            capture_original_state_x = True
+
+        if capture_original_state_x:
+            global original_rotation_x, original_shift_y  # Declare as global to modify
+            original_rotation_x = camera.rotation_euler.x
+            original_shift_y = camera_data.shift_y
+            # Disable capturing until the value returns to zero
+            capture_original_state_x = False
+
+        self.set_tilt_shift_x(self, settings.Camera_TiltShift_AmountX)
+
+    Camera_TiltShift_AmountX: FloatProperty(
+        name="Tilt Shift X",
+        default=0,
+        max=50,
+        soft_max=20,
+        min=-50,
+        soft_min=-20,
+        subtype="FACTOR",
+        precision=2,
+        update=update_Camera_TiltShift_AmountX,
+    )
+
+    # Amount Y
+
+    def set_tilt_shift_y(self, context, tilt_shift_amount):
+        global previous_tilt_shift_amounty, original_rotation_z, original_shift_x  # Declare as global to modify them
+
+        camera = bpy.context.scene.camera
+        camera_data = bpy.data.cameras[camera.name]
+
+        k = -round((self.linear_interpolation(tilt_shift_amount+20)/(camera_data.lens/50)), 3)
+
+        # If tilt_shift_amount is zero, reset to original state
+        if tilt_shift_amount == 0:
+            if original_rotation_z is not None and original_shift_x is not None:
+                camera.rotation_euler.z = original_rotation_z
+                camera_data.shift_x = original_shift_x
+            return
+
+        # Store the original state if this is the first change
+        if original_rotation_z is None or original_shift_x is None or tilt_shift_amount == 0:
+            original_rotation_z = camera.rotation_euler.z
+            original_shift_x = camera_data.shift_x
+
+        # Calculate the difference in tilt_shift_amount
+        if previous_tilt_shift_amounty is None:
+            delta_tilt_shift = 0  # No previo1us value, so no change
+        else:
+            delta_tilt_shift = tilt_shift_amount - previous_tilt_shift_amounty
+
+        # Update previous_tilt_shift_amounty
+        previous_tilt_shift_amounty = tilt_shift_amount
+
+        # Get the current rotation of the camera in radians
+        current_rotation_z = camera.rotation_euler.z
+
+        # Set the tilt (rotation on Z-axis)
+        tilt = math.radians(delta_tilt_shift)  # Convert tilt amount to radians
+        rotation_matrix = mathutils.Matrix.Rotation(tilt, 4, 'Y')
+
+        camera.matrix_local = camera.matrix_local @ rotation_matrix
+        # camera.rotation_euler.z = current_rotation_z + tilt  # Add to the current rotation
+
+        # Get the current shift of the camera
+        current_shift_x = camera_data.shift_x
+
+        # Set the shift (translation on Y-axis)
+        shift = delta_tilt_shift / k  # Shift in Blender units
+        camera_data.shift_x = current_shift_x - shift  # Add to the current shift
+
+    def update_Camera_TiltShift_AmountY(self, context):
+        global capture_original_state_y  # Declare as global to modify
+
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        camera = bpy.context.scene.camera
+        camera_data = bpy.data.cameras[camera.name]
+
+        if settings.Camera_TiltShift_AmountY == 0:
+            # Enable capturing of the original state the next time the value moves away from zero
+            capture_original_state_y = True
+
+        if capture_original_state_y:
+            global original_rotation_z, original_shift_x  # Declare as global to modify
+            original_rotation_z = camera.rotation_euler.z
+            original_shift_x = camera_data.shift_x
+            # Disable capturing until the value returns to zero
+            capture_original_state_y = False
+
+        self.set_tilt_shift_y(self, settings.Camera_TiltShift_AmountY)
+
+    Camera_TiltShift_AmountY: FloatProperty(
+        name="Tilt Shift Y",
+        default=0,
+        max=50,
+        soft_max=20,
+        min=-50,
+        soft_min=-20,
+        subtype="FACTOR",
+        update=update_Camera_TiltShift_AmountY
+    )
+
+    # endregion Camera

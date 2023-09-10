@@ -56,12 +56,6 @@ from .SAC_Panel import (
     SAC_PT_EFFECTS_Color_Panel,
     SAC_PT_CAMERA_Bokeh_Panel,
 
-    SAC_PT_EFFECTS_Artistic_Panel,
-    SAC_PT_EFFECTS_OilPaint_Panel,
-    SAC_PT_EFFECTS_Sketch_Panel,
-    SAC_PT_EFFECTS_Watercolor_Panel,
-    SAC_PT_EFFECTS_Pointillism_Panel,
-
     SAC_PT_CAMERA_Panel,
     SAC_PT_CAMERA_TiltShift_Panel,
 )
@@ -98,12 +92,6 @@ classes = (
     SAC_UL_List,
 
     SAC_PT_EFFECTS_Color_Panel,
-
-    SAC_PT_EFFECTS_Artistic_Panel,
-    SAC_PT_EFFECTS_OilPaint_Panel,
-    SAC_PT_EFFECTS_Sketch_Panel,
-    SAC_PT_EFFECTS_Watercolor_Panel,
-    SAC_PT_EFFECTS_Pointillism_Panel,
 
     SAC_PT_CAMERA_Panel,
     SAC_PT_CAMERA_TiltShift_Panel,

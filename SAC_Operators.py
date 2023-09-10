@@ -25,10 +25,7 @@ from bpy.types import (
     Context,
     Operator
 )
-
-from .Groups.SuperAdvancedCamera import (
-    connect_renderLayer_node
-)
+from .Groups.SuperAdvancedCamera import (connect_renderLayer_node)
 from .SAC_Settings import SAC_Settings
 
 

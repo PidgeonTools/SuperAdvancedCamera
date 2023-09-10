@@ -291,8 +291,10 @@ class SAC_PT_COLORGRADE_Colorwheels_Panel(SAC_PT_Panel, Panel):
         layout.prop(settings, "Colorgrade_Colorwheel_Highlights_Intensity")
 # endregion ColorGrade
 
-
+# region Effects
 # Effects
+
+
 class SAC_PT_EFFECTS_Panel(SAC_PT_Panel, Panel):
     bl_label = "Effects"
     bl_parent_id = "SAC_PT_SAC_Panel"
@@ -453,83 +455,7 @@ class SAC_PT_EFFECTS_Color_Panel(SAC_PT_Panel, Panel):
             layout.label(text="No item selected.")
 
 
-# Effects - Artistic
-class SAC_PT_EFFECTS_Artistic_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Artistic Effects"
-    bl_parent_id = "SAC_PT_EFFECTS_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="ARMATURE_DATA")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-
-# Oil Paint
-class SAC_PT_EFFECTS_OilPaint_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Oil Paint (coming soon)"
-    bl_parent_id = "SAC_PT_EFFECTS_Artistic_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="MOD_FLUIDSIM")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.label(text="Coming soon")
-
-
-# Sketch
-class SAC_PT_EFFECTS_Sketch_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Sketch (coming soon)"
-    bl_parent_id = "SAC_PT_EFFECTS_Artistic_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="GREASEPENCIL")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.label(text="Coming soon")
-
-
-# Watercolor
-class SAC_PT_EFFECTS_Watercolor_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Watercolor (coming soon)"
-    bl_parent_id = "SAC_PT_EFFECTS_Artistic_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="BRUSHES_ALL")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.label(text="Coming soon")
-
-
-# Pointillism
-class SAC_PT_EFFECTS_Pointillism_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Pointillism (coming soon)"
-    bl_parent_id = "SAC_PT_EFFECTS_Artistic_Panel"
-
-    def draw_header(self, context: Context):
-        layout = self.layout
-        layout.label(text="", icon="OUTLINER_OB_LIGHTPROBE")
-
-    def draw(self, context: Context):
-        layout = self.layout
-        settings = context.scene.sac_settings
-
-        layout.label(text="This effect is very resource demanding, it might not get viewport support")
-
+# endregion Effects
 
 # Camera
 class SAC_PT_CAMERA_Panel(SAC_PT_Panel, Panel):
@@ -557,10 +483,13 @@ class SAC_PT_CAMERA_TiltShift_Panel(SAC_PT_Panel, Panel):
         layout = self.layout
         settings = context.scene.sac_settings
 
-        layout.label(text="This effect will most likely be done through camera settings")
-
+        layout.prop(settings, "Camera_TiltShift_AmountX")
+        layout.prop(settings, "Camera_TiltShift_AmountY")
+        layout.label(text="(it's buggy and I don't know how to do it properly)")
 
 # Bokeh
+
+
 class SAC_PT_CAMERA_Bokeh_Panel(SAC_PT_Panel, Panel):
     bl_label = "Bokeh (coming soon)"
     bl_parent_id = "SAC_PT_CAMERA_Panel"
