@@ -35,7 +35,8 @@ def mute_update(self, context):
 class SAC_EffectList(PropertyGroup):
     name: bpy.props.StringProperty(name="Name", default="Untitled")
     icon: bpy.props.StringProperty(name="Icon", default="NONE")
-    mute: bpy.props.BoolProperty(name="Mute", default=False, update=mute_update)
+    warn: bpy.props.BoolProperty(name="Warn", default=False, description="This effect is not viewport compatible.\nIt will work in the final render.\n\nThis is a limitation of Blender.\nDisable this effect to see the viewport.")
+    mute: bpy.props.BoolProperty(name="Mute", default=False, update=mute_update, description="Disable this effect for viewport and final render.")
     EffectGroup: bpy.props.StringProperty(name="Effect Group", default="")
     ID: bpy.props.StringProperty(name="ID", default="")
 
@@ -52,6 +53,10 @@ class SAC_UL_List(UIList):
 
             row = split.row(align=True)
             row.emboss = 'NONE_OR_STATUS'
+
+            # Create a new row for the warning icon
+            warning_row = main_row.row(align=True)
+            warning_row.prop(item, "warn", text="", emboss=False, icon='ERROR' if item.warn else 'NONE')
 
             # Create a new row for the mute button on the far right
             mute_row = main_row.row(align=True)

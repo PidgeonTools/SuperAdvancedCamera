@@ -38,8 +38,14 @@ def active_effect_update(self, context):
     item = context.scene.sac_effect_list[self.sac_effect_list_index]
     node_name = f"{item.EffectGroup}_{item.ID}"
     node_group_name = f".{node_name}"
+    # Bokeh
+    if item.EffectGroup == "SAC_BOKEH":
+        settings.Effects_Bokeh_MaxSize = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Blur"].blur_max
+        settings.Effects_Bokeh_Range = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Range"].inputs[1].default_value
+        settings.Effects_Bokeh_Offset = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Offset"].inputs[1].default_value
+        settings.Effects_Bokeh_Rotation = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Rotation"].inputs[1].default_value
     # Chromatic Aberration
-    if item.EffectGroup == "SAC_CHROMATICABERRATION":
+    elif item.EffectGroup == "SAC_CHROMATICABERRATION":
         settings.Effects_ChromaticAberration_Amount = bpy.data.node_groups[node_group_name].nodes["SAC Effects_ChromaticAberration"].inputs[2].default_value
     # Duotone
     elif item.EffectGroup == "SAC_DUOTONE":
@@ -335,9 +341,6 @@ class SAC_PT_List(SAC_PT_Panel, Panel):
         col.operator("sac_effect_list.move_effect_up", text="", icon='TRIA_UP')
         col.operator("sac_effect_list.move_effect_down", text="", icon='TRIA_DOWN')
 
-        layout = self.layout
-        layout.operator("sac_effect_list.print_effect_groups", text="Print Effect Groups")
-
 
 # Effects - Color
 class SAC_PT_EFFECTS_Color_Panel(SAC_PT_Panel, Panel):
@@ -361,8 +364,19 @@ class SAC_PT_EFFECTS_Color_Panel(SAC_PT_Panel, Panel):
 
         if item is not None:
             layout.label(text=f"These are settings for {item.name}.")
+            # Bokah
+            if item.EffectGroup == "SAC_BOKEH":
+                # warning that this effect is not viewport compatible
+                layout.label(text="This effect is not viewport compatible.", icon="ERROR")
+                layout.prop(settings, "Effects_Bokeh_MaxSize")
+                layout.prop(settings, "Effects_Bokeh_Offset")
+                layout.prop(settings, "Effects_Bokeh_Range")
+                layout.prop(settings, "Effects_Bokeh_Rotation")
+                layout.label(text="Custom Bokeh")
+                bokeh_image = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Image"]
+                layout.template_ID(bokeh_image, "image", open="image.open")
             # Chromatic Aberration
-            if item.EffectGroup == "SAC_CHROMATICABERRATION":
+            elif item.EffectGroup == "SAC_CHROMATICABERRATION":
                 layout.prop(settings, "Effects_ChromaticAberration_Amount")
             # Duotone
             elif item.EffectGroup == "SAC_DUOTONE":

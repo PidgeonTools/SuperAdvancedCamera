@@ -69,6 +69,9 @@ class SAC_OT_AddEffect(Operator):
         item.ID = str(context.scene.last_used_id).zfill(2)
         context.scene.last_used_id += 1
 
+        # If the item is in array "slow", set the warning to True
+        item.warn = new_item_type in settings.slow_effects
+
         context.scene.sac_effect_list_index = len(context.scene.sac_effect_list) - 1
         connect_renderLayer_node()
         return {'FINISHED'}
@@ -125,14 +128,4 @@ class SAC_OT_MoveEffectDown(Operator):
         list.move(index, index+1)
         context.scene.sac_effect_list_index = index + 1
         connect_renderLayer_node()
-        return {'FINISHED'}
-
-
-class SAC_OT_PrintEffectGroups(Operator):
-    bl_idname = "sac_effect_list.print_effect_groups"
-    bl_label = "Print Effect Groups"
-
-    def execute(self, context):
-        for item in context.scene.sac_effect_list:
-            print(f"{item.EffectGroup}_{item.ID}")
         return {'FINISHED'}

@@ -31,7 +31,6 @@ from .SAC_Operators import (
     SAC_OT_RemoveEffect,
     SAC_OT_MoveEffectUp,
     SAC_OT_MoveEffectDown,
-    SAC_OT_PrintEffectGroups
 )
 
 from .SAC_List import (
@@ -102,7 +101,6 @@ classes = (
     SAC_OT_RemoveEffect,
     SAC_OT_MoveEffectUp,
     SAC_OT_MoveEffectDown,
-    SAC_OT_PrintEffectGroups,
 
     SAC_Settings
 )

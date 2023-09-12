@@ -39,28 +39,45 @@ from .Colorgrading.HighlightTint import create_highlighttint_group
 from .Colorgrading.ShadowTint import create_shadowtint_group
 from .Colorgrading.Curves import create_curves_group
 from .Colorgrading.Colorwheels import create_colorwheel_group
-from .Effects.Duotone import create_duotone_group
-from .Effects.FogGlow import create_fogglow_group
-from .Effects.Streaks import create_streaks_group
-from .Effects.Ghost import create_ghost_group
-from .Effects.Emboss import create_emboss_group
-from .Effects.Posterize import create_posterize_group
-from .Effects.Overlay import create_overlay_group
-from .Effects.Pixelate import create_pixelate_group
+
+from .Effects.Bokeh import create_bokeh_group
 from .Effects.ChromaticAberration import create_chromatic_group
-from .Effects.Viginette import create_viginette_group
-from .Effects.Infrared import create_infrared_group
-from .Effects.Negative import create_negative_group
-from .Effects.Warp import create_warp_group
-from .Effects.Fisheye import create_fisheye_group
-from .Effects.PerspectiveShift import create_perspectiveshift_group
-from .Effects.ISO import create_iso_group
+from .Effects.Duotone import create_duotone_group
+from .Effects.Emboss import create_emboss_group
 from .Effects.FilmGrain import create_filmgrain_group
-from .Effects.Halftone import create_halftone_group
+from .Effects.Fisheye import create_fisheye_group
+from .Effects.FogGlow import create_fogglow_group
+from .Effects.Ghost import create_ghost_group
 from .Effects.GradientMap import create_gradientmap_group
+from .Effects.Halftone import create_halftone_group
+from .Effects.Infrared import create_infrared_group
+from .Effects.ISO import create_iso_group
+from .Effects.Negative import create_negative_group
+from .Effects.Overlay import create_overlay_group
+from .Effects.PerspectiveShift import create_perspectiveshift_group
+from .Effects.Pixelate import create_pixelate_group
+from .Effects.Posterize import create_posterize_group
+from .Effects.Streaks import create_streaks_group
+from .Effects.Viginette import create_viginette_group
+from .Effects.Warp import create_warp_group
 
 
 def create_main_group() -> NodeTree:
+
+    # Create the links
+
+    def create_and_link_colorgrade_group(group, previous_node, node_name, node_key, creation_function, *args):
+        new_group = group.nodes.new("CompositorNodeGroup")
+        try:
+            if bpy.data.node_groups[node_key]:
+                new_group.node_tree = bpy.data.node_groups[node_key]
+        except:
+            new_group.node_tree = creation_function(*args)
+        new_group.name = node_name
+        new_group.mute = True
+
+        group.links.new(previous_node.outputs[0], new_group.inputs[0])
+        return new_group
 
     # Delete the group if it already exists
     try:
@@ -78,46 +95,64 @@ def create_main_group() -> NodeTree:
 
     # Add the input and output sockets
     sac_group.inputs.new("NodeSocketColor", "Image")
+    sac_group.inputs.new("NodeSocketFloat", "Depth")
     sac_group.outputs.new("NodeSocketColor", "Image")
 
-    def create_and_link_colorgrade_group(sac_group, previous_node, node_name, node_key, creation_function, *args):
-        new_group = sac_group.nodes.new("CompositorNodeGroup")
-        try:
-            if bpy.data.node_groups[node_key]:
-                new_group.node_tree = bpy.data.node_groups[node_key]
-        except:
-            new_group.node_tree = creation_function(*args)
-        new_group.name = node_name
-        new_group.mute = True
+    # Colorgrade
 
-        sac_group.links.new(previous_node.outputs[0], new_group.inputs[0])
-        return new_group
+    # create the nodes
+    colorgrade_node = sac_group.nodes.new("CompositorNodeGroup")
 
-    # Create and link groups
-    node_configurations = [
-        ("SAC WhiteLevel", ".SAC WhiteLevel", create_whitelevel_group),
-        ("SAC Temperature", ".SAC Temperature", create_temperature_group),
-        ("SAC Tint", ".SAC Tint", create_tint_group),
-        ("SAC Saturation", ".SAC Saturation", create_saturation_group, "SAC Colorgrade_Color_Saturation", ".SAC Saturation"),
-        ("SAC Exposure", ".SAC Exposure", create_exposure_group),
-        ("SAC Contrast", ".SAC Contrast", create_contrast_group),
-        ("SAC Highlights", ".SAC Highlights", create_highlights_group),
-        ("SAC Shadows", ".SAC Shadows", create_shadows_group),
-        ("SAC Whites", ".SAC Whites", create_whites_group),
-        ("SAC Darks", ".SAC Darks", create_darks_group),
-        ("SAC Sharpen", ".SAC Sharpen", create_sharpen_group),
-        ("SAC Vibrance", ".SAC Vibrance", create_vibrance_group),
-        ("SAC Saturation2", ".SAC Saturation2", create_saturation_group, "SAC Colorgrade_Presets_Saturation", ".SAC Saturation2"),
-        ("SAC HighlightTint", ".SAC HighlightTint", create_highlighttint_group),
-        ("SAC ShadowTint", ".SAC ShadowTint", create_shadowtint_group),
-        ("SAC Curves", ".SAC Curves", create_curves_group),
-        ("SAC Colorwheel", ".SAC Colorwheel", create_colorwheel_group)
-    ]
+    # Skip creation if the group already exists
+    try:
+        if bpy.data.node_groups[".SAC Colorgrade"]:
+            colorgrade_group: NodeTree = bpy.data.node_groups[".SAC Colorgrade"]
+            colorgrade_node.node_tree = bpy.data.node_groups[".SAC Colorgrade"]
 
-    previous_node = input_node
-    for node_name, node_key, creation_function, *args in node_configurations:
-        previous_node = create_and_link_colorgrade_group(sac_group, previous_node, node_name, node_key, creation_function, *args)
+            colorgrade_input_node = colorgrade_group.nodes["Group Input"]
+            colorgrade_output_node = colorgrade_group.nodes["Group Output"]
+    except:
+        colorgrade_group: NodeTree = bpy.data.node_groups.new(name=".SAC Colorgrade", type="CompositorNodeTree")
 
+        # Create the input and output nodes
+        colorgrade_input_node = colorgrade_group.nodes.new("NodeGroupInput")
+        colorgrade_output_node = colorgrade_group.nodes.new("NodeGroupOutput")
+
+        # Add the input and output sockets
+        colorgrade_group.inputs.new("NodeSocketColor", "Image")
+        colorgrade_group.outputs.new("NodeSocketColor", "Image")
+
+        colorgrade_node.node_tree = colorgrade_group
+
+        # Create and link groups
+        node_configurations = [
+            ("SAC WhiteLevel", ".SAC WhiteLevel", create_whitelevel_group),
+            ("SAC Temperature", ".SAC Temperature", create_temperature_group),
+            ("SAC Tint", ".SAC Tint", create_tint_group),
+            ("SAC Saturation", ".SAC Saturation", create_saturation_group, "SAC Colorgrade_Color_Saturation", ".SAC Saturation"),
+            ("SAC Exposure", ".SAC Exposure", create_exposure_group),
+            ("SAC Contrast", ".SAC Contrast", create_contrast_group),
+            ("SAC Highlights", ".SAC Highlights", create_highlights_group),
+            ("SAC Shadows", ".SAC Shadows", create_shadows_group),
+            ("SAC Whites", ".SAC Whites", create_whites_group),
+            ("SAC Darks", ".SAC Darks", create_darks_group),
+            ("SAC Sharpen", ".SAC Sharpen", create_sharpen_group),
+            ("SAC Vibrance", ".SAC Vibrance", create_vibrance_group),
+            ("SAC Saturation2", ".SAC Saturation2", create_saturation_group, "SAC Colorgrade_Presets_Saturation", ".SAC Saturation2"),
+            ("SAC HighlightTint", ".SAC HighlightTint", create_highlighttint_group),
+            ("SAC ShadowTint", ".SAC ShadowTint", create_shadowtint_group),
+            ("SAC Curves", ".SAC Curves", create_curves_group),
+            ("SAC Colorwheel", ".SAC Colorwheel", create_colorwheel_group)
+        ]
+
+        previous_node = colorgrade_input_node
+        for node_name, node_key, creation_function, *args in node_configurations:
+            previous_node = create_and_link_colorgrade_group(colorgrade_group, previous_node, node_name, node_key, creation_function, *args)
+
+        # Link the colorgrade node to the output node
+        colorgrade_group.links.new(previous_node.outputs[0], colorgrade_output_node.inputs[0])
+
+    sac_group.links.new(input_node.outputs[0], colorgrade_node.inputs[0])
     # Effects
 
     # Delete the group tree if it already exists
@@ -138,9 +173,11 @@ def create_main_group() -> NodeTree:
 
     # Add the input and output sockets
     effects_group.inputs.new("NodeSocketColor", "Image")
+    effects_group.inputs.new("NodeSocketFloat", "Depth")
     effects_group.outputs.new("NodeSocketColor", "Image")
 
-    sac_group.links.new(previous_node.outputs[0], effects_node.inputs[0])
+    sac_group.links.new(colorgrade_node.outputs[0], effects_node.inputs[0])
+    sac_group.links.new(input_node.outputs[1], effects_node.inputs[1])
 
     def create_and_link_group(effects_group, previous_node, node_name, creation_function, unique_id):
         new_group = effects_group.nodes.new("CompositorNodeGroup")
@@ -155,10 +192,14 @@ def create_main_group() -> NodeTree:
 
         new_group.name = f"{node_name}_{unique_id}"
 
-        effects_group.links.new(previous_node.outputs[0], new_group.inputs[0])
+        effects_group.links.new(previous_node.outputs["Image"], new_group.inputs["Image"])
+        # if the node has a depth input, link it
+        if new_group.inputs.get("Depth"):
+            effects_group.links.new(effects_input_node.outputs["Depth"], new_group.inputs["Depth"])
         return new_group
 
     node_mapping = {
+        "SAC_BOKEH": create_bokeh_group,
         "SAC_CHROMATICABERRATION": create_chromatic_group,
         "SAC_DUOTONE": create_duotone_group,
         "SAC_EMBOSS": create_emboss_group,
@@ -254,7 +295,8 @@ def connect_renderLayer_node():
                 to_disconnect.append(link)
 
                 # Save the information needed to make new connections
-                to_connect.append((sac_node.outputs[0], link.to_socket, connect_to_node.outputs[link.from_socket.name]))
+                if link.to_socket.name != "Depth":
+                    to_connect.append((sac_node.outputs[0], link.to_socket, connect_to_node.outputs[link.from_socket.name]))
 
         # Disconnect the original links
         for link in to_disconnect:
@@ -266,4 +308,6 @@ def connect_renderLayer_node():
             tree.links.new(mix_output, to_socket)
 
             # Connect the connect_to_node to the mix node
-            tree.links.new(from_socket, sac_node.inputs[0])
+            tree.links.new(from_socket, sac_node.inputs["Image"])
+
+        tree.links.new(render_layer_node.outputs["Depth"], sac_node.inputs["Depth"])
