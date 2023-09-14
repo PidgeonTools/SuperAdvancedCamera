@@ -119,6 +119,204 @@ class SAC_Settings(PropertyGroup):
         "SAC_BOKEH"
     ]
 
+    bokeh_types = [
+        # Carl Zeiss - Contax Planar - f/2.8 - 60mm
+        # f/2.8
+        ("CarlZeiss_ContaxPlanar_f2.8_60mm_f2.8", "Carl Zeiss - Contax Planar - 60mm - f/2.8"),
+        # f/4
+        ("CarlZeiss_ContaxPlanar_f2.8_60mm_f4.0", "Carl Zeiss - Contax Planar - 60mm - f/4.0"),
+        # f/5.6
+        ("CarlZeiss_ContaxPlanar_f2.8_60mm_f5.6", "Carl Zeiss - Contax Planar - 60mm - f/5.6"),
+        # f/8
+        ("CarlZeiss_ContaxPlanar_f2.8_60mm_f8.0", "Carl Zeiss - Contax Planar - 60mm - f/8.0"),
+        # f/11
+        ("CarlZeiss_ContaxPlanar_f2.8_60mm_f11.0", "Carl Zeiss - Contax Planar - 60mm - f/11.0"),
+        # f/16
+        ("CarlZeiss_ContaxPlanar_f2.8_60mm_f16.0", "Carl Zeiss - Contax Planar - 60mm - f/16.0"),
+        # f/22
+        ("CarlZeiss_ContaxPlanar_f2.8_60mm_f22.0", "Carl Zeiss - Contax Planar - 60mm - f/22.0"),
+
+        # Centon - Centon - f/8 - 500mm
+        # 2.15m
+        ("Centon_Centon_2.15m_500mm_f8.0", "Centon - Centon - 500mm - f/8.0 - focus on 2.15m"),
+        # infinity
+        ("Centon_Centon_Infinity_500mm_f8.0", "Centon - Centon - 500mm - f/8.0 - focus on infinity"),
+
+        # Cosina - Cosinon - f/4.0 - 200mm
+        # f/4
+        ("Cosina_Cosinon_f4.0_200mm_f4.0", "Cosina - Cosinon - 200mm - f/4.0"),
+        # f/5.6
+        ("Cosina_Cosinon_f4.0_200mm_f5.6", "Cosina - Cosinon - 200mm - f/5.6"),
+        # f/8
+        ("Cosina_Cosinon_f4.0_200mm_f8.0", "Cosina - Cosinon - 200mm - f/8.0"),
+        # f/11
+        ("Cosina_Cosinon_f4.0_200mm_f11.0", "Cosina - Cosinon - 200mm - f/11.0"),
+        # f/16
+        ("Cosina_Cosinon_f4.0_200mm_f16.0", "Cosina - Cosinon - 200mm - f/16.0"),
+        # f/22
+        ("Cosina_Cosinon_f4.0_200mm_f22.0", "Cosina - Cosinon - 200mm - f/22.0"),
+
+        # Jupiter - 9 - f/2.0 - 85mm
+        # f/2
+        ("Jupiter_9_f2.0_85mm_f2.0", "Jupiter - 9 - 85mm - f/2.0"),
+        # f/2.8
+        ("Jupiter_9_f2.0_85mm_f2.8", "Jupiter - 9 - 85mm - f/2.8"),
+        # f/4
+        ("Jupiter_9_f2.0_85mm_f4.0", "Jupiter - 9 - 85mm - f/4.0"),
+        # f/5.6
+        ("Jupiter_9_f2.0_85mm_f5.6", "Jupiter - 9 - 85mm - f/5.6"),
+        # f/8
+        ("Jupiter_9_f2.0_85mm_f8.0", "Jupiter - 9 - 85mm - f/8.0"),
+        # f/11
+        ("Jupiter_9_f2.0_85mm_f11.0", "Jupiter - 9 - 85mm - f/11.0"),
+        # f/16
+        ("Jupiter_9_f2.0_85mm_f16.0", "Jupiter - 9 - 85mm - f/16.0"),
+
+        # Olympus - OmZuiko - f/2.8 - 100mm
+        # f/2.8
+        ("Olympus_OmZuiko_f2.8_100mm_f2.8", "Olympus - OmZuiko - 100mm - f/2.8"),
+        # f/4
+        ("Olympus_OmZuiko_f2.8_100mm_f4.0", "Olympus - OmZuiko - 100mm - f/4.0"),
+        # f/5.6
+        ("Olympus_OmZuiko_f2.8_100mm_f5.6", "Olympus - OmZuiko - 100mm - f/5.6"),
+        # f/8
+        ("Olympus_OmZuiko_f2.8_100mm_f8.0", "Olympus - OmZuiko - 100mm - f/8.0"),
+        # f/11
+        ("Olympus_OmZuiko_f2.8_100mm_f11.0", "Olympus - OmZuiko - 100mm - f/11.0"),
+
+        # Pentax - SMC - f/2.0 - 50mm
+        # f/2
+        ("Pentax_SMC_f2.0_50mm_f2.0", "Pentax - SMC - 50mm - f/2.0"),
+        # f/2.8
+        ("Pentax_SMC_f2.0_50mm_f2.8", "Pentax - SMC - 50mm - f/2.8"),
+        # f/4
+        ("Pentax_SMC_f2.0_50mm_f4.0", "Pentax - SMC - 50mm - f/4.0"),
+        # f/5.6
+        ("Pentax_SMC_f2.0_50mm_f5.6", "Pentax - SMC - 50mm - f/5.6"),
+        # f/8
+        ("Pentax_SMC_f2.0_50mm_f8.0", "Pentax - SMC - 50mm - f/8.0"),
+        # f/11
+        ("Pentax_SMC_f2.0_50mm_f11.0", "Pentax - SMC - 50mm - f/11.0"),
+
+        # Takumar - SMC - f3.5 - 135mm
+        # f/3.5
+        ("Takumar_SMC_f3.5_135mm_f3.5", "Takumar - SMC - 135mm - f/3.5"),
+        # f/5.6
+        ("Takumar_SMC_f3.5_135mm_f5.6", "Takumar - SMC - 135mm - f/5.6"),
+        # f/8
+        ("Takumar_SMC_f3.5_135mm_f8.0", "Takumar - SMC - 135mm - f/8.0"),
+        # f/11
+        ("Takumar_SMC_f3.5_135mm_f11.0", "Takumar - SMC - 135mm - f/11.0"),
+        # f/16
+        ("Takumar_SMC_f3.5_135mm_f16.0", "Takumar - SMC - 135mm - f/16.0"),
+        # f/22
+        ("Takumar_SMC_f3.5_135mm_f22.0", "Takumar - SMC - 135mm - f/22.0"),
+
+        # Takumar - Super - f/1.4 - 50mm
+        # f/1.4
+        ("Takumar_Super_f1.4_50mm_f1.4", "Takumar - Super - 50mm - f/1.4"),
+        # f/2
+        ("Takumar_Super_f1.4_50mm_f2.0", "Takumar - Super - 50mm - f/2.0"),
+        # f/2.8
+        ("Takumar_Super_f1.4_50mm_f2.8", "Takumar - Super - 50mm - f/2.8"),
+        # f/4
+        ("Takumar_Super_f1.4_50mm_f4.0", "Takumar - Super - 50mm - f/4.0"),
+        # f/5.6
+        ("Takumar_Super_f1.4_50mm_f5.6", "Takumar - Super - 50mm - f/5.6"),
+        # f/8
+        ("Takumar_Super_f1.4_50mm_f8.0", "Takumar - Super - 50mm - f/8.0"),
+
+        # Takumar - Super - f/1.8 - 55mm
+        # f/1.8
+        ("Takumar_Super_f1.8_55mm_f1.8", "Takumar - Super - 55mm - f/1.8"),
+        # f/2.8
+        ("Takumar_Super_f1.8_55mm_f2.8", "Takumar - Super - 55mm - f/2.8"),
+        # f/4
+        ("Takumar_Super_f1.8_55mm_f4.0", "Takumar - Super - 55mm - f/4.0"),
+        # f/5.6
+        ("Takumar_Super_f1.8_55mm_f5.6", "Takumar - Super - 55mm - f/5.6"),
+        # f/8
+        ("Takumar_Super_f1.8_55mm_f8.0", "Takumar - Super - 55mm - f/8.0"),
+
+        # Takumar - Super - f/2.0 - 55mm
+        # f/2
+        ("Takumar_Super_f2.0_55mm_f2.0", "Takumar - Super - 55mm - f/2.0"),
+        # f/2.8
+        ("Takumar_Super_f2.0_55mm_f2.8", "Takumar - Super - 55mm - f/2.8"),
+        # f/4
+        ("Takumar_Super_f2.0_55mm_f4.0", "Takumar - Super - 55mm - f/4.0"),
+        # f/5.6
+        ("Takumar_Super_f2.0_55mm_f5.6", "Takumar - Super - 55mm - f/5.6"),
+        # f/8
+        ("Takumar_Super_f2.0_55mm_f8.0", "Takumar - Super - 55mm - f/8.0"),
+
+        # Takumar - Super - f/4.0 - 150mm
+        # f/4
+        ("Takumar_Super_f4.0_150mm_f4.0", "Takumar - Super - 150mm - f/4.0"),
+        # f/5.6
+        ("Takumar_Super_f4.0_150mm_f5.6", "Takumar - Super - 150mm - f/5.6"),
+        # f/8
+        ("Takumar_Super_f4.0_150mm_f8.0", "Takumar - Super - 150mm - f/8.0"),
+        # f/11
+        ("Takumar_Super_f4.0_150mm_f11.0", "Takumar - Super - 150mm - f/11.0"),
+        # f/16
+        ("Takumar_Super_f4.0_150mm_f16.0", "Takumar - Super - 150mm - f/16.0"),
+        # f/22
+        ("Takumar_Super_f4.0_150mm_f22.0", "Takumar - Super - 150mm - f/22.0"),
+
+        # Tamron - Adaptall - f/2.5 - 90mm
+        # f/2.5
+        ("Tamron_Adaptall_f2.5_90mm_f2.5", "Tamron - Adaptall - 90mm - f/2.5"),
+        # f/4
+        ("Tamron_Adaptall_f2.5_90mm_f4.0", "Tamron - Adaptall - 90mm - f/4.0"),
+        # f/5.6
+        ("Tamron_Adaptall_f2.5_90mm_f5.6", "Tamron - Adaptall - 90mm - f/5.6"),
+        # f/8
+        ("Tamron_Adaptall_f2.5_90mm_f8.0", "Tamron - Adaptall - 90mm - f/8.0"),
+        # f/11
+        ("Tamron_Adaptall_f2.5_90mm_f11.0", "Tamron - Adaptall - 90mm - f/11.0"),
+        # f/16
+        ("Tamron_Adaptall_f2.5_90mm_f16.0", "Tamron - Adaptall - 90mm - f/16.0"),
+        # f/22
+        ("Tamron_Adaptall_f2.5_90mm_f22.0", "Tamron - Adaptall - 90mm - f/22.0"),
+
+        # Tamron - Adaptall55bb - f/8.0 - 500mm
+        # 2m
+        ("Tamron_Adaptall55bb_2m_500mm_f8.0", "Tamron - Adaptall 55bb - 500mm - f/8.0 - focus on 2m"),
+        # infinity
+        ("Tamron_Adaptall55bb_Infinity_500mm_f8.0", "Tamron - Adaptall 55bb - 500mm - f/8.0 - focus on infinity"),
+
+        # Topman - MC - f/2.8 - 135mm
+        # f/2.8
+        ("Topman_MC_f2.8_135mm_f2.8", "Topman - MC - 135mm - f/2.8"),
+        # f/4
+        ("Topman_MC_f2.8_135mm_f4.0", "Topman - MC - 135mm - f/4.0"),
+        # f/5.6
+        ("Topman_MC_f2.8_135mm_f5.6", "Topman - MC - 135mm - f/5.6"),
+        # f/8
+        ("Topman_MC_f2.8_135mm_f8.0", "Topman - MC - 135mm - f/8.0"),
+        # f/11
+        ("Topman_MC_f2.8_135mm_f11.0", "Topman - MC - 135mm - f/11.0"),
+        # f/16
+        ("Topman_MC_f2.8_135mm_f16.0", "Topman - MC - 135mm - f/16.0"),
+        # f/22
+        ("Topman_MC_f2.8_135mm_f22.0", "Topman - MC - 135mm - f/22.0"),
+
+        # Vivitar - Vivitar - f/2.8 - 55mm
+        # f/2.8
+        ("Vivitar_Vivitar_f2.8_55mm_f2.8", "Vivitar - Vivitar - 55mm - f/2.8"),
+        # f/4
+        ("Vivitar_Vivitar_f2.8_55mm_f4.0", "Vivitar - Vivitar - 55mm - f/4.0"),
+        # f/5.6
+        ("Vivitar_Vivitar_f2.8_55mm_f5.6", "Vivitar - Vivitar - 55mm - f/5.6"),
+        # f/8
+        ("Vivitar_Vivitar_f2.8_55mm_f8.0", "Vivitar - Vivitar - 55mm - f/8.0"),
+        # f/11
+        ("Vivitar_Vivitar_f2.8_55mm_f11.0", "Vivitar - Vivitar - 55mm - f/11.0"),
+        # f/16
+        ("Vivitar_Vivitar_f2.8_55mm_f16.0", "Vivitar - Vivitar - 55mm - f/16.0"),
+    ]
+
     # region Colorgrade
 
     # White Level
@@ -1695,6 +1893,161 @@ class SAC_Settings(PropertyGroup):
         subtype="ANGLE",
         update=update_Effects_Bokeh_Rotation
     )
+
+    # Procedural Bokeh
+    # Flaps
+
+    def update_Effects_Bokeh_Procedural_Flaps(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        # Get the current item from the list
+
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Procedural"].flaps = settings.Effects_Bokeh_Procedural_Flaps
+
+    Effects_Bokeh_Procedural_Flaps: IntProperty(
+        name="Flaps",
+        default=6,
+        max=24,
+        min=3,
+        subtype="FACTOR",
+        update=update_Effects_Bokeh_Procedural_Flaps
+    )
+
+    # Angle
+
+    def update_Effects_Bokeh_Procedural_Angle(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        # Get the current item from the list
+
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Procedural"].angle = settings.Effects_Bokeh_Procedural_Angle
+
+    Effects_Bokeh_Procedural_Angle: FloatProperty(
+        name="Angle",
+        default=0.0785398,
+        max=(math.pi*2),
+        min=0,
+        subtype="ANGLE",
+        update=update_Effects_Bokeh_Procedural_Angle
+    )
+
+    # Rounding
+
+    def update_Effects_Bokeh_Procedural_Rounding(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        # Get the current item from the list
+
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Procedural"].rounding = settings.Effects_Bokeh_Procedural_Rounding
+
+    Effects_Bokeh_Procedural_Rounding: FloatProperty(
+        name="Rounding",
+        default=0.1,
+        max=1,
+        min=0,
+        subtype="FACTOR",
+        update=update_Effects_Bokeh_Procedural_Rounding
+    )
+
+    # Catadioptric
+
+    def update_Effects_Bokeh_Procedural_Catadioptric(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Procedural"].catadioptric = settings.Effects_Bokeh_Procedural_Catadioptric
+
+    Effects_Bokeh_Procedural_Catadioptric: FloatProperty(
+        name="Catadioptric",
+        default=0,
+        max=1,
+        min=0,
+        subtype="FACTOR",
+        update=update_Effects_Bokeh_Procedural_Catadioptric
+    )
+
+    # Shift
+
+    def update_Effects_Bokeh_Procedural_Shift(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Procedural"].shift = settings.Effects_Bokeh_Procedural_Shift
+
+    Effects_Bokeh_Procedural_Shift: FloatProperty(
+        name="Lens Shift",
+        default=0.02,
+        max=1,
+        min=-1,
+        subtype="FACTOR",
+        update=update_Effects_Bokeh_Procedural_Shift
+    )
+
+    # Type
+
+    def update_Effects_Bokeh_Type(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+
+        if settings.Effects_Bokeh_Type == 'PROCEDURAL':
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Switch"].check = True
+        else:
+            bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Switch"].check = False
+            if settings.Effects_Bokeh_Type == 'CUSTOM':
+                bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_ImageSwitch"].check = True
+            else:
+                bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_ImageSwitch"].check = False
+
+    Effects_Bokeh_Type: EnumProperty(
+        name="Bokeh Type",
+        items=(
+            (
+                'CAMERA',
+                'Camera',
+                'A real camera bokeh image',
+            ),
+            (
+                'PROCEDURAL',
+                'Procedural',
+                'A procedurally generated bokeh image',
+            ),
+            (
+                'CUSTOM',
+                'Custom',
+                'A custom bokeh image of your choice',
+            ),
+        ),
+        default='CAMERA',
+        update=update_Effects_Bokeh_Type
+    )
+
 
 # endregion Effects
 

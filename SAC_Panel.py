@@ -44,6 +44,20 @@ def active_effect_update(self, context):
         settings.Effects_Bokeh_Range = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Range"].inputs[1].default_value
         settings.Effects_Bokeh_Offset = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Offset"].inputs[1].default_value
         settings.Effects_Bokeh_Rotation = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Rotation"].inputs[1].default_value
+        settings.Effects_Bokeh_Procedural_Flaps = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Procedural"].flaps
+        settings.Effects_Bokeh_Procedural_Angle = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Procedural"].angle
+        settings.Effects_Bokeh_Procedural_Rounding = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Procedural"].rounding
+        settings.Effects_Bokeh_Procedural_Catadioptric = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Procedural"].catadioptric
+        settings.Effects_Bokeh_Procedural_Shift = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Procedural"].shift
+
+        if bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Switch"].check == True:
+            settings.Effects_Bokeh_Type = "PROCEDURAL"
+        else:
+            if bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_ImageSwitch"].check == True:
+                settings.Effects_Bokeh_Type = "CUSTOM"
+            else:
+                settings.Effects_Bokeh_Type = "CAMERA"
+
     # Chromatic Aberration
     elif item.EffectGroup == "SAC_CHROMATICABERRATION":
         settings.Effects_ChromaticAberration_Amount = bpy.data.node_groups[node_group_name].nodes["SAC Effects_ChromaticAberration"].inputs[2].default_value
@@ -328,7 +342,7 @@ class SAC_PT_List(SAC_PT_Panel, Panel):
         scene = context.scene
 
         layout = self.layout
-        layout.template_icon_view(context.scene, "new_item_type", show_labels=True, scale=8.0, scale_popup=8.0)
+        layout.template_icon_view(context.scene, "new_effect_type", show_labels=True, scale=8.0, scale_popup=8.0)
 
         row = layout.row()
         row.template_list("SAC_UL_List", "", scene, "sac_effect_list", scene, "sac_effect_list_index")
@@ -371,10 +385,37 @@ class SAC_PT_EFFECTS_Color_Panel(SAC_PT_Panel, Panel):
                 layout.prop(settings, "Effects_Bokeh_MaxSize")
                 layout.prop(settings, "Effects_Bokeh_Offset")
                 layout.prop(settings, "Effects_Bokeh_Range")
-                layout.prop(settings, "Effects_Bokeh_Rotation")
-                layout.label(text="Custom Bokeh")
-                bokeh_image = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Image"]
-                layout.template_ID(bokeh_image, "image", open="image.open")
+                layout.separator()
+                layout.label(text="Bokeh Type")
+                layout_bokeh_type = layout.row(align=True)
+                layout_bokeh_type.prop(settings, "Effects_Bokeh_Type", expand=True)
+
+                if settings.Effects_Bokeh_Type == "CAMERA":
+                    layout.label(text="Camera Bokeh")
+                    layout.template_icon_view(context.scene, "new_bokeh_type", show_labels=True, scale=8.0, scale_popup=4.0)
+                    layout.prop(settings, "Effects_Bokeh_Rotation")
+                    bokeh_type = context.scene.new_bokeh_type.split("_")
+                    layout.label(text="Manufacturer: " + bokeh_type[0])
+                    layout.label(text="Model: " + bokeh_type[1] + " - " + bokeh_type[3] + " - " + bokeh_type[2])
+                    layout.label(text="Aperture: " + bokeh_type[4])
+
+                    layout.label(text="Special thanks to Prof. Dr. Matt Gunn for the Bokeh textures.")
+                    layout.operator("sac_effect_list.apply_bokeh", icon="SEQ_CHROMA_SCOPE")
+
+                elif settings.Effects_Bokeh_Type == "CUSTOM":
+                    layout.label(text="Custom Bokeh")
+                    bokeh_image = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Custom_Image"]
+                    layout.template_ID(bokeh_image, "image", open="image.open")
+                    layout.prop(settings, "Effects_Bokeh_Rotation")
+
+                elif settings.Effects_Bokeh_Type == "PROCEDURAL":
+                    layout.label(text="Procedural Bokeh")
+                    layout.prop(settings, "Effects_Bokeh_Procedural_Flaps")
+                    layout.prop(settings, "Effects_Bokeh_Procedural_Angle")
+                    layout.prop(settings, "Effects_Bokeh_Procedural_Rounding")
+                    layout.prop(settings, "Effects_Bokeh_Procedural_Catadioptric")
+                    layout.prop(settings, "Effects_Bokeh_Procedural_Shift")
+
             # Chromatic Aberration
             elif item.EffectGroup == "SAC_CHROMATICABERRATION":
                 layout.prop(settings, "Effects_ChromaticAberration_Amount")

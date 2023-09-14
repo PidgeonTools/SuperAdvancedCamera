@@ -57,6 +57,18 @@ def create_bokeh_group() -> NodeTree:
     # image node
     image_node = sac_bokeh_group.nodes.new("CompositorNodeImage")
     image_node.name = "SAC Effects_Bokeh_Image"
+    # image node
+    custom_node = sac_bokeh_group.nodes.new("CompositorNodeImage")
+    custom_node.name = "SAC Effects_Bokeh_Custom_Image"
+    # bokeh image node
+    bokeh_image_node = sac_bokeh_group.nodes.new("CompositorNodeBokehImage")
+    bokeh_image_node.name = "SAC Effects_Bokeh_Procedural"
+    # switch node
+    switch_node = sac_bokeh_group.nodes.new("CompositorNodeSwitch")
+    switch_node.name = "SAC Effects_Bokeh_Switch"
+    # switch node
+    switch_image_node = sac_bokeh_group.nodes.new("CompositorNodeSwitch")
+    switch_image_node.name = "SAC Effects_Bokeh_ImageSwitch"
     # rotate node
     rotate_node = sac_bokeh_group.nodes.new("CompositorNodeRotate")
     rotate_node.name = "SAC Effects_Bokeh_Rotation"
@@ -78,10 +90,18 @@ def create_bokeh_group() -> NodeTree:
     sac_bokeh_group.links.new(absolute_node.outputs[0], bokeh_blur_node.inputs[2])
     # link the input node to the bokeh blur node
     sac_bokeh_group.links.new(input_node.outputs[0], bokeh_blur_node.inputs[0])
-    # link the image node to the rotate node
-    sac_bokeh_group.links.new(image_node.outputs[0], rotate_node.inputs[0])
-    # link the rotate node to the bokeh blur node
-    sac_bokeh_group.links.new(rotate_node.outputs[0], bokeh_blur_node.inputs[1])
+    # link the image node to the switch image node
+    sac_bokeh_group.links.new(image_node.outputs[0], switch_image_node.inputs[0])
+    # link the custom node to the switch image node
+    sac_bokeh_group.links.new(custom_node.outputs[0], switch_image_node.inputs[1])
+    # link the switch image node to the rotate node
+    sac_bokeh_group.links.new(switch_image_node.outputs[0], rotate_node.inputs[0])
+    # link the rotate node to the switch node
+    sac_bokeh_group.links.new(rotate_node.outputs[0], switch_node.inputs[0])
+    # link the bokeh image node to the switch node
+    sac_bokeh_group.links.new(bokeh_image_node.outputs[0], switch_node.inputs[1])
+    # link the switch node to the bokeh blur node
+    sac_bokeh_group.links.new(switch_node.outputs[0], bokeh_blur_node.inputs[1])
     # link the bokeh blur node to the output node
     sac_bokeh_group.links.new(bokeh_blur_node.outputs[0], output_node.inputs[0])
 

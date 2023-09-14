@@ -21,6 +21,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+import os
 from bpy.types import (
     Context,
     Operator
@@ -58,19 +59,21 @@ class SAC_OT_AddEffect(Operator):
 
     def execute(self, context):
         item = context.scene.sac_effect_list.add()
-        new_item_type = context.scene.new_item_type
+        new_effect_type = context.scene.new_effect_type
         settings: SAC_Settings = context.scene.sac_settings
+
+        context.scene.view_layers["RenderLayer"].use_pass_z = True
 
         # Create the item_type_info dictionary from item_types
         item_type_info = {internal: (name, icon, internal) for internal, name, icon in settings.effect_types}
 
-        item.name, item.icon, item.EffectGroup = item_type_info.get(new_item_type, ('Untitled', 'NONE', ''))
+        item.name, item.icon, item.EffectGroup = item_type_info.get(new_effect_type, ('Untitled', 'NONE', ''))
         # Set the ID using the Scene property and increment it
         item.ID = str(context.scene.last_used_id).zfill(2)
         context.scene.last_used_id += 1
 
         # If the item is in array "slow", set the warning to True
-        item.warn = new_item_type in settings.slow_effects
+        item.warn = new_effect_type in settings.slow_effects
 
         context.scene.sac_effect_list_index = len(context.scene.sac_effect_list) - 1
         connect_renderLayer_node()
@@ -128,4 +131,26 @@ class SAC_OT_MoveEffectDown(Operator):
         list.move(index, index+1)
         context.scene.sac_effect_list_index = index + 1
         connect_renderLayer_node()
+        return {'FINISHED'}
+
+
+class SAC_OT_ApplyBokeh(Operator):
+    bl_idname = "sac_effect_list.apply_bokeh"
+    bl_label = "Apply selected Bokeh to the effect"
+    bl_description = ""
+
+    def execute(self, context: Context):
+
+        context.scene.view_layers["RenderLayer"].use_pass_z = True
+
+        bokeh_dir = os.path.join(os.path.dirname(__file__), "bokeh")
+        image_path = os.path.join(bokeh_dir, f"{context.scene.new_bokeh_type}.jpg")
+        image = bpy.data.images.load(image_path)
+
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Image"].image = image
+
         return {'FINISHED'}

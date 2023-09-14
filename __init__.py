@@ -31,6 +31,7 @@ from .SAC_Operators import (
     SAC_OT_RemoveEffect,
     SAC_OT_MoveEffectUp,
     SAC_OT_MoveEffectDown,
+    SAC_OT_ApplyBokeh,
 )
 
 from .SAC_List import (
@@ -65,7 +66,7 @@ from .SAC_Settings import (
 bl_info = {
     "name": "Super Advanced Camera (SAC)",
     "author": "Kevin Lorengel, Slinc",
-    "version": (0, 1, 0),
+    "version": (0, 1, 1),
     "blender": (3, 6, 0),
     "description": "Adds plenty of new features to the camera and compositor",
     "warning": "",
@@ -101,39 +102,71 @@ classes = (
     SAC_OT_RemoveEffect,
     SAC_OT_MoveEffectUp,
     SAC_OT_MoveEffectDown,
+    SAC_OT_ApplyBokeh,
 
     SAC_Settings
 )
 
 
-def load_previews():
-    pcoll = bpy.utils.previews.new()
+def load_effect_previews():
+    pcoll_effects = bpy.utils.previews.new()
     my_icons_dir = os.path.join(os.path.dirname(__file__), "icons")
 
     for item_type, _, _ in SAC_Settings.effect_types:
         icon_path = os.path.join(my_icons_dir, f"{item_type}.png")
-        pcoll.load(item_type, icon_path, 'IMAGE')
+        pcoll_effects.load(item_type, icon_path, 'IMAGE')
 
-    return pcoll
+    return pcoll_effects
 
 
-def enum_previews_from_directory_items(self, context):
+def load_bokeh_previews():
+    pcoll_bokeh = bpy.utils.previews.new()
+    my_icons_dir = os.path.join(os.path.dirname(__file__), "bokeh")
+
+    for item_type, _ in SAC_Settings.bokeh_types:
+        icon_path = os.path.join(my_icons_dir, f"{item_type}.jpg")
+        pcoll_bokeh.load(item_type, icon_path, 'IMAGE')
+
+    return pcoll_bokeh
+
+
+def enum_previews_from_directory_effects(self, context):
     """Dynamic list of available previews."""
     enum_items = []
 
     if context is None:
         return enum_items
 
-    pcoll = bpy.types.Scene.previews
+    pcoll_effects = bpy.types.Scene.effect_previews
     for i, (item_type, name, _) in enumerate(SAC_Settings.effect_types):
-        icon = pcoll[item_type].icon_id
+        icon = pcoll_effects[item_type].icon_id
         enum_items.append((item_type, name, "", icon, i))
 
     return enum_items
 
 
-bpy.types.Scene.new_item_type = bpy.props.EnumProperty(
-    items=enum_previews_from_directory_items,
+bpy.types.Scene.new_effect_type = bpy.props.EnumProperty(
+    items=enum_previews_from_directory_effects,
+)
+
+
+def enum_previews_from_directory_bokeh(self, context):
+    """Dynamic list of available previews."""
+    enum_items = []
+
+    if context is None:
+        return enum_items
+
+    pcoll_bokeh = bpy.types.Scene.bokeh_previews
+    for i, (item_type, name) in enumerate(SAC_Settings.bokeh_types):
+        icon = pcoll_bokeh[item_type].icon_id
+        enum_items.append((item_type, name, "", icon, i))
+
+    return enum_items
+
+
+bpy.types.Scene.new_bokeh_type = bpy.props.EnumProperty(
+    items=enum_previews_from_directory_bokeh,
 )
 
 
@@ -146,7 +179,8 @@ def register():
     bpy.types.Scene.last_used_id = bpy.props.IntProperty(name="Last Used ID", default=0)
     bpy.types.Scene.sac_effect_list = bpy.props.CollectionProperty(type=SAC_EffectList)
     bpy.types.Scene.sac_effect_list_index = bpy.props.IntProperty(name="Index for sac_effect_list", default=0, update=SAC_Panel.active_effect_update)
-    bpy.types.Scene.previews = load_previews()
+    bpy.types.Scene.effect_previews = load_effect_previews()
+    bpy.types.Scene.bokeh_previews = load_bokeh_previews()
 
 
 def unregister():
@@ -159,7 +193,8 @@ def unregister():
     del bpy.types.Scene.sac_effect_list_index
     del bpy.types.Scene.last_used_id
 
-    bpy.utils.previews.remove(bpy.types.Scene.previews)
+    bpy.utils.previews.remove(bpy.types.Scene.effect_previews)
+    bpy.utils.previews.remove(bpy.types.Scene.bokeh_previews)
 
 
 if __name__ == "__main__":
