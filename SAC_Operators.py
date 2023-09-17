@@ -62,7 +62,9 @@ class SAC_OT_AddEffect(Operator):
         new_effect_type = context.scene.new_effect_type
         settings: SAC_Settings = context.scene.sac_settings
 
-        context.scene.view_layers["RenderLayer"].use_pass_z = True
+        # for each view layer, enable the Z pass
+        for view_layer in context.scene.view_layers:
+            view_layer.use_pass_z = True
 
         # Create the item_type_info dictionary from item_types
         item_type_info = {internal: (name, icon, internal) for internal, name, icon in settings.effect_types}
@@ -140,8 +142,6 @@ class SAC_OT_ApplyBokeh(Operator):
     bl_description = ""
 
     def execute(self, context: Context):
-
-        context.scene.view_layers["RenderLayer"].use_pass_z = True
 
         bokeh_dir = os.path.join(os.path.dirname(__file__), "bokeh")
         image_path = os.path.join(bokeh_dir, f"{context.scene.new_bokeh_type}.jpg")
