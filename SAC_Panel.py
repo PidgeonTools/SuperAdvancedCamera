@@ -512,6 +512,7 @@ class SAC_PT_EFFECTS_Color_Panel(SAC_PT_Panel, Panel):
 
 # endregion Effects
 
+# region Camera
 # Camera
 class SAC_PT_CAMERA_Panel(SAC_PT_Panel, Panel):
     bl_label = "Camera"
@@ -527,7 +528,7 @@ class SAC_PT_CAMERA_Panel(SAC_PT_Panel, Panel):
 
 # Tilt Shift
 class SAC_PT_CAMERA_TiltShift_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Tilt Shift (coming soon)"
+    bl_label = "Lens Settings"
     bl_parent_id = "SAC_PT_CAMERA_Panel"
 
     def draw_header(self, context: Context):
@@ -538,9 +539,36 @@ class SAC_PT_CAMERA_TiltShift_Panel(SAC_PT_Panel, Panel):
         layout = self.layout
         settings = context.scene.sac_settings
 
-        layout.prop(settings, "Camera_TiltShift_AmountX")
-        layout.prop(settings, "Camera_TiltShift_AmountY")
-        layout.label(text="(it's buggy and I don't know how to do it properly)")
+        active_obj = bpy.context.view_layer.objects.active
+        if active_obj and active_obj.type == 'CAMERA':
+            camera = active_obj
+            camera_object = bpy.data.objects[camera.name]
+            camera_data = bpy.data.cameras[camera_object.data.name]
+
+            if settings.Camera_TiltShift_KeepFrame == True:
+                shift_x_text = "Vertical Tilt Shift"
+                shift_y_text = "Horizontal Tilt Shift"
+            else:
+                shift_x_text = "Vertical Lens Shift"
+                shift_y_text = "Horizontal Lens Shift"
+
+            layout_shift = layout.column(align=False)
+            layout_shift.prop(settings, "Camera_TiltShift_AmountX", text=shift_x_text)
+            layout_shift.prop(settings, "Camera_TiltShift_AmountY", text=shift_y_text)
+            layout_shift.prop(settings, "Camera_TiltShift_KeepFrame")
+            layout.separator()
+
+            layout_focal = layout.column(align=True)
+            layout_focal.prop(camera_data, "lens")
+            layout_focal.prop(camera_data, "angle")
+            layout.separator()
+
+            layout_clip = layout.column(align=True)
+            layout_clip.prop(camera_data, "clip_start", text="Min. Visible Distance")
+            layout_clip.prop(camera_data, "clip_end", text="Max. Visible Distance")
+        else:
+            layout.label(text="No camera selected.")
+
 
 # Bokeh
 
@@ -558,3 +586,4 @@ class SAC_PT_CAMERA_Bokeh_Panel(SAC_PT_Panel, Panel):
         settings = context.scene.sac_settings
 
         layout.label(text="This effect is very resource demanding, it might not get viewport support")
+# endregion Camera
