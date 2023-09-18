@@ -62,6 +62,10 @@ from .Effects.Viginette import create_viginette_group
 from .Effects.Warp import create_warp_group
 
 
+def link_nodes(node_tree, node1, node1_output, node2, node2_input):
+    node_tree.links.new(node1.outputs[node1_output], node2.inputs[node2_input])
+
+
 def create_main_group() -> NodeTree:
 
     # Create the links

@@ -32,6 +32,7 @@ from .SAC_Operators import (
     SAC_OT_MoveEffectUp,
     SAC_OT_MoveEffectDown,
     SAC_OT_ApplyBokeh,
+    SAC_OT_ApplyCameraBokeh,
 )
 
 from .SAC_List import (
@@ -66,7 +67,7 @@ from .SAC_Settings import (
 bl_info = {
     "name": "Super Advanced Camera (SAC)",
     "author": "Kevin Lorengel, Slinc",
-    "version": (0, 1, 2),
+    "version": (0, 1, 3),
     "blender": (3, 6, 0),
     "description": "Adds plenty of new features to the camera and compositor",
     "warning": "",
@@ -103,6 +104,7 @@ classes = (
     SAC_OT_MoveEffectUp,
     SAC_OT_MoveEffectDown,
     SAC_OT_ApplyBokeh,
+    SAC_OT_ApplyCameraBokeh,
 
     SAC_Settings
 )
@@ -166,6 +168,10 @@ def enum_previews_from_directory_bokeh(self, context):
 
 
 bpy.types.Scene.new_bokeh_type = bpy.props.EnumProperty(
+    items=enum_previews_from_directory_bokeh,
+)
+
+bpy.types.Scene.new_camera_bokeh_type = bpy.props.EnumProperty(
     items=enum_previews_from_directory_bokeh,
 )
 

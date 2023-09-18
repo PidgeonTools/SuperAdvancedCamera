@@ -2118,4 +2118,119 @@ class SAC_Settings(PropertyGroup):
         set=set_Camera_Shift_AmountY,
     )
 
+    # bokeh
+
+    def update_Camera_Bokeh_Scale(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+
+        active_obj = bpy.context.view_layer.objects.active
+        if active_obj and active_obj.type == 'CAMERA':
+            camera = active_obj
+
+        material = bpy.data.materials[f".{camera.name}_Bokeh_Plane_Material"]
+        material_node_tree = material.node_tree
+        material_node_tree.nodes["SAC Camera_Bokeh_Scale"].inputs["Scale"].default_value = settings.Camera_Bokeh_Scale
+
+    Camera_Bokeh_Scale: FloatProperty(
+        name="Scale",
+        default=2,
+        soft_max=30,
+        min=0,
+        subtype="FACTOR",
+        update=update_Camera_Bokeh_Scale
+    )
+
+    def update_Camera_Bokeh_Rotation(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+
+        active_obj = bpy.context.view_layer.objects.active
+        if active_obj and active_obj.type == 'CAMERA':
+            camera = active_obj
+
+        material = bpy.data.materials[f".{camera.name}_Bokeh_Plane_Material"]
+        material_node_tree = material.node_tree
+        material_node_tree.nodes["SAC Camera_Bokeh_Rotate"].inputs["Angle"].default_value = settings.Camera_Bokeh_Rotation
+
+    Camera_Bokeh_Rotation: FloatProperty(
+        name="Rotation",
+        default=0,
+        subtype="ANGLE",
+        update=update_Camera_Bokeh_Rotation
+    )
+
+    def update_Camera_Bokeh_Curves(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+
+        active_obj = bpy.context.view_layer.objects.active
+        if active_obj and active_obj.type == 'CAMERA':
+            camera = active_obj
+
+        material = bpy.data.materials[f".{camera.name}_Bokeh_Plane_Material"]
+        material_node_tree = material.node_tree
+        material_node_tree.nodes["SAC Camera_Bokeh_Curves"].inputs[0].default_value = settings.Camera_Bokeh_Curves
+
+    Camera_Bokeh_Curves: FloatProperty(
+        name="Exposure Compensation",
+        default=1,
+        max=1,
+        min=0,
+        subtype="FACTOR",
+        update=update_Camera_Bokeh_Curves
+    )
+
+    def update_Camera_Bokeh_Type(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+
+        active_obj = bpy.context.view_layer.objects.active
+        if active_obj and active_obj.type == 'CAMERA':
+            camera = active_obj
+            camera_object = bpy.data.objects[camera.name]
+            camera_data = bpy.data.cameras[camera_object.data.name]
+
+        material = bpy.data.materials[f".{camera.name}_Bokeh_Plane_Material"]
+        material_node_tree = material.node_tree
+
+        bokeh_plane = bpy.data.objects[f"{camera.name}_Bokeh_Plane"]
+
+        bokeh_plane.hide_viewport = False
+        bokeh_plane.hide_render = False
+
+        if settings.Camera_Bokeh_Type == 'CAMERA':
+            material_node_tree.nodes["SAC Camera_Bokeh_Switch"].mute = True
+            camera_data.dof.aperture_blades = 0
+            camera_data.dof.aperture_ratio = 1
+        elif settings.Camera_Bokeh_Type == 'CUSTOM':
+            material_node_tree.nodes["SAC Camera_Bokeh_Switch"].mute = False
+            camera_data.dof.aperture_blades = 0
+            camera_data.dof.aperture_ratio = 1
+        elif settings.Camera_Bokeh_Type == 'PROCEDURAL':
+            bokeh_plane.hide_viewport = True
+            bokeh_plane.hide_render = True
+
+    Camera_Bokeh_Type: EnumProperty(
+        name="Bokeh Type",
+        items=(
+            (
+                'CAMERA',
+                'Camera',
+                'A real camera bokeh image',
+            ),
+            (
+                'PROCEDURAL',
+                'Procedural',
+                'A procedurally generated bokeh',
+            ),
+            (
+                'CUSTOM',
+                'Custom',
+                'A custom bokeh image of your choice',
+            ),
+        ),
+        default='CAMERA',
+        update=update_Camera_Bokeh_Type
+    )
     # endregion Camera
