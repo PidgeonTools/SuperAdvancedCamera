@@ -270,7 +270,7 @@ class SAC_PT_EFFECTS_Color_Panel(SAC_PT_Panel, Panel):
                 layout_bokeh_type = layout.row(align=True)
                 layout_bokeh_type.prop(settings, "Effects_Bokeh_Type", expand=True)
 
-                if settings.Effects_Bokeh_Type == "CAMERA":
+                if settings.effects_Bokeh_Type == "CAMERA":
                     layout.label(text="Camera Bokeh")
                     layout.template_icon_view(context.scene, "new_bokeh_type", show_labels=True, scale=8.0, scale_popup=4.0)
                     layout.prop(settings, "Effects_Bokeh_Rotation")
@@ -281,13 +281,13 @@ class SAC_PT_EFFECTS_Color_Panel(SAC_PT_Panel, Panel):
                     layout.label(text="Special thanks to Prof. Dr. Matt Gunn for the Bokeh textures.")
                     layout.operator("sac_effect_list.apply_bokeh", icon="SEQ_CHROMA_SCOPE")
 
-                elif settings.Effects_Bokeh_Type == "CUSTOM":
+                elif settings.effects_Bokeh_Type == "CUSTOM":
                     layout.label(text="Custom Bokeh")
                     bokeh_image = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Custom_Image"]
                     layout.template_ID(bokeh_image, "image", open="image.open")
                     layout.prop(settings, "Effects_Bokeh_Rotation")
 
-                elif settings.Effects_Bokeh_Type == "PROCEDURAL":
+                elif settings.effects_Bokeh_Type == "PROCEDURAL":
                     layout.label(text="Procedural Bokeh")
                     layout.prop(settings, "Effects_Bokeh_Procedural_Flaps")
                     layout.prop(settings, "Effects_Bokeh_Procedural_Angle")

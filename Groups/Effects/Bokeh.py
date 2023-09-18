@@ -58,7 +58,6 @@ def create_bokeh_group() -> NodeTree:
     image_node.name = "SAC Effects_Bokeh_Image"
 
     custom_node = sac_bokeh_group.nodes.new("CompositorNodeImage")
-    custom_node.image = load_image_once(os.path.join(os.path.join(os.path.dirname(__file__), "bokeh"), "PidgeonTools.png"), "PidgeonTools.png")
     custom_node.name = "SAC Effects_Bokeh_Custom_Image"
 
     bokeh_image_node = sac_bokeh_group.nodes.new("CompositorNodeBokehImage")

@@ -27,7 +27,7 @@ from bpy.types import (
     Context,
     Operator
 )
-from .Groups.SuperAdvancedCamera import connect_renderLayer_node
+from .groups.SuperAdvancedCamera import connect_renderLayer_node
 from .SAC_Settings import SAC_Settings
 from .SAC_Functions import link_nodes, load_image_once, create_dot_texture
 
