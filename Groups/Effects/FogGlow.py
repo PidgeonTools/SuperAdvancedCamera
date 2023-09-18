@@ -22,6 +22,7 @@
 
 import bpy
 from bpy.types import NodeTree
+from ...SAC_Functions import link_nodes
 
 
 def create_fogglow_group() -> NodeTree:
@@ -29,37 +30,30 @@ def create_fogglow_group() -> NodeTree:
     # Create the group
     sac_fogglow_group: NodeTree = bpy.data.node_groups.new(name=".SAC FogGlow", type="CompositorNodeTree")
 
-    # Create the input and output nodes
     input_node = sac_fogglow_group.nodes.new("NodeGroupInput")
     output_node = sac_fogglow_group.nodes.new("NodeGroupOutput")
 
-    # Add the input and output sockets
     sac_fogglow_group.inputs.new("NodeSocketColor", "Image")
     sac_fogglow_group.outputs.new("NodeSocketColor", "Image")
 
     # Create the nodes
-    # Glare node set to fog glow
     fogglow_node_1 = sac_fogglow_group.nodes.new("CompositorNodeGlare")
     fogglow_node_1.name = "SAC Effects_FogGlow"
     fogglow_node_1.glare_type = "FOG_GLOW"
     fogglow_node_1.quality = "HIGH"
     fogglow_node_1.mix = 1
     fogglow_node_1.size = 7
-    # Color Mix node named FogGlowStrength
+
     color_mix_node_1 = sac_fogglow_group.nodes.new("CompositorNodeMixRGB")
     color_mix_node_1.name = "SAC Effects_FogGlowStrength"
     color_mix_node_1.blend_type = "ADD"
     color_mix_node_1.inputs[0].default_value = 0
 
     # Create the links
-    # link the input node to the fogglow node 1
-    sac_fogglow_group.links.new(input_node.outputs[0], fogglow_node_1.inputs[0])
-    # link the input node to the color mix node 1
-    sac_fogglow_group.links.new(input_node.outputs[0], color_mix_node_1.inputs[1])
-    # link the fogglow node 1 to the color mix node 1
-    sac_fogglow_group.links.new(fogglow_node_1.outputs[0], color_mix_node_1.inputs[2])
-    # link the color mix node 1 to the output node
-    sac_fogglow_group.links.new(color_mix_node_1.outputs[0], output_node.inputs[0])
+    link_nodes(sac_fogglow_group, input_node, 0, fogglow_node_1, 0)
+    link_nodes(sac_fogglow_group, input_node, 0, color_mix_node_1, 1)
+    link_nodes(sac_fogglow_group, fogglow_node_1, 0, color_mix_node_1, 2)
+    link_nodes(sac_fogglow_group, color_mix_node_1, 0, output_node, 0)
 
     # return
     return sac_fogglow_group

@@ -22,6 +22,7 @@
 
 import bpy
 from bpy.types import NodeTree
+from ...SAC_Functions import link_nodes
 
 
 def create_ghost_group() -> NodeTree:
@@ -29,36 +30,29 @@ def create_ghost_group() -> NodeTree:
     # Create the group
     sac_ghost_group: NodeTree = bpy.data.node_groups.new(name=".SAC Ghost", type="CompositorNodeTree")
 
-    # Create the input and output nodes
     input_node = sac_ghost_group.nodes.new("NodeGroupInput")
     output_node = sac_ghost_group.nodes.new("NodeGroupOutput")
 
-    # Add the input and output sockets
     sac_ghost_group.inputs.new("NodeSocketColor", "Image")
     sac_ghost_group.outputs.new("NodeSocketColor", "Image")
 
     # Create the nodes
-    # Glare node set to ghosts
     ghost_node_3 = sac_ghost_group.nodes.new("CompositorNodeGlare")
     ghost_node_3.name = "SAC Effects_Ghosts"
     ghost_node_3.glare_type = "GHOSTS"
     ghost_node_3.quality = "HIGH"
     ghost_node_3.mix = 1
-    # Color Mix node named GhostsStrength
+
     color_mix_node_3 = sac_ghost_group.nodes.new("CompositorNodeMixRGB")
     color_mix_node_3.name = "SAC Effects_GhostsStrength"
     color_mix_node_3.blend_type = "ADD"
     color_mix_node_3.inputs[0].default_value = 0
 
     # Create the links
-    # link the input node to the ghost node 3
-    sac_ghost_group.links.new(input_node.outputs[0], ghost_node_3.inputs[0])
-    # link the input node to the color mix node 3
-    sac_ghost_group.links.new(input_node.outputs[0], color_mix_node_3.inputs[1])
-    # link the ghost node 3 to the color mix node 3
-    sac_ghost_group.links.new(ghost_node_3.outputs[0], color_mix_node_3.inputs[2])
-    # link the color mix node 3 to the output node
-    sac_ghost_group.links.new(color_mix_node_3.outputs[0], output_node.inputs[0])
+    link_nodes(sac_ghost_group, input_node, 0, ghost_node_3, 0)
+    link_nodes(sac_ghost_group, input_node, 0, color_mix_node_3, 1)
+    link_nodes(sac_ghost_group, ghost_node_3, 0, color_mix_node_3, 2)
+    link_nodes(sac_ghost_group, color_mix_node_3, 0, output_node, 0)
 
     # return
     return sac_ghost_group

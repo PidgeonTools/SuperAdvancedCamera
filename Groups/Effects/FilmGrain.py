@@ -22,6 +22,7 @@
 
 import bpy
 from bpy.types import NodeTree
+from ...SAC_Functions import link_nodes
 
 
 def create_filmgrain_group() -> NodeTree:
@@ -29,61 +30,50 @@ def create_filmgrain_group() -> NodeTree:
     # Create the group
     sac_filmgrain_group: NodeTree = bpy.data.node_groups.new(name=".SAC FilmGrain", type="CompositorNodeTree")
 
-    # Create the input and output nodes
     input_node = sac_filmgrain_group.nodes.new("NodeGroupInput")
     output_node = sac_filmgrain_group.nodes.new("NodeGroupOutput")
 
-    # Add the input and output sockets
     sac_filmgrain_group.inputs.new("NodeSocketColor", "Image")
     sac_filmgrain_group.outputs.new("NodeSocketColor", "Image")
 
     # Create the nodes
-    # math add node, second value 1, clamped
     add_node = sac_filmgrain_group.nodes.new("CompositorNodeMath")
     add_node.operation = "ADD"
     add_node.use_clamp = True
     add_node.inputs[1].default_value = 1
-    # Lens Distortion node, jitter enabled, distortion 0.0001
+
     lens_distortion_node = sac_filmgrain_group.nodes.new("CompositorNodeLensdist")
     lens_distortion_node.use_jitter = True
     lens_distortion_node.inputs[1].default_value = 0.00001
-    # RGB to BW
+
     rgb_to_bw_node = sac_filmgrain_group.nodes.new("CompositorNodeRGBToBW")
-    # math subtract node, first value 1, clamped
+
     math_subtract_node = sac_filmgrain_group.nodes.new("CompositorNodeMath")
     math_subtract_node.operation = "SUBTRACT"
     math_subtract_node.use_clamp = True
     math_subtract_node.inputs[0].default_value = 1
-    # Bilateral Blur node, iterations 5, color sigma 0.4, space sigma 1
+
     bilateral_blur_node = sac_filmgrain_group.nodes.new("CompositorNodeBilateralblur")
     bilateral_blur_node.iterations = 5
     bilateral_blur_node.sigma_color = 0.4
     bilateral_blur_node.sigma_space = 1
     bilateral_blur_node.name = "SAC Effects_FilmGrain_Blur"
-    # color screen node
+
     color_screen_node = sac_filmgrain_group.nodes.new("CompositorNodeMixRGB")
     color_screen_node.blend_type = "SCREEN"
     color_screen_node.name = "SAC Effects_FilmGrain_Strength"
     color_screen_node.inputs[0].default_value = 0
 
     # Create the links
-    # input node to add node
-    sac_filmgrain_group.links.new(input_node.outputs[0], add_node.inputs[0])
-    # add node to lens distortion node
-    sac_filmgrain_group.links.new(add_node.outputs[0], lens_distortion_node.inputs[0])
-    # lens distortion node to rgb to bw node
-    sac_filmgrain_group.links.new(lens_distortion_node.outputs[0], rgb_to_bw_node.inputs[0])
-    # rgb to bw node to math subtract node
-    sac_filmgrain_group.links.new(rgb_to_bw_node.outputs[0], math_subtract_node.inputs[1])
-    # math subtract node to bilateral blur node
-    sac_filmgrain_group.links.new(math_subtract_node.outputs[0], bilateral_blur_node.inputs[0])
-    sac_filmgrain_group.links.new(math_subtract_node.outputs[0], bilateral_blur_node.inputs[1])
-    # bilateral blur node to color screen node
-    sac_filmgrain_group.links.new(bilateral_blur_node.outputs[0], color_screen_node.inputs[2])
-    # input node to color screen node
-    sac_filmgrain_group.links.new(input_node.outputs[0], color_screen_node.inputs[1])
-    # color screen node to output node
-    sac_filmgrain_group.links.new(color_screen_node.outputs[0], output_node.inputs[0])
+    link_nodes(sac_filmgrain_group, input_node, 0, add_node, 0)
+    link_nodes(sac_filmgrain_group, add_node, 0, lens_distortion_node, 0)
+    link_nodes(sac_filmgrain_group, lens_distortion_node, 0, rgb_to_bw_node, 0)
+    link_nodes(sac_filmgrain_group, rgb_to_bw_node, 0, math_subtract_node, 1)
+    link_nodes(sac_filmgrain_group, math_subtract_node, 0, bilateral_blur_node, 0)
+    link_nodes(sac_filmgrain_group, math_subtract_node, 0, bilateral_blur_node, 1)
+    link_nodes(sac_filmgrain_group, bilateral_blur_node, 0, color_screen_node, 2)
+    link_nodes(sac_filmgrain_group, input_node, 0, color_screen_node, 1)
+    link_nodes(sac_filmgrain_group, color_screen_node, 0, output_node, 0)
 
     # return
     return sac_filmgrain_group

@@ -22,6 +22,7 @@
 
 import bpy
 from bpy.types import NodeTree
+from ...SAC_Functions import link_nodes
 
 
 def create_streaks_group() -> NodeTree:
@@ -29,39 +30,31 @@ def create_streaks_group() -> NodeTree:
     # Create the group
     sac_streaks_group: NodeTree = bpy.data.node_groups.new(name=".SAC Streaks", type="CompositorNodeTree")
 
-    # Create the input and output nodes
     input_node = sac_streaks_group.nodes.new("NodeGroupInput")
     output_node = sac_streaks_group.nodes.new("NodeGroupOutput")
 
-    # Add the input and output sockets
     sac_streaks_group.inputs.new("NodeSocketColor", "Image")
     sac_streaks_group.outputs.new("NodeSocketColor", "Image")
 
     # Create the nodes
-    # Glare node set to streaks
     streaks_node_2 = sac_streaks_group.nodes.new("CompositorNodeGlare")
     streaks_node_2.name = "SAC Effects_Streaks"
     streaks_node_2.glare_type = "STREAKS"
     streaks_node_2.quality = "HIGH"
     streaks_node_2.mix = 1
     streaks_node_2.streaks = 6
-    streaks_node_2.angle_offset = 0.1963495  # 11.25 degrees
+    streaks_node_2.angle_offset = 0.1963495
     streaks_node_2.fade = 0.85
-    # Color Mix node named StreaksStrength
+
     color_mix_node_2 = sac_streaks_group.nodes.new("CompositorNodeMixRGB")
     color_mix_node_2.name = "SAC Effects_StreaksStrength"
     color_mix_node_2.blend_type = "ADD"
     color_mix_node_2.inputs[0].default_value = 0
 
     # Create the links
-    # link the input node to the streaks node 2
-    sac_streaks_group.links.new(input_node.outputs[0], streaks_node_2.inputs[0])
-    # link the input to the color mix node 2
-    sac_streaks_group.links.new(input_node.outputs[0], color_mix_node_2.inputs[1])
-    # link the streaks node 2 to the color mix node 2
-    sac_streaks_group.links.new(streaks_node_2.outputs[0], color_mix_node_2.inputs[2])
-    # link the color mix node 2 to the output node
-    sac_streaks_group.links.new(color_mix_node_2.outputs[0], output_node.inputs[0])
+    link_nodes(sac_streaks_group, input_node, 0, streaks_node_2, 0)
+    link_nodes(sac_streaks_group, input_node, 0, color_mix_node_2, 1)
+    link_nodes(sac_streaks_group, streaks_node_2, 0, color_mix_node_2, 2)
+    link_nodes(sac_streaks_group, color_mix_node_2, 0, output_node, 0)
 
-    # return
     return sac_streaks_group

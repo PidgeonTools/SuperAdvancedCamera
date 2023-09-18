@@ -22,6 +22,7 @@
 
 import bpy
 from bpy.types import NodeTree
+from ...SAC_Functions import link_nodes
 
 
 def create_gradientmap_group() -> NodeTree:
@@ -29,32 +30,25 @@ def create_gradientmap_group() -> NodeTree:
     # Create the group
     sac_gradientmap_group: NodeTree = bpy.data.node_groups.new(name=".SAC GradientMap", type="CompositorNodeTree")
 
-    # Create the input and output nodes
     input_node = sac_gradientmap_group.nodes.new("NodeGroupInput")
     output_node = sac_gradientmap_group.nodes.new("NodeGroupOutput")
 
-    # Add the input and output sockets
     sac_gradientmap_group.inputs.new("NodeSocketColor", "Image")
     sac_gradientmap_group.outputs.new("NodeSocketColor", "Image")
 
     # Create the nodes
-    # color ramp node
     gradientmap_node = sac_gradientmap_group.nodes.new("CompositorNodeValToRGB")
     gradientmap_node.name = "SAC Effects_GradientMap"
-    # color mix node
+
     colormix_node = sac_gradientmap_group.nodes.new("CompositorNodeMixRGB")
     colormix_node.name = "SAC Effects_GradientMap_Mix"
     colormix_node.inputs[0].default_value = 0
 
     # Create the links
-    # Link the input node to the color ramp node
-    sac_gradientmap_group.links.new(input_node.outputs[0], gradientmap_node.inputs[0])
-    # Link the color ramp node to the color mix node
-    sac_gradientmap_group.links.new(gradientmap_node.outputs[0], colormix_node.inputs[2])
-    # link the input node to the color mix node
-    sac_gradientmap_group.links.new(input_node.outputs[0], colormix_node.inputs[1])
-    # link the color mix node to the output node
-    sac_gradientmap_group.links.new(colormix_node.outputs[0], output_node.inputs[0])
+    link_nodes(sac_gradientmap_group, input_node, 0, gradientmap_node, 0)
+    link_nodes(sac_gradientmap_group, gradientmap_node, 0, colormix_node, 2)
+    link_nodes(sac_gradientmap_group, input_node, 0, colormix_node, 1)
+    link_nodes(sac_gradientmap_group, colormix_node, 0, output_node, 0)
 
     # return
     return sac_gradientmap_group
