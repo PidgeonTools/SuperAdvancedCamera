@@ -151,7 +151,7 @@ class SAC_OT_ApplyBokeh(Operator):
 
 class SAC_OT_ApplyCameraBokeh(Operator):
     bl_idname = "sac_camera_bokeh.apply_bokeh"
-    bl_label = "Apply selected Bokeh to the camera"
+    bl_label = "Apply Bokeh"
     bl_description = ""
 
     def execute(self, context: Context):

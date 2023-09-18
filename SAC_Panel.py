@@ -481,6 +481,14 @@ class SAC_PT_CAMERA_Bokeh_Panel(SAC_PT_Panel, Panel):
         layout.prop(camera_data.dof, "focus_distance")
         layout.prop(camera_data.dof, "aperture_fstop")
         layout.separator()
+        layout.operator("sac_camera_bokeh.apply_bokeh", icon="SEQ_CHROMA_SCOPE")
+        try:
+            plane_object = bpy.data.objects[f"{camera.name}_Bokeh_Plane"]
+        except:
+            layout.label(text="No Bokeh Plane found.")
+            layout.label(text="Please apply Bokeh first.")
+            return
+        layout.separator()
         layout.label(text="Bokeh Type")
         layout_bokeh_type = layout.row(align=True)
         layout_bokeh_type.prop(settings, "Camera_Bokeh_Type", expand=True)
@@ -492,7 +500,6 @@ class SAC_PT_CAMERA_Bokeh_Panel(SAC_PT_Panel, Panel):
             layout.label(text="Model: " + bokeh_type[1] + " - " + bokeh_type[3] + " - " + bokeh_type[2])
             layout.label(text="Aperture: " + bokeh_type[4])
             layout.label(text="Special thanks to Prof. Dr. Matt Gunn for the Bokeh textures.")
-            layout.operator("sac_camera_bokeh.apply_bokeh", icon="SEQ_CHROMA_SCOPE")
             layout.separator()
             layout.prop(settings, "Camera_Bokeh_Scale")
             layout.prop(settings, "Camera_Bokeh_Rotation")
