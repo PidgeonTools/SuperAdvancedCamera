@@ -54,6 +54,7 @@ def create_vibrance_group() -> NodeTree:
     subtract_node_2 = sac_vibrance_group.nodes.new("CompositorNodeMath")
     subtract_node_2.operation = "SUBTRACT"
     subtract_node_2.inputs[0].default_value = 1
+    subtract_node_2.use_clamp = True
 
     divide_node = sac_vibrance_group.nodes.new("CompositorNodeMath")
     divide_node.operation = "DIVIDE"
