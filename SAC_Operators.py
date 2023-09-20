@@ -30,10 +30,11 @@ from bpy.types import (
 from .groups.SuperAdvancedCamera import connect_renderLayer_node
 from .SAC_Settings import SAC_Settings
 from .SAC_Functions import link_nodes, load_image_once, create_dot_texture
+from .filters.filter import get_filter
 
 
 class SAC_OT_Initialize(Operator):
-    bl_idname = "object.superadvancedcamerainit"
+    bl_idname = "superadvancedcamera.superadvancedcamerainit"
     bl_label = "Initialize Super Advanced Camera"
     bl_description = ""
 
@@ -44,8 +45,134 @@ class SAC_OT_Initialize(Operator):
         return {'FINISHED'}
 
 
+class SAC_OT_PreviousFilter(Operator):
+    bl_idname = "superadvancedcamera.previous_filter"
+    bl_label = ""
+    bl_description = ""
+
+    def execute(self, context: Context):
+        settings: SAC_Settings = context.scene.sac_settings
+
+        filters = []
+        filter_type_list = settings.filter_types
+        for index, filter_type in enumerate(filter_type_list):
+            filters.append(filter_type[0])
+
+        current_filter = context.scene.new_filter_type
+        index = filters.index(current_filter)
+
+        if index == 0:
+            context.scene.new_filter_type = filters[len(filters)-1]
+        else:
+            context.scene.new_filter_type = filters[index-1]
+
+        bpy.ops.superadvancedcamera.apply_filter()
+
+        return {'FINISHED'}
+
+
+class SAC_OT_NextFilter(Operator):
+    bl_idname = "superadvancedcamera.next_filter"
+    bl_label = ""
+    bl_description = ""
+
+    def execute(self, context: Context):
+        settings: SAC_Settings = context.scene.sac_settings
+
+        filters = []
+        filter_type_list = settings.filter_types
+        for index, filter_type in enumerate(filter_type_list):
+            filters.append(filter_type[0])
+
+        current_filter = context.scene.new_filter_type
+        index = filters.index(current_filter)
+
+        if index == len(filters)-1:
+            context.scene.new_filter_type = filters[0]
+        else:
+            context.scene.new_filter_type = filters[index+1]
+
+        bpy.ops.superadvancedcamera.apply_filter()
+
+        return {'FINISHED'}
+
+
+class SAC_OT_ApplyFilter(Operator):
+    bl_idname = "superadvancedcamera.apply_filter"
+    bl_label = "Apply Filter"
+    bl_description = ""
+
+    def execute(self, context: Context):
+        bpy.data.node_groups[".SAC Colorgrade"].nodes["SAC Filter"].mute = False
+
+        filter_channels = get_filter(context.scene.new_filter_type)
+        channels = [
+            bpy.data.node_groups[".SAC Filter"].nodes["SAC Colorgrade_Filter_Red"],
+            bpy.data.node_groups[".SAC Filter"].nodes["SAC Colorgrade_Filter_Green"],
+            bpy.data.node_groups[".SAC Filter"].nodes["SAC Colorgrade_Filter_Blue"]
+        ]
+
+        for channel, filter_channel in enumerate(filter_channels):
+            channel_node = channels[channel]
+            for curve, filter_curve in enumerate(filter_channel):
+                channel_mapping = channel_node.mapping.curves[curve]
+                for point, filter_point in enumerate(reversed(filter_curve)):
+                    channel_mapping.points[point].location = (point/(len(filter_curve)-1), filter_point)
+            channel_node.mapping.update()
+
+        return {'FINISHED'}
+
+
+class SAC_OT_PreviousEffect(Operator):
+    bl_idname = "superadvancedcamera.previous_effect"
+    bl_label = ""
+    bl_description = ""
+
+    def execute(self, context: Context):
+        settings: SAC_Settings = context.scene.sac_settings
+
+        effects = []
+        effect_type_list = settings.effect_types
+        for index, effect_type in enumerate(effect_type_list):
+            effects.append(effect_type[0])
+
+        current_effect = context.scene.new_effect_type
+        index = effects.index(current_effect)
+
+        if index == 0:
+            context.scene.new_effect_type = effects[len(effects)-1]
+        else:
+            context.scene.new_effect_type = effects[index-1]
+
+        return {'FINISHED'}
+
+
+class SAC_OT_NextEffect(Operator):
+    bl_idname = "superadvancedcamera.next_effect"
+    bl_label = ""
+    bl_description = ""
+
+    def execute(self, context: Context):
+        settings: SAC_Settings = context.scene.sac_settings
+
+        effects = []
+        effect_type_list = settings.effect_types
+        for index, effect_type in enumerate(effect_type_list):
+            effects.append(effect_type[0])
+
+        current_effect = context.scene.new_effect_type
+        index = effects.index(current_effect)
+
+        if index == len(effects)-1:
+            context.scene.new_effect_type = effects[0]
+        else:
+            context.scene.new_effect_type = effects[index+1]
+
+        return {'FINISHED'}
+
+
 class SAC_OT_AddEffect(Operator):
-    bl_idname = "sac_effect_list.add_effect"
+    bl_idname = "superadvancedcamera.add_effect"
     bl_label = "Add a new effect to the list"
 
     def execute(self, context):
@@ -74,7 +201,7 @@ class SAC_OT_AddEffect(Operator):
 
 
 class SAC_OT_RemoveEffect(Operator):
-    bl_idname = "sac_effect_list.remove_effect"
+    bl_idname = "superadvancedcamera.remove_effect"
     bl_label = "Remove the selected effect from the list"
 
     @classmethod
@@ -92,7 +219,7 @@ class SAC_OT_RemoveEffect(Operator):
 
 
 class SAC_OT_MoveEffectUp(Operator):
-    bl_idname = "sac_effect_list.move_effect_up"
+    bl_idname = "superadvancedcamera.move_effect_up"
     bl_label = "Move the selected effect up in the list"
 
     @classmethod
@@ -110,7 +237,7 @@ class SAC_OT_MoveEffectUp(Operator):
 
 
 class SAC_OT_MoveEffectDown(Operator):
-    bl_idname = "sac_effect_list.move_effect_down"
+    bl_idname = "superadvancedcamera.move_effect_down"
     bl_label = "Move the selected effect down in the list"
 
     @classmethod
@@ -127,8 +254,66 @@ class SAC_OT_MoveEffectDown(Operator):
         return {'FINISHED'}
 
 
+class SAC_OT_PreviousBokeh(Operator):
+    bl_idname = "superadvancedcamera.previous_effect_bokeh"
+    bl_label = ""
+    bl_description = ""
+
+    def execute(self, context: Context):
+        settings: SAC_Settings = context.scene.sac_settings
+
+        bokehs = []
+        bokeh_type_list = settings.bokeh_types
+        for index, bokeh_type in enumerate(bokeh_type_list):
+            bokehs.append(bokeh_type[0])
+
+        current_bokeh = context.scene.new_bokeh_type
+        index = bokehs.index(current_bokeh)
+
+        if index == 0:
+            context.scene.new_bokeh_type = bokehs[len(bokehs)-1]
+        else:
+            context.scene.new_bokeh_type = bokehs[index-1]
+
+        try:
+            bpy.ops.superadvancedcamera.apply_effect_bokeh()
+        except:
+            print("No camera selected")
+
+        return {'FINISHED'}
+
+
+class SAC_OT_NextBokeh(Operator):
+    bl_idname = "superadvancedcamera.next_effect_bokeh"
+    bl_label = ""
+    bl_description = ""
+
+    def execute(self, context: Context):
+        settings: SAC_Settings = context.scene.sac_settings
+
+        bokehs = []
+        bokeh_type_list = settings.bokeh_types
+        for index, bokeh_type in enumerate(bokeh_type_list):
+            bokehs.append(bokeh_type[0])
+
+        current_bokeh = context.scene.new_bokeh_type
+        index = bokehs.index(current_bokeh)
+
+        if index == len(bokehs)-1:
+            context.scene.new_bokeh_type = bokehs[0]
+        else:
+            context.scene.new_bokeh_type = bokehs[index+1]
+
+        try:
+            bpy.ops.superadvancedcamera.apply_effect_bokeh()
+        except:
+            print("No camera selected")
+
+        return {'FINISHED'}
+
+
 class SAC_OT_ApplyBokeh(Operator):
-    bl_idname = "sac_effect_list.apply_bokeh"
+    bl_idname = "superadvancedcamera.apply_effect_bokeh"
     bl_label = "Apply selected Bokeh to the effect"
     bl_description = ""
 
@@ -149,8 +334,66 @@ class SAC_OT_ApplyBokeh(Operator):
         return {'FINISHED'}
 
 
+class SAC_OT_PreviousCameraBokeh(Operator):
+    bl_idname = "superadvancedcamera.previous_camera_bokeh"
+    bl_label = ""
+    bl_description = ""
+
+    def execute(self, context: Context):
+        settings: SAC_Settings = context.scene.sac_settings
+
+        bokehs = []
+        bokeh_type_list = settings.bokeh_types
+        for index, bokeh_type in enumerate(bokeh_type_list):
+            bokehs.append(bokeh_type[0])
+
+        current_bokeh = context.scene.new_camera_bokeh_type
+        index = bokehs.index(current_bokeh)
+
+        if index == 0:
+            context.scene.new_camera_bokeh_type = bokehs[len(bokehs)-1]
+        else:
+            context.scene.new_camera_bokeh_type = bokehs[index-1]
+
+        try:
+            bpy.ops.superadvancedcamera.apply_camera_bokeh()
+        except:
+            print("No camera selected")
+
+        return {'FINISHED'}
+
+
+class SAC_OT_NextCameraBokeh(Operator):
+    bl_idname = "superadvancedcamera.next_camera_bokeh"
+    bl_label = ""
+    bl_description = ""
+
+    def execute(self, context: Context):
+        settings: SAC_Settings = context.scene.sac_settings
+
+        bokehs = []
+        bokeh_type_list = settings.bokeh_types
+        for index, bokeh_type in enumerate(bokeh_type_list):
+            bokehs.append(bokeh_type[0])
+
+        current_bokeh = context.scene.new_camera_bokeh_type
+        index = bokehs.index(current_bokeh)
+
+        if index == len(bokehs)-1:
+            context.scene.new_camera_bokeh_type = bokehs[0]
+        else:
+            context.scene.new_camera_bokeh_type = bokehs[index+1]
+
+        try:
+            bpy.ops.superadvancedcamera.apply_camera_bokeh()
+        except:
+            print("No camera selected")
+
+        return {'FINISHED'}
+
+
 class SAC_OT_ApplyCameraBokeh(Operator):
-    bl_idname = "sac_camera_bokeh.apply_bokeh"
+    bl_idname = "superadvancedcamera.apply_camera_bokeh"
     bl_label = "Apply Bokeh"
     bl_description = ""
 
@@ -274,3 +517,37 @@ class SAC_OT_ApplyCameraBokeh(Operator):
             link_nodes(material_node_tree, transparent_bsdf_node, 0, material_output_node, 0)
 
         return {'FINISHED'}
+
+
+classes = (
+    SAC_OT_Initialize,
+    SAC_OT_PreviousFilter,
+    SAC_OT_NextFilter,
+    SAC_OT_ApplyFilter,
+    SAC_OT_PreviousEffect,
+    SAC_OT_NextEffect,
+    SAC_OT_AddEffect,
+    SAC_OT_RemoveEffect,
+    SAC_OT_MoveEffectUp,
+    SAC_OT_MoveEffectDown,
+    SAC_OT_PreviousBokeh,
+    SAC_OT_NextBokeh,
+    SAC_OT_ApplyBokeh,
+    SAC_OT_NextCameraBokeh,
+    SAC_OT_PreviousCameraBokeh,
+    SAC_OT_ApplyCameraBokeh
+)
+
+
+def register_function():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+
+def unregister_function():
+    for cls in reversed(classes):
+        if hasattr(bpy.types, cls.__name__):
+            try:
+                bpy.utils.unregister_class(cls)
+            except (RuntimeError, Exception) as e:
+                print(f"Failed to unregister {cls}: {e}")

@@ -25,49 +25,19 @@ import bpy.utils.previews
 
 import os
 
-from .SAC_Operators import (
-    SAC_OT_Initialize,
-    SAC_OT_AddEffect,
-    SAC_OT_RemoveEffect,
-    SAC_OT_MoveEffectUp,
-    SAC_OT_MoveEffectDown,
-    SAC_OT_ApplyBokeh,
-    SAC_OT_ApplyCameraBokeh,
-)
 
-from .SAC_List import (
-    SAC_EffectList,
-    SAC_UL_List
-)
-
-from .SAC_Panel import (
-    SAC_PT_SAC_Panel,
-
-    SAC_PT_List,
-
-    SAC_PT_COLORGRADE_Panel,
-    SAC_PT_COLORGRADE_Color_Panel,
-    SAC_PT_COLORGRADE_Light_Panel,
-    SAC_PT_COLORGRADE_Presets_Panel,
-    SAC_PT_COLORGRADE_Curves_Panel,
-    SAC_PT_COLORGRADE_Colorwheels_Panel,
-
-    SAC_PT_EFFECTS_Panel,
-
-    SAC_PT_EFFECTS_Color_Panel,
-    SAC_PT_CAMERA_Bokeh_Panel,
-
-    SAC_PT_CAMERA_Panel,
-    SAC_PT_CAMERA_TiltShift_Panel,
-)
-from .SAC_Settings import (
-    SAC_Settings
+from . import (
+    SAC_Settings,
+    SAC_Operators,
+    SAC_Panel,
+    SAC_List,
+    SAC_Functions,
 )
 
 bl_info = {
     "name": "Super Advanced Camera (SAC)",
     "author": "Kevin Lorengel, Slinc",
-    "version": (0, 1, 5),
+    "version": (0, 1, 6),
     "blender": (3, 6, 0),
     "description": "Adds plenty of new features to the camera and compositor",
     "warning": "",
@@ -75,132 +45,49 @@ bl_info = {
     "category": "Compositor",
 }
 
-
-classes = (
-    SAC_PT_SAC_Panel,
-
-    SAC_PT_COLORGRADE_Panel,
-    SAC_PT_COLORGRADE_Color_Panel,
-    SAC_PT_COLORGRADE_Light_Panel,
-    SAC_PT_COLORGRADE_Presets_Panel,
-    SAC_PT_COLORGRADE_Curves_Panel,
-    SAC_PT_COLORGRADE_Colorwheels_Panel,
-
-    SAC_PT_EFFECTS_Panel,
-
-    SAC_PT_List,
-    SAC_EffectList,
-    SAC_UL_List,
-
-    SAC_PT_EFFECTS_Color_Panel,
-
-    SAC_PT_CAMERA_Panel,
-    SAC_PT_CAMERA_TiltShift_Panel,
-    SAC_PT_CAMERA_Bokeh_Panel,
-
-    SAC_OT_Initialize,
-    SAC_OT_AddEffect,
-    SAC_OT_RemoveEffect,
-    SAC_OT_MoveEffectUp,
-    SAC_OT_MoveEffectDown,
-    SAC_OT_ApplyBokeh,
-    SAC_OT_ApplyCameraBokeh,
-
-    SAC_Settings
-)
-
-
-def load_effect_previews():
-    pcoll_effects = bpy.utils.previews.new()
-    my_icons_dir = os.path.join(os.path.dirname(__file__), "icons")
-
-    for item_type, _, _ in SAC_Settings.effect_types:
-        icon_path = os.path.join(my_icons_dir, f"{item_type}.png")
-        pcoll_effects.load(item_type, icon_path, 'IMAGE')
-
-    return pcoll_effects
-
-
-def load_bokeh_previews():
-    pcoll_bokeh = bpy.utils.previews.new()
-    my_icons_dir = os.path.join(os.path.dirname(__file__), "bokeh")
-
-    for item_type, _ in SAC_Settings.bokeh_types:
-        icon_path = os.path.join(my_icons_dir, f"{item_type}.jpg")
-        pcoll_bokeh.load(item_type, icon_path, 'IMAGE')
-
-    return pcoll_bokeh
-
-
-def enum_previews_from_directory_effects(self, context):
-    """Dynamic list of available previews."""
-    enum_items = []
-
-    if context is None:
-        return enum_items
-
-    pcoll_effects = bpy.types.Scene.effect_previews
-    for i, (item_type, name, _) in enumerate(SAC_Settings.effect_types):
-        icon = pcoll_effects[item_type].icon_id
-        enum_items.append((item_type, name, "", icon, i))
-
-    return enum_items
-
-
 bpy.types.Scene.new_effect_type = bpy.props.EnumProperty(
-    items=enum_previews_from_directory_effects,
-)
-
-
-def enum_previews_from_directory_bokeh(self, context):
-    """Dynamic list of available previews."""
-    enum_items = []
-
-    if context is None:
-        return enum_items
-
-    pcoll_bokeh = bpy.types.Scene.bokeh_previews
-    for i, (item_type, name) in enumerate(SAC_Settings.bokeh_types):
-        icon = pcoll_bokeh[item_type].icon_id
-        enum_items.append((item_type, name, "", icon, i))
-
-    return enum_items
-
+    items=SAC_Functions.enum_previews_from_directory_effects)
 
 bpy.types.Scene.new_bokeh_type = bpy.props.EnumProperty(
-    items=enum_previews_from_directory_bokeh,
-)
+    items=SAC_Functions.enum_previews_from_directory_bokeh)
 
 bpy.types.Scene.new_camera_bokeh_type = bpy.props.EnumProperty(
-    items=enum_previews_from_directory_bokeh,
-)
+    items=SAC_Functions.enum_previews_from_directory_bokeh)
+
+bpy.types.Scene.new_filter_type = bpy.props.EnumProperty(
+    items=SAC_Functions.enum_previews_from_directory_filter)
 
 
 def register():
-    # register the example panel, to show updater buttons
-    for cls in classes:
-        bpy.utils.register_class(cls)
 
-    bpy.types.Scene.sac_settings = bpy.props.PointerProperty(type=SAC_Settings)
+    SAC_Settings.register_function()
+    SAC_List.register_function()
+    SAC_Operators.register_function()
+    SAC_Panel.register_function()
+
     bpy.types.Scene.last_used_id = bpy.props.IntProperty(name="Last Used ID", default=0)
-    bpy.types.Scene.sac_effect_list = bpy.props.CollectionProperty(type=SAC_EffectList)
-    bpy.types.Scene.sac_effect_list_index = bpy.props.IntProperty(name="Index for sac_effect_list", default=0, update=SAC_Panel.active_effect_update)
-    bpy.types.Scene.effect_previews = load_effect_previews()
-    bpy.types.Scene.bokeh_previews = load_bokeh_previews()
+    bpy.types.Scene.sac_effect_list = bpy.props.CollectionProperty(type=SAC_List.SAC_EffectList)
+    bpy.types.Scene.sac_effect_list_index = bpy.props.IntProperty(name="Index for sac_effect_list", default=0, update=SAC_Functions.active_effect_update)
+
+    bpy.types.Scene.effect_previews = SAC_Functions.load_effect_previews()
+    bpy.types.Scene.bokeh_previews = SAC_Functions.load_bokeh_previews()
+    bpy.types.Scene.filter_previews = SAC_Functions.load_filter_previews()
 
 
 def unregister():
-    # register the example panel, to show updater buttons
-    for cls in reversed(classes):
-        bpy.utils.unregister_class(cls)
 
-    del bpy.types.Scene.sac_settings
+    SAC_Panel.unregister_function()
+    SAC_Operators.unregister_function()
+    SAC_List.unregister_function()
+    SAC_Settings.unregister_function()
+
+    del bpy.types.Scene.last_used_id
     del bpy.types.Scene.sac_effect_list
     del bpy.types.Scene.sac_effect_list_index
-    del bpy.types.Scene.last_used_id
 
     bpy.utils.previews.remove(bpy.types.Scene.effect_previews)
     bpy.utils.previews.remove(bpy.types.Scene.bokeh_previews)
+    bpy.utils.previews.remove(bpy.types.Scene.filter_previews)
 
 
 if __name__ == "__main__":

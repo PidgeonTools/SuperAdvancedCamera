@@ -33,6 +33,7 @@ from .colorgrading.Highlights import create_highlights_group
 from .colorgrading.Shadows import create_shadows_group
 from .colorgrading.Whites import create_whites_group
 from .colorgrading.Darks import create_darks_group
+from .colorgrading.Filter import create_filter_group
 from .colorgrading.Sharpen import create_sharpen_group
 from .colorgrading.Vibrance import create_vibrance_group
 from .colorgrading.HighlightTint import create_highlighttint_group
@@ -140,6 +141,7 @@ def create_main_group() -> NodeTree:
             ("SAC Shadows", ".SAC Shadows", create_shadows_group),
             ("SAC Whites", ".SAC Whites", create_whites_group),
             ("SAC Darks", ".SAC Darks", create_darks_group),
+            ("SAC Filter", ".SAC Filter", create_filter_group),
             ("SAC Sharpen", ".SAC Sharpen", create_sharpen_group),
             ("SAC Vibrance", ".SAC Vibrance", create_vibrance_group),
             ("SAC Saturation2", ".SAC Saturation2", create_saturation_group, "SAC Colorgrade_Presets_Saturation", ".SAC Saturation2"),

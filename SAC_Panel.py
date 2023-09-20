@@ -28,9 +28,7 @@ from bpy.types import (
 )
 
 from .SAC_Settings import SAC_Settings
-from .SAC_Operators import SAC_OT_Initialize
-from .SAC_List import SAC_EffectList, SAC_UL_List
-from .SAC_Functions import active_effect_update
+
 
 # Main
 
@@ -52,7 +50,7 @@ class SAC_PT_SAC_Panel(SAC_PT_Panel, Panel):
 
     def draw(self, context: Context):
         layout = self.layout
-        layout.operator("object.superadvancedcamerainit", icon="SHADERFX")
+        layout.operator("superadvancedcamera.superadvancedcamerainit", icon="SHADERFX")
 
 
 # Colorgrade
@@ -127,7 +125,25 @@ class SAC_PT_COLORGRADE_Presets_Panel(SAC_PT_Panel, Panel):
         settings: SAC_Settings = scene.sac_settings
 
         layout = self.layout
-        layout.prop(settings, "Colorgrade_Presets_Presets")
+        layout.prop(settings, "filter_type")
+
+        row = layout.row(align=True)
+        left = row.column(align=True)
+        left.scale_x = 1
+        left.scale_y = 8
+        left.operator("superadvancedcamera.previous_filter", text="", icon="TRIA_LEFT")
+        center = row.column()
+        center.template_icon_view(context.scene, "new_filter_type", show_labels=True, scale=8.0, scale_popup=4.0)
+        right = row.column(align=True)
+        right.scale_x = 1
+        right.scale_y = 8
+        right.operator("superadvancedcamera.next_filter", text="", icon="TRIA_RIGHT")
+        center_column = layout.row(align=True)
+        center_column.label(text="Filter Name:")
+        center_column.label(text=f"{scene.new_filter_type}")
+        layout.operator("superadvancedcamera.apply_filter", icon="BRUSHES_ALL")
+        layout.prop(settings, "Colorgrade_Filter_Mix")
+        layout.separator()
         layout.prop(settings, "Colorgrade_Presets_Sharpen")
         layout.prop(settings, "Colorgrade_Presets_Vibrance")
         layout.prop(settings, "Colorgrade_Presets_Saturation")
@@ -222,18 +238,29 @@ class SAC_PT_List(SAC_PT_Panel, Panel):
         scene = context.scene
 
         layout = self.layout
-        layout.template_icon_view(context.scene, "new_effect_type", show_labels=True, scale=8.0, scale_popup=8.0)
+
+        row = layout.row(align=True)
+        left = row.column(align=True)
+        left.scale_x = 1
+        left.scale_y = 8
+        left.operator("superadvancedcamera.previous_effect", text="", icon="TRIA_LEFT")
+        center = row.column()
+        center.template_icon_view(context.scene, "new_effect_type", show_labels=True, scale=8.0, scale_popup=4.0)
+        right = row.column(align=True)
+        right.scale_x = 1
+        right.scale_y = 8
+        right.operator("superadvancedcamera.next_effect", text="", icon="TRIA_RIGHT")
 
         row = layout.row()
         row.template_list("SAC_UL_List", "", scene, "sac_effect_list", scene, "sac_effect_list_index")
 
         col = row.column(align=True)
         col.scale_x = 1  # Set a fixed width
-        col.operator("sac_effect_list.add_effect", text="", icon='ADD')
-        col.operator("sac_effect_list.remove_effect", text="", icon='REMOVE')
+        col.operator("superadvancedcamera.add_effect", text="", icon='ADD')
+        col.operator("superadvancedcamera.remove_effect", text="", icon='REMOVE')
         col.separator()
-        col.operator("sac_effect_list.move_effect_up", text="", icon='TRIA_UP')
-        col.operator("sac_effect_list.move_effect_down", text="", icon='TRIA_DOWN')
+        col.operator("superadvancedcamera.move_effect_up", text="", icon='TRIA_UP')
+        col.operator("superadvancedcamera.move_effect_down", text="", icon='TRIA_DOWN')
 
 
 # Effects - Color
@@ -272,14 +299,26 @@ class SAC_PT_EFFECTS_Color_Panel(SAC_PT_Panel, Panel):
 
                 if settings.Effects_Bokeh_Type == "CAMERA":
                     layout.label(text="Camera Bokeh")
-                    layout.template_icon_view(context.scene, "new_bokeh_type", show_labels=True, scale=8.0, scale_popup=4.0)
+
+                    row = layout.row(align=True)
+                    left = row.column(align=True)
+                    left.scale_x = 1
+                    left.scale_y = 8
+                    left.operator("superadvancedcamera.previous_effect_bokeh", text="", icon="TRIA_LEFT")
+                    center = row.column()
+                    center.template_icon_view(context.scene, "new_bokeh_type", show_labels=True, scale=8.0, scale_popup=4.0)
+                    right = row.column(align=True)
+                    right.scale_x = 1
+                    right.scale_y = 8
+                    right.operator("superadvancedcamera.next_effect_bokeh", text="", icon="TRIA_RIGHT")
+
                     layout.prop(settings, "Effects_Bokeh_Rotation")
                     bokeh_type = context.scene.new_bokeh_type.split("_")
                     layout.label(text="Manufacturer: " + bokeh_type[0])
                     layout.label(text="Model: " + bokeh_type[1] + " - " + bokeh_type[3] + " - " + bokeh_type[2])
                     layout.label(text="Aperture: " + bokeh_type[4])
                     layout.label(text="Special thanks to Prof. Dr. Matt Gunn for the Bokeh textures.")
-                    layout.operator("sac_effect_list.apply_bokeh", icon="SEQ_CHROMA_SCOPE")
+                    layout.operator("superadvancedcamera.apply_effect_bokeh", icon="SEQ_CHROMA_SCOPE")
 
                 elif settings.Effects_Bokeh_Type == "CUSTOM":
                     layout.label(text="Custom Bokeh")
@@ -481,7 +520,8 @@ class SAC_PT_CAMERA_Bokeh_Panel(SAC_PT_Panel, Panel):
         layout.prop(camera_data.dof, "focus_distance")
         layout.prop(camera_data.dof, "aperture_fstop")
         layout.separator()
-        layout.operator("sac_camera_bokeh.apply_bokeh", icon="SEQ_CHROMA_SCOPE")
+
+        layout.operator("superadvancedcamera.apply_camera_bokeh", icon="SEQ_CHROMA_SCOPE")
         try:
             plane_object = bpy.data.objects[f"{camera.name}_Bokeh_Plane"]
         except:
@@ -494,7 +534,18 @@ class SAC_PT_CAMERA_Bokeh_Panel(SAC_PT_Panel, Panel):
         layout_bokeh_type.prop(settings, "Camera_Bokeh_Type", expand=True)
 
         if settings.Camera_Bokeh_Type == "CAMERA":
-            layout.template_icon_view(context.scene, "new_camera_bokeh_type", show_labels=True, scale=8.0, scale_popup=4.0)
+            row = layout.row(align=True)
+            left = row.column(align=True)
+            left.scale_x = 1
+            left.scale_y = 8
+            left.operator("superadvancedcamera.previous_camera_bokeh", text="", icon="TRIA_LEFT")
+            center = row.column()
+            center.template_icon_view(context.scene, "new_camera_bokeh_type", show_labels=True, scale=8.0, scale_popup=4.0)
+            right = row.column(align=True)
+            right.scale_x = 1
+            right.scale_y = 8
+            right.operator("superadvancedcamera.next_camera_bokeh", text="", icon="TRIA_RIGHT")
+
             bokeh_type = context.scene.new_camera_bokeh_type.split("_")
             layout.label(text="Manufacturer: " + bokeh_type[0])
             layout.label(text="Model: " + bokeh_type[1] + " - " + bokeh_type[3] + " - " + bokeh_type[2])
@@ -519,3 +570,34 @@ class SAC_PT_CAMERA_Bokeh_Panel(SAC_PT_Panel, Panel):
             layout.prop(settings, "Camera_Bokeh_Rotation")
             layout.prop(settings, "Camera_Bokeh_Curves")
 # endregion Camera
+
+
+classes = (
+    SAC_PT_SAC_Panel,
+    SAC_PT_COLORGRADE_Panel,
+    SAC_PT_COLORGRADE_Color_Panel,
+    SAC_PT_COLORGRADE_Light_Panel,
+    SAC_PT_COLORGRADE_Presets_Panel,
+    SAC_PT_COLORGRADE_Curves_Panel,
+    SAC_PT_COLORGRADE_Colorwheels_Panel,
+    SAC_PT_EFFECTS_Panel,
+    SAC_PT_List,
+    SAC_PT_EFFECTS_Color_Panel,
+    SAC_PT_CAMERA_Panel,
+    SAC_PT_CAMERA_TiltShift_Panel,
+    SAC_PT_CAMERA_Bokeh_Panel,
+)
+
+
+def register_function():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+
+def unregister_function():
+    for cls in reversed(classes):
+        if hasattr(bpy.types, cls.__name__):
+            try:
+                bpy.utils.unregister_class(cls)
+            except (RuntimeError, Exception) as e:
+                print(f"Failed to unregister {cls}: {e}")

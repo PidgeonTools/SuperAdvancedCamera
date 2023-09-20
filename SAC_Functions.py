@@ -1,4 +1,106 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  <Adds plenty of new features to Blenders camera and compositor>
+#    Copyright (C) <2023>  <Kevin Lorengel>
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 3
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#  Alternatively, see <https://www.gnu.org/licenses/>.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
+import os
+from .SAC_Settings import SAC_Settings
+
+
+def load_effect_previews():
+    pcoll_effects = bpy.utils.previews.new()
+    my_icons_dir = os.path.join(os.path.dirname(__file__), "icons")
+
+    for item_type, _, _ in SAC_Settings.effect_types:
+        icon_path = os.path.join(my_icons_dir, f"{item_type}.png")
+        pcoll_effects.load(item_type, icon_path, 'IMAGE')
+
+    return pcoll_effects
+
+
+def load_bokeh_previews():
+    pcoll_bokeh = bpy.utils.previews.new()
+    my_icons_dir = os.path.join(os.path.dirname(__file__), "bokeh")
+
+    for item_type, _ in SAC_Settings.bokeh_types:
+        icon_path = os.path.join(my_icons_dir, f"{item_type}.jpg")
+        pcoll_bokeh.load(item_type, icon_path, 'IMAGE')
+
+    return pcoll_bokeh
+
+
+def load_filter_previews():
+    pcoll_filter = bpy.utils.previews.new()
+    my_icons_dir = os.path.join(os.path.dirname(__file__), "filters")
+
+    for item_type, _ in SAC_Settings.filter_types:
+        icon_path = os.path.join(my_icons_dir, f"{item_type}.png")
+        pcoll_filter.load(item_type, icon_path, 'IMAGE')
+
+    return pcoll_filter
+
+
+def enum_previews_from_directory_effects(self, context):
+    """Dynamic list of available previews."""
+    enum_items = []
+
+    if context is None:
+        return enum_items
+
+    pcoll_effects = bpy.types.Scene.effect_previews
+    for i, (item_type, name, _) in enumerate(SAC_Settings.effect_types):
+        icon = pcoll_effects[item_type].icon_id
+        enum_items.append((item_type, name, "", icon, i))
+
+    return enum_items
+
+
+def enum_previews_from_directory_bokeh(self, context):
+    """Dynamic list of available previews."""
+    enum_items = []
+
+    if context is None:
+        return enum_items
+
+    pcoll_bokeh = bpy.types.Scene.bokeh_previews
+    for i, (item_type, name) in enumerate(SAC_Settings.bokeh_types):
+        icon = pcoll_bokeh[item_type].icon_id
+        enum_items.append((item_type, name, "", icon, i))
+
+    return enum_items
+
+
+def enum_previews_from_directory_filter(self, context):
+    """Dynamic list of available previews."""
+    enum_items = []
+
+    if context is None:
+        return enum_items
+
+    pcoll_filter = bpy.types.Scene.filter_previews
+    for i, (item_type, name) in enumerate(SAC_Settings.filter_types):
+        icon = pcoll_filter[item_type].icon_id
+        enum_items.append((item_type, name, "", icon, i))
+
+    return enum_items
 
 
 def link_nodes(node_tree, node1, node1_output, node2, node2_input):
@@ -21,6 +123,10 @@ def create_dot_texture():
     texture.use_color_ramp = True
     texture.color_ramp.interpolation = 'CONSTANT'
     texture.color_ramp.elements[1].position = 0.65
+
+
+def mute_update(self, context):
+    bpy.data.node_groups[".SAC Effects"].nodes[f"{self.EffectGroup}_{self.ID}"].mute = self.mute
 
 
 def active_effect_update(self, context):

@@ -296,6 +296,187 @@ class SAC_Settings(PropertyGroup):
         ("Vivitar_Vivitar_f2.8_55mm_f16.0", "Vivitar - Vivitar - 55mm - f/16.0"),
     ]
 
+    filter_types_bw = (
+        # 1920
+        ("1920", "1920"),
+        # Dusty
+        ("Dusty", "Dusty"),
+        # Grayed
+        ("Grayed", "Grayed"),
+        # Litho
+        ("Litho", "Litho"),
+        # Sepia
+        ("Sepia", "Sepia"),
+        # Steel
+        ("Steel", "Steel"),
+        # Weathered
+        ("Weathered", "Weathered")
+    )
+    filter_types_vintage = (
+        # Ancient
+        ("Ancient", "Ancient"),
+        # Classic
+        ("Classic", "Classic"),
+        # Inferno
+        ("Inferno", "Inferno"),
+        # Lomo
+        ("Lomo", "Lomo"),
+        # Lomo 100
+        ("Lomo 100", "Lomo 100"),
+        # Oldtimer
+        ("Oldtimer", "Oldtimer"),
+        # Pola SX
+        ("Pola SX", "Pola SX"),
+        # Polaroid
+        ("Polaroid", "Polaroid"),
+        # Quozi
+        ("Quozi", "Quozi"),
+        # Seventies
+        ("Seventies", "Seventies"),
+        # Snappy
+        ("Snappy", "Snappy"),
+        # Sunny 70s
+        ("Sunny 70s", "Sunny 70s")
+    )
+    filter_types_neat = (
+        # Candy
+        ("Candy", "Candy"),
+        # Chestnut
+        ("Chestnut", "Chestnut"),
+        # Creamy
+        ("Creamy", "Creamy"),
+        # Fixie
+        ("Fixie", "Fixie"),
+        # Food
+        ("Food", "Food"),
+        # Glam
+        ("Glam", "Glam"),
+        # Goblin
+        ("Goblin", "Goblin"),
+        # Green Gap
+        ("Green Gap", "Green Gap"),
+        # High Carb
+        ("High Carb", "High Carb"),
+        # High Contrast
+        ("High Contrast", "High Contrast"),
+        # K1
+        ("K1", "K1"),
+        # K6
+        ("K6", "K6"),
+        # Keen
+        ("Keen", "Keen"),
+        # Lucid
+        ("Lucid", "Lucid"),
+        # Moss
+        ("Moss", "Moss"),
+        # Neat
+        ("Neat", "Neat"),
+        # Pebble
+        ("Pebble", "Pebble"),
+        # Pro 400
+        ("Pro 400", "Pro 400"),
+        # Soft
+        ("Soft", "Soft"),
+        # Softy
+        ("Softy", "Softy")
+    )
+    filter_types_cold = (
+        # Colla
+        ("Colla", "Colla"),
+        # Fridge
+        ("Fridge", "Fridge"),
+        # Joran
+        ("Joran", "Joran"),
+        # Kalmen
+        ("Kalmen", "Kalmen"),
+        # Levante
+        ("Levante", "Levante"),
+        # Pitched
+        ("Pitched", "Pitched"),
+        # Settled
+        ("Settled", "Settled"),
+        # Solanus
+        ("Solanus", "Solanus"),
+        # Zephyr
+        ("Zephyr", "Zephyr")
+    )
+    filter_types_warm = (
+        # Flat Black
+        ("Flat Black", "Flat Black"),
+        # Golden
+        ("Golden", "Golden"),
+        # Low Fire
+        ("Low Fire", "Low Fire"),
+        # Pale
+        ("Pale", "Pale"),
+        # Pumpkin
+        ("Pumpkin", "Pumpkin"),
+        # Summer
+        ("Summer", "Summer"),
+        # Sunrise
+        ("Sunrise", "Sunrise"),
+        # Tender
+        ("Tender", "Tender"),
+        # Twilight
+        ("Twilight", "Twilight")
+    )
+    filter_types = [
+        # Default
+        ("Default", "Default")
+    ]
+
+    filter_types.extend(filter_types_bw)
+    filter_types.extend(filter_types_vintage)
+    filter_types.extend(filter_types_neat)
+    filter_types.extend(filter_types_cold)
+    filter_types.extend(filter_types_warm)
+
+    def update_filter_type(self, context):
+
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+
+        filter_types = self.filter_types
+
+        filter_types = [
+            # Default
+            ("Default", "Default")
+        ]
+
+        if settings.filter_type == "BW":
+            filter_types.extend(self.filter_types_bw)
+        elif settings.filter_type == "Vintage":
+            filter_types.extend(self.filter_types_vintage)
+        elif settings.filter_type == "Neat":
+            filter_types.extend(self.filter_types_neat)
+        elif settings.filter_type == "Cold":
+            filter_types.extend(self.filter_types_cold)
+        elif settings.filter_type == "Warm":
+            filter_types.extend(self.filter_types_warm)
+        else:
+            filter_types.extend(self.filter_types_bw)
+            filter_types.extend(self.filter_types_vintage)
+            filter_types.extend(self.filter_types_neat)
+            filter_types.extend(self.filter_types_cold)
+            filter_types.extend(self.filter_types_warm)
+
+        scene.new_filter_type = "Default"
+        SAC_Settings.filter_types = filter_types
+
+    filter_type: EnumProperty(
+        name="Filter Type",
+        items=(
+            ("All", "All", "All filters", "WORLD", 0),
+            ("BW", "Black and White", "An assortment of monochrome filters", "OVERLAY", 1),
+            ("Vintage", "Vintage", "An assortment of vintage filters", "DISC", 2),
+            ("Neat", "Neat", "An assortment of neat filters", "BOIDS", 3),
+            ("Cold", "Cold", "An assortment of cold filters", "FREEZE", 4),
+            ("Warm", "Warm", "An assortment of warm filters", "LIGHT_SUN", 5),
+        ),
+        default="All",
+        update=update_filter_type
+    )
+
     # region Colorgrade
 
     # White Level
@@ -522,25 +703,27 @@ class SAC_Settings(PropertyGroup):
 
     # Presets
 
-    # Presets
-    Colorgrade_Presets_Presets: EnumProperty(
-        name="Presets (coming soon)",
-        items=(
-            (
-                'DEFAULT',
-                'Default',
-                'Unchanged Image'
-            ),
-            (
-                'SEPIA',
-                'Sepia',
-                'Sepia Preset applied'
-            ),
-        ),
-        default='DEFAULT'
+    # Filter Mix
+    def update_Colorgrade_Filter_Mix(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+        bpy.data.node_groups[".SAC Filter"].nodes["SAC Colorgrade_Filter_Mix"].inputs[0].default_value = settings.Colorgrade_Filter_Mix
+
+        bpy.data.node_groups[".SAC Colorgrade"].nodes["SAC Filter"].mute = False
+        if settings.Colorgrade_Filter_Mix == 0:
+            bpy.data.node_groups[".SAC Colorgrade"].nodes["SAC Filter"].mute = True
+
+    Colorgrade_Filter_Mix: FloatProperty(
+        name="Filter Blend",
+        default=0.5,
+        max=1,
+        min=-1,
+        subtype="FACTOR",
+        update=update_Colorgrade_Filter_Mix
     )
 
     # Sharpen
+
     def update_Colorgrade_Presets_Sharpen(self, context):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
@@ -2234,3 +2417,18 @@ class SAC_Settings(PropertyGroup):
         update=update_Camera_Bokeh_Type
     )
     # endregion Camera
+
+
+def register_function():
+    bpy.utils.register_class(SAC_Settings)
+
+    bpy.types.Scene.sac_settings = bpy.props.PointerProperty(type=SAC_Settings)
+
+
+def unregister_function():
+    try:
+        bpy.utils.unregister_class(SAC_Settings)
+    except (RuntimeError, Exception) as e:
+        print(f"Failed to unregister SAC_Settings: {e}")
+
+    del bpy.types.Scene.sac_settings

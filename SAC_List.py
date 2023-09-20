@@ -22,14 +22,12 @@
 
 import bpy
 
+from .SAC_Functions import mute_update
+
 from bpy.types import (
     PropertyGroup,
     UIList,
 )
-
-
-def mute_update(self, context):
-    bpy.data.node_groups[".SAC Effects"].nodes[f"{self.EffectGroup}_{self.ID}"].mute = self.mute
 
 
 class SAC_EffectList(PropertyGroup):
@@ -63,3 +61,23 @@ class SAC_UL_List(UIList):
             mute_row.prop(item, "mute", text="", emboss=False, icon='HIDE_OFF' if not item.mute else 'HIDE_ON')
             if item.mute:
                 split.active = False
+
+
+classes = (
+    SAC_EffectList,
+    SAC_UL_List,
+)
+
+
+def register_function():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+
+def unregister_function():
+    for cls in reversed(classes):
+        if hasattr(bpy.types, cls.__name__):
+            try:
+                bpy.utils.unregister_class(cls)
+            except (RuntimeError, Exception) as e:
+                print(f"Failed to unregister {cls}: {e}")
