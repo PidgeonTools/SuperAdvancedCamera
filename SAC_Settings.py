@@ -482,6 +482,7 @@ class SAC_Settings(PropertyGroup):
 
     filter_type: EnumProperty(
         name="Filter Type",
+        description="Filter the fitlter list by type",
         items=(
             ("All", "All", "All filters", "WORLD", 0),
             ("BW", "Black and White", "An assortment of monochrome filters", "OVERLAY", 1),
@@ -514,6 +515,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Color_WhiteLevel: FloatVectorProperty(
         name="White Balance",
+        description="Adjusts the overall color tone of an image to make it appear more natural,\ncompensating for the color temperature of the light source",
         min=0.0,
         max=1.0,
         default=(1.0, 1.0, 1.0),
@@ -534,6 +536,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Color_Temperature: FloatProperty(
         name="Temperature",
+        description="Adjusts the color balance of an image,\nmaking it cooler (bluer) or warmer (more orange)",
         default=0,
         max=1,
         min=-1,
@@ -553,6 +556,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Color_Tint: FloatProperty(
         name="Tint",
+        description="Adjusts the green-magenta balance in an image,\ncompensating for color cast from certain light sources",
         default=0,
         max=1,
         min=-1,
@@ -572,6 +576,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Color_Saturation: FloatProperty(
         name="Saturation",
+        description="Increases or decreases the intensity of colors in an image, from vivid to gray",
         default=1,
         max=2,
         min=0,
@@ -591,6 +596,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Color_Hue: FloatProperty(
         name="Hue",
+        description="Rotates the hue of all colors in the image around the color wheel",
         default=0.5,
         max=1,
         min=0,
@@ -612,6 +618,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Light_Exposure: FloatProperty(
         name="Exposure",
+        description="Adjusts the overall brightness of the image",
         default=0,
         max=10,
         soft_max=5,
@@ -633,6 +640,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Light_Contrast: FloatProperty(
         name="Contrast",
+        description="Modifies the difference between the darkest and lightest parts of an image,\nmaking shadows deeper and highlights brighter",
         default=0,
         max=100,
         soft_max=25,
@@ -654,6 +662,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Light_Highlights: FloatProperty(
         name="Highlights",
+        description="Adjusts the brightness of the brightest parts of the image",
         default=0,
         max=1,
         min=-1,
@@ -673,6 +682,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Light_Shadows: FloatProperty(
         name="Shadows",
+        description="Adjusts the brightness of the darkest parts of the image",
         default=0,
         max=1,
         min=-1,
@@ -692,6 +702,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Light_Whites: FloatProperty(
         name="Whites",
+        description="Adjusts the luminance level of the very brightest parts of the image,\nhelping to set the white point",
         default=0,
         max=1,
         min=-1,
@@ -711,6 +722,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Light_Darks: FloatProperty(
         name="Darks",
+        description="Adjusts the luminance level of the very darkest parts of the image,\nhelping to set the black point",
         default=0,
         max=1,
         min=-1,
@@ -732,6 +744,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Filter_Mix: FloatProperty(
         name="Filter Blend",
+        description="Adjusts the blend between the original image and the filter",
         default=0.5,
         max=1,
         min=-1,
@@ -752,6 +765,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Presets_Sharpen: FloatProperty(
         name="Sharpen",
+        description="Increases the contrast of edges in the image,\nmaking them appear more defined",
         default=0,
         max=5,
         soft_max=2,
@@ -773,6 +787,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Presets_Vibrance: FloatProperty(
         name="Vibrance",
+        description="Increases the intensity of the more muted colors in the image,\nwithout affecting the already saturated colors",
         default=0,
         max=1,
         min=-1,
@@ -792,6 +807,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Presets_Saturation: FloatProperty(
         name="Saturation",
+        description="Increases or decreases the intensity of colors in an image, from vivid to gray",
         default=1,
         max=2,
         min=0,
@@ -817,6 +833,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Presets_HighlightTint: FloatVectorProperty(
         name="Highlight Tint",
+        description="Alters the color tint specifically in the highlight regions of an image",
         min=0.0,
         max=1.0,
         default=(1.0, 1.0, 1.0),
@@ -842,6 +859,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Presets_ShadowTint: FloatVectorProperty(
         name="Shadow Tint",
+        description="Alters the color tint specifically in the shadow regions of an image",
         min=0.0,
         max=1.0,
         default=(1.0, 1.0, 1.0),
@@ -861,6 +879,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Curves_RGB_Intensity: FloatProperty(
         name="RGB Curves Intensity",
+        description="Adjusts the blend between the original image and the curves",
         default=0,
         max=1,
         min=0,
@@ -880,6 +899,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Curves_HSV_Intensity: FloatProperty(
         name="HSV Curves Intensity",
+        description="Adjusts the blend between the original image and the curves",
         default=0,
         max=1,
         min=0,
@@ -897,6 +917,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Colorwheel_Shadows_Brightness: FloatProperty(
         name="Shadows Brightness",
+        description="Adjusts the brightness of the darkest parts of the image",
         default=1,
         max=2,
         min=-2,
@@ -918,6 +939,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Colorwheel_Shadows_Intensity: FloatProperty(
         name="Shadows Colorwheel Intensity",
+        description="Adjusts the blend between the original image and the colorwheel",
         default=0,
         max=1,
         min=-1,
@@ -933,6 +955,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Colorwheel_Midtones_Brightness: FloatProperty(
         name="Midtones Brightness",
+        description="Adjusts the brightness of the midtones of the image",
         default=1,
         max=2,
         min=-2,
@@ -954,6 +977,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Colorwheel_Midtones_Intensity: FloatProperty(
         name="Midtones Colorwheel Intensity",
+        description="Adjusts the blend between the original image and the colorwheel",
         default=0,
         max=1,
         min=-1,
@@ -969,6 +993,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Colorwheel_Highlights_Brightness: FloatProperty(
         name="Highlights Brightness",
+        description="Adjusts the brightness of the brightest parts of the image",
         default=1,
         max=2,
         min=-2,
@@ -990,6 +1015,7 @@ class SAC_Settings(PropertyGroup):
 
     Colorgrade_Colorwheel_Highlights_Intensity: FloatProperty(
         name="Highlights Colorwheel Intensity",
+        description="Adjusts the blend between the original image and the colorwheel",
         default=0,
         max=1,
         min=-1,
@@ -1015,6 +1041,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Duotone_Color1: FloatVectorProperty(
         name="Color 1",
+        description="Sets the color for the bright parts of the image",
         min=0.0,
         max=1.0,
         default=(0.01, 0.01, 0.17),
@@ -1035,6 +1062,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Duotone_Color2: FloatVectorProperty(
         name="Color 2",
+        description="Sets the color for the dark parts of the image",
         min=0.0,
         max=1.0,
         default=(1.0, 0.56, 0.06),
@@ -1058,6 +1086,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Duotone_Blend: FloatProperty(
         name="Blend",
+        description="Adjusts the blend between the original image and the duotone",
         default=0,
         max=1,
         min=0,
@@ -1077,6 +1106,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_FogGlow_Threshold: FloatProperty(
         name="Threshold",
+        description="Adjusts the threshold for the fog glow effect",
         default=1,
         max=1000,
         min=0,
@@ -1095,6 +1125,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_FogGlow_Size: IntProperty(
         name="Size",
+        description="Adjusts the size of the fog glow effect",
         default=2,
         max=4,
         min=1,
@@ -1118,6 +1149,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_FogGlow_Strength: FloatProperty(
         name="Strength",
+        description="Adjusts the strength of the fog glow effect",
         default=0,
         max=1,
         min=0,
@@ -1137,6 +1169,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Streaks_Threshold: FloatProperty(
         name="Threshold",
+        description="Adjusts the threshold for the streaks effect",
         default=1,
         max=1000,
         min=0,
@@ -1155,6 +1188,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Streaks_Count: IntProperty(
         name="Count",
+        description="Adjusts the number of streaks",
         default=6,
         max=16,
         min=1,
@@ -1173,6 +1207,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Streaks_Angle: FloatProperty(
         name="Angle",
+        description="Adjusts the angle of the streaks",
         default=0.1963495,  # 11.25 degrees
         max=3.1415,  # 180 degrees
         min=0,
@@ -1191,6 +1226,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Streaks_Distortion: FloatProperty(
         name="Distortion",
+        description="Adjusts the color modulation of the streaks",
         default=0.25,
         max=1,
         min=0,
@@ -1209,6 +1245,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Streaks_Fade: FloatProperty(
         name="Fade",
+        description="Adjusts the fade of the streaks",
         default=0.85,
         max=1,
         min=0.75,
@@ -1227,6 +1264,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Streaks_Length: IntProperty(
         name="Length",
+        description="Adjusts the length of the streaks",
         default=2,
         max=4,
         min=1,
@@ -1250,6 +1288,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Streaks_Strength: FloatProperty(
         name="Strength",
+        description="Adjusts the strength of the streaks",
         default=0,
         max=1,
         min=0,
@@ -1270,6 +1309,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Ghosts_Threshold: FloatProperty(
         name="Threshold",
+        description="Adjusts the threshold for the ghosts effect",
         default=1,
         max=1000,
         min=0,
@@ -1288,6 +1328,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Ghosts_Distortion: FloatProperty(
         name="Distortion",
+        description="Adjusts the color modulation of the ghosts",
         default=0.1,
         max=1,
         min=0,
@@ -1306,6 +1347,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Ghosts_Count: IntProperty(
         name="Count",
+        description="Adjusts the number of ghosts",
         default=3,
         max=5,
         min=2,
@@ -1329,6 +1371,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Ghosts_Strength: FloatProperty(
         name="Strength",
+        description="Adjusts the strength of the ghosts",
         default=0,
         max=1,
         min=0,
@@ -1354,6 +1397,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Emboss_Strength: FloatProperty(
         name="Strength",
+        description="Adjusts the strength of the emboss effect",
         default=0,
         max=1,
         min=-1,
@@ -1375,6 +1419,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Posterize_Steps: FloatProperty(
         name="Steps",
+        description="Adjusts the number of color steps in the posterize effect",
         default=128,
         max=1024,
         soft_max=256,
@@ -1401,6 +1446,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Overlay_Strength: FloatProperty(
         name="Strength",
+        description="Adjusts the strength of the overlay effect",
         default=0,
         max=1,
         min=0,
@@ -1426,6 +1472,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Pixelate_PixelSize: FloatProperty(
         name="Pixel Size",
+        description="Adjusts the size of the pixels in the mosaic effect",
         default=0,
         max=100,
         soft_max=25,
@@ -1453,6 +1500,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_ChromaticAberration_Amount: FloatProperty(
         name="Amount",
+        description="Adjusts the amount of chromatic aberration",
         default=0,
         max=1,
         min=0,
@@ -1478,6 +1526,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Vignette_Intensity: FloatProperty(
         name="Intensity",
+        description="Adjusts the intensity of the vignette,\nnegative values make the vignette darker,\npositive values make the vignette brighter",
         default=0,
         max=1,
         min=-1,
@@ -1497,6 +1546,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Vignette_Roundness: FloatProperty(
         name="Roundness",
+        description="Adjusts the roundness of the vignette,\npositive values make the vignette rounder,\nnegative values make the vignette more square",
         default=0,
         max=1,
         min=-1,
@@ -1530,6 +1580,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Vignette_Feather: FloatProperty(
         name="Feather",
+        description="Adjusts the blur of the vignette",
         default=0.25,
         max=1,
         min=0,
@@ -1549,6 +1600,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Vignette_Midpoint: FloatProperty(
         name="Midpoint",
+        description="Adjusts the midpoint of the vignette",
         default=0,
         max=1,
         min=-0.998,
@@ -1574,6 +1626,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Infrared_Blend: FloatProperty(
         name="Blend",
+        description="Adjusts the blend of the infrared effect",
         default=0,
         max=1,
         min=0,
@@ -1593,6 +1646,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Infrared_Offset: FloatProperty(
         name="Offset",
+        description="Adjusts the offset of the infrared effect",
         default=0,
         max=1,
         min=-1,
@@ -1618,6 +1672,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Negative: FloatProperty(
         name="Negative",
+        description="Adjusts the strength of the negative effect",
         default=0,
         max=1,
         min=0,
@@ -1655,6 +1710,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Warp: FloatProperty(
         name="Warp",
+        description="Adjusts the strength of the warp effect",
         default=0,
         max=1,
         min=0,
@@ -1680,6 +1736,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Fisheye: FloatProperty(
         name="Fisheye",
+        description="Adjusts the strength of the fisheye effect",
         default=0,
         max=1,
         min=-1,
@@ -1719,6 +1776,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_PerspectiveShift_Horizontal: FloatProperty(
         name="Horizontal",
+        description="Adjusts the horizontal perspective shift",
         default=0,
         max=0.999,
         min=-0.999,
@@ -1757,6 +1815,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_PerspectiveShift_Vertical: FloatProperty(
         name="Vertical",
+        description="Adjusts the vertical perspective shift",
         default=0,
         max=0.999,
         min=-0.999,
@@ -1782,6 +1841,7 @@ class SAC_Settings(PropertyGroup):
 
     ISO_strength: FloatProperty(
         name="Strength",
+        description="Adjusts the strength of the ISO effect",
         default=0,
         max=1,
         min=0,
@@ -1801,6 +1861,7 @@ class SAC_Settings(PropertyGroup):
 
     ISO_size: FloatProperty(
         name="Size",
+        description="Adjusts the size of the ISO effect",
         default=1,
         max=1,
         min=0,
@@ -1827,6 +1888,7 @@ class SAC_Settings(PropertyGroup):
 
     Filmgrain_strength: FloatProperty(
         name="Strength",
+        description="Adjusts the strength of the filmgrain effect",
         default=0,
         max=10,
         min=0,
@@ -1847,6 +1909,7 @@ class SAC_Settings(PropertyGroup):
 
     Filmgrain_dustproportion: FloatProperty(
         name="Dust Proportion",
+        description="Adjusts the proportion of dust in the filmgrain effect",
         default=0.35,
         max=0.5,
         min=0.01,
@@ -1867,6 +1930,7 @@ class SAC_Settings(PropertyGroup):
 
     Filmgrain_size: IntProperty(
         name="Size",
+        description="Adjusts the size of the filmgrain effect",
         default=3,
         max=12,
         min=1,
@@ -1888,6 +1952,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Halftone_value: FloatProperty(
         name="Value",
+        description="Adjusts the offset of the halftone effect",
         default=-0.2,
         max=1,
         min=-1,
@@ -1908,6 +1973,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Halftone_delta: FloatProperty(
         name="Delta",
+        description="Adjusts the brightness range of the halftone effect",
         default=0.2,
         max=1,
         min=0,
@@ -1930,6 +1996,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Halftone_size: FloatProperty(
         name="Size",
+        description="Adjusts the size of the halftone effect",
         default=2,
         max=10,
         min=1,
@@ -1956,6 +2023,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_GradientMap_blend: FloatProperty(
         name="Blend",
+        description="Adjusts the blend of the gradient map effect",
         default=0,
         max=1,
         min=-1,
@@ -1979,6 +2047,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Bokeh_MaxSize: FloatProperty(
         name="Max Size",
+        description="Adjusts the max size of the bokeh effect.\nLarger will be slower",
         default=16,
         max=512,
         soft_max=64,
@@ -2002,6 +2071,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Bokeh_Offset: FloatProperty(
         name="Offset",
+        description="Adjusts the focus point of the bokeh effect",
         default=0,
         max=100,
         min=-100,
@@ -2024,6 +2094,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Bokeh_Range: FloatProperty(
         name="Range",
+        description="Adjusts the focus range of the bokeh effect",
         default=1,
         max=1000,
         soft_max=10,
@@ -2047,6 +2118,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Bokeh_image: PointerProperty(
         name="Image",
+        description="The image to use for the bokeh effect",
         type=bpy.types.Image,
         update=update_Effects_Bokeh_Image
     )
@@ -2066,6 +2138,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Bokeh_Rotation: FloatProperty(
         name="Rotation",
+        description="Adjusts the rotation of the bokeh effect",
         default=0,
         max=(math.pi*2),
         min=0,
@@ -2089,6 +2162,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Bokeh_Procedural_Flaps: IntProperty(
         name="Flaps",
+        description="Adjusts the number of flaps in the bokeh effect",
         default=6,
         max=24,
         min=3,
@@ -2111,6 +2185,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Bokeh_Procedural_Angle: FloatProperty(
         name="Angle",
+        description="Adjusts the angle of the bokeh effect",
         default=0.0785398,
         max=(math.pi*2),
         min=0,
@@ -2133,6 +2208,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Bokeh_Procedural_Rounding: FloatProperty(
         name="Rounding",
+        description="Adjusts the rounding of the bokeh effect",
         default=0.1,
         max=1,
         min=0,
@@ -2155,6 +2231,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Bokeh_Procedural_Catadioptric: FloatProperty(
         name="Catadioptric",
+        description="Adjusts the catadioptric of the bokeh effect.\nValues above 0 will adda black circle in the center of the bokeh",
         default=0,
         max=1,
         min=0,
@@ -2177,6 +2254,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Bokeh_Procedural_Shift: FloatProperty(
         name="Lens Shift",
+        description="Adjusts the lens shift of the bokeh effect.\nValues above 0 will shift the bokeh edges to blue,\nvalues below 0 will shift the bokeh edges to red",
         default=0.02,
         max=1,
         min=-1,
@@ -2206,6 +2284,7 @@ class SAC_Settings(PropertyGroup):
 
     Effects_Bokeh_Type: EnumProperty(
         name="Bokeh Type",
+        description="The type of bokeh to use",
         items=(
             (
                 'CAMERA',
@@ -2237,6 +2316,7 @@ class SAC_Settings(PropertyGroup):
 
     Camera_TiltShift_KeepFrame: BoolProperty(
         name="Tilt Shift",
+        description="Whether to adjust the tilt shift, or the lens shift",
         default=True,
     )
 
@@ -2270,6 +2350,7 @@ class SAC_Settings(PropertyGroup):
 
     Camera_TiltShift_AmountX: FloatProperty(
         name="Vertical Tilt Shift",
+        description="Adjusts the vertical tilt shift",
         default=0,
         soft_max=1,
         soft_min=-1,
@@ -2310,6 +2391,7 @@ class SAC_Settings(PropertyGroup):
 
     Camera_TiltShift_AmountY: FloatProperty(
         name="Horizontal Tilt Shift",
+        description="Adjusts the horizontal tilt shift",
         default=0,
         soft_max=1,
         soft_min=-1,
@@ -2334,6 +2416,7 @@ class SAC_Settings(PropertyGroup):
 
     Camera_Bokeh_Scale: FloatProperty(
         name="Scale",
+        description="Adjusts the scale of the bokeh effect",
         default=2,
         soft_max=30,
         min=0,
@@ -2355,6 +2438,7 @@ class SAC_Settings(PropertyGroup):
 
     Camera_Bokeh_Rotation: FloatProperty(
         name="Rotation",
+        description="Adjusts the rotation of the bokeh effect",
         default=0,
         subtype="ANGLE",
         update=update_Camera_Bokeh_Rotation
@@ -2374,6 +2458,7 @@ class SAC_Settings(PropertyGroup):
 
     Camera_Bokeh_Curves: FloatProperty(
         name="Exposure Compensation",
+        description="Adjusts the exposure compensation of the bokeh effect.\nBokeh naturally darkens the image, this can be used to compensate for that",
         default=1,
         max=1,
         min=0,
@@ -2413,6 +2498,7 @@ class SAC_Settings(PropertyGroup):
 
     Camera_Bokeh_Type: EnumProperty(
         name="Bokeh Type",
+        description="The type of bokeh to use",
         items=(
             (
                 'CAMERA',
