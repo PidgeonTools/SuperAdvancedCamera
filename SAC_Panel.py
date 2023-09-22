@@ -22,6 +22,10 @@
 
 import bpy
 
+from bpy.utils import (
+    previews
+)
+
 from bpy.types import (
     Context,
     Panel,
@@ -29,6 +33,13 @@ from bpy.types import (
 
 from .SAC_Settings import SAC_Settings
 
+custom_icons = bpy.utils.previews.new()
+icon_names = ["Discord", "BlenderMarket", "Gumroad", "Instagram", "Twitter", "Youtube"]
+
+custom_icons = bpy.utils.previews.new()
+for icon_name in icon_names:
+    icon_path = "icons/" + icon_name + ".png"
+    custom_icons.load(icon_name, icon_path, 'IMAGE')
 
 # Main
 
@@ -52,10 +63,30 @@ class SAC_PT_SAC_Panel(SAC_PT_Panel, Panel):
         layout = self.layout
         layout.operator("superadvancedcamera.superadvancedcamerainit", icon="SHADERFX")
 
+        found = False
+
+        for node in bpy.context.scene.node_tree.nodes:
+            if node.name.startswith("Super Advanced Camera"):
+                found = True
+
+                layout.label(text="Super Advanced Camera is added.", icon="CHECKMARK")
+                if node.mute:
+                    layout.label(text="Super Advanced Camera is disabled.", icon="ERROR")
+                    layout.label(text="Unmute the node in the compositor.", icon="INFO")
+                else:
+                    layout.label(text="Super Advanced Camera is enabled.", icon="CHECKMARK")
+                    layout.label(text="You can now use the Super Advanced Camera.", icon="INFO")
+                break
+
+        if not found:
+            layout.label(text="Super Advanced Camera node not found.", icon="ERROR")
+            layout.label(text="Please initialize the Super Advanced Camera", icon="INFO")
 
 # Colorgrade
 
 # region ColorGrade
+
+
 class SAC_PT_COLORGRADE_Panel(SAC_PT_Panel, Panel):
     bl_label = "Color Grading"
     bl_parent_id = "SAC_PT_SAC_Panel"
@@ -168,10 +199,15 @@ class SAC_PT_COLORGRADE_Curves_Panel(SAC_PT_Panel, Panel):
         hsv_curves_node = bpy.data.node_groups[".SAC Curves"].nodes["SAC Colorgrade_Curves_HSV"]
 
         layout = self.layout
-        layout.template_curve_mapping(rgb_curves_node, "mapping", type='COLOR')
-        layout.prop(settings, "Colorgrade_Curves_RGB_Intensity")
-        layout.template_curve_mapping(hsv_curves_node, "mapping", type='HUE')
-        layout.prop(settings, "Colorgrade_Curves_HSV_Intensity")
+        row = layout.row()
+        col = row.column()
+        col.label(text="RGB Curves", icon="MOD_INSTANCE")
+        col.template_curve_mapping(rgb_curves_node, "mapping", type='COLOR')
+        col.prop(settings, "Colorgrade_Curves_RGB_Intensity")
+        col.separator(factor=2)
+        col.label(text="HSV Curves", icon="MOD_OCEAN")
+        col.template_curve_mapping(hsv_curves_node, "mapping", type='HUE')
+        col.prop(settings, "Colorgrade_Curves_HSV_Intensity")
 
 
 # Colorgrade - Colorwheels
@@ -192,19 +228,22 @@ class SAC_PT_COLORGRADE_Colorwheels_Panel(SAC_PT_Panel, Panel):
         color_wheel_node_gain = bpy.data.node_groups[".SAC Colorwheel"].nodes["SAC Colorgrade_Colorwheel_Highlights"]
 
         layout = self.layout
-        layout.alignment = "CENTER"
-        layout.label(text="Shadows")
-        layout.template_color_picker(color_wheel_node_lift, "lift")
-        layout.prop(settings, "Colorgrade_Colorwheel_Shadows_Brightness")
-        layout.prop(settings, "Colorgrade_Colorwheel_Shadows_Intensity")
-        layout.label(text="Midtones")
-        layout.template_color_picker(color_wheel_node_gamma, "gamma")
-        layout.prop(settings, "Colorgrade_Colorwheel_Midtones_Brightness")
-        layout.prop(settings, "Colorgrade_Colorwheel_Midtones_Intensity")
-        layout.label(text="Highlights")
-        layout.template_color_picker(color_wheel_node_gain, "gain")
-        layout.prop(settings, "Colorgrade_Colorwheel_Highlights_Brightness")
-        layout.prop(settings, "Colorgrade_Colorwheel_Highlights_Intensity")
+        row = layout.row()
+        col_1 = row.column()
+        col_1.label(text="Shadows", icon="PMARKER")
+        col_1.template_color_picker(color_wheel_node_lift, "lift")
+        col_1.prop(settings, "Colorgrade_Colorwheel_Shadows_Brightness", text="Brightness")
+        col_1.prop(settings, "Colorgrade_Colorwheel_Shadows_Intensity", text="Intensity")
+        col_2 = row.column()
+        col_2.label(text="Midtones", icon="PMARKER_SEL")
+        col_2.template_color_picker(color_wheel_node_gamma, "gamma")
+        col_2.prop(settings, "Colorgrade_Colorwheel_Midtones_Brightness", text="Brightness")
+        col_2.prop(settings, "Colorgrade_Colorwheel_Midtones_Intensity", text="Intensity")
+        col_3 = row.column()
+        col_3.label(text="Highlights", icon="PMARKER_ACT")
+        col_3.template_color_picker(color_wheel_node_gain, "gain")
+        col_3.prop(settings, "Colorgrade_Colorwheel_Highlights_Brightness", text="Brightness")
+        col_3.prop(settings, "Colorgrade_Colorwheel_Highlights_Intensity", text="Intensity")
 # endregion ColorGrade
 
 # region Effects
@@ -221,7 +260,6 @@ class SAC_PT_EFFECTS_Panel(SAC_PT_Panel, Panel):
 
     def draw(self, context: Context):
         layout = self.layout
-        layout.operator("wm.url_open", text="Submit your requests", icon="URL").url = "https://go.pidgeontools.com/2023-08-29-sac-survey"
 
 
 # Effects - List
@@ -264,7 +302,7 @@ class SAC_PT_List(SAC_PT_Panel, Panel):
 
 
 # Effects - Color
-class SAC_PT_EFFECTS_Color_Panel(SAC_PT_Panel, Panel):
+class SAC_PT_EFFECTS_Properties_Panel(SAC_PT_Panel, Panel):
     bl_label = "Effect Properties"
     bl_parent_id = "SAC_PT_EFFECTS_Panel"
 
@@ -280,155 +318,154 @@ class SAC_PT_EFFECTS_Color_Panel(SAC_PT_Panel, Panel):
         index = context.scene.sac_effect_list_index
         item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
         if item is None:
+            layout.label(text="No effect selected.")
             return
+
         node_group_name = f".{item.EffectGroup}_{item.ID}"
 
-        if item is not None:
-            layout.label(text=f"These are settings for {item.name}.")
-            # Bokah
-            if item.EffectGroup == "SAC_BOKEH":
-                # warning that this effect is not viewport compatible
-                layout.label(text="This effect is not viewport compatible.", icon="ERROR")
-                layout.prop(settings, "Effects_Bokeh_MaxSize")
-                layout.prop(settings, "Effects_Bokeh_Offset")
-                layout.prop(settings, "Effects_Bokeh_Range")
-                layout.separator()
-                layout.label(text="Bokeh Type")
-                layout_bokeh_type = layout.row(align=True)
-                layout_bokeh_type.prop(settings, "Effects_Bokeh_Type", expand=True)
+        layout.label(text=f"These are settings for {item.name}.")
+        # Bokah
+        if item.EffectGroup == "SAC_BOKEH":
+            layout.label(text="This effect is not viewport compatible.", icon="ERROR")
+            layout.prop(settings, "Effects_Bokeh_MaxSize")
+            layout.prop(settings, "Effects_Bokeh_Offset")
+            layout.prop(settings, "Effects_Bokeh_Range")
+            layout.separator()
+            layout.label(text="Bokeh Type")
+            layout_bokeh_type = layout.row(align=True)
+            layout_bokeh_type.prop(settings, "Effects_Bokeh_Type", expand=True)
 
-                if settings.Effects_Bokeh_Type == "CAMERA":
-                    layout.label(text="Camera Bokeh")
+            if settings.Effects_Bokeh_Type == "CAMERA":
+                layout.label(text="Camera Bokeh")
 
-                    row = layout.row(align=True)
-                    left = row.column(align=True)
-                    left.scale_x = 1
-                    left.scale_y = 8
-                    left.operator("superadvancedcamera.previous_effect_bokeh", text="", icon="TRIA_LEFT")
-                    center = row.column()
-                    center.template_icon_view(context.scene, "new_bokeh_type", show_labels=True, scale=8.0, scale_popup=4.0)
-                    right = row.column(align=True)
-                    right.scale_x = 1
-                    right.scale_y = 8
-                    right.operator("superadvancedcamera.next_effect_bokeh", text="", icon="TRIA_RIGHT")
+                row = layout.row(align=True)
+                left = row.column(align=True)
+                left.scale_x = 1
+                left.scale_y = 8
+                left.operator("superadvancedcamera.previous_effect_bokeh", text="", icon="TRIA_LEFT")
+                center = row.column()
+                center.template_icon_view(context.scene, "new_bokeh_type", show_labels=True, scale=8.0, scale_popup=4.0)
+                right = row.column(align=True)
+                right.scale_x = 1
+                right.scale_y = 8
+                right.operator("superadvancedcamera.next_effect_bokeh", text="", icon="TRIA_RIGHT")
 
-                    layout.prop(settings, "Effects_Bokeh_Rotation")
-                    bokeh_type = context.scene.new_bokeh_type.split("_")
-                    layout.label(text="Manufacturer: " + bokeh_type[0])
-                    layout.label(text="Model: " + bokeh_type[1] + " - " + bokeh_type[3] + " - " + bokeh_type[2])
-                    layout.label(text="Aperture: " + bokeh_type[4])
-                    layout.label(text="Special thanks to Prof. Dr. Matt Gunn for the Bokeh textures.")
-                    layout.operator("superadvancedcamera.apply_effect_bokeh", icon="SEQ_CHROMA_SCOPE")
+                layout.prop(settings, "Effects_Bokeh_Rotation")
+                bokeh_type = context.scene.new_bokeh_type.split("_")
+                layout.label(text="Manufacturer: " + bokeh_type[0])
+                layout.label(text="Model: " + bokeh_type[1] + " - " + bokeh_type[3] + " - " + bokeh_type[2])
+                layout.label(text="Aperture: " + bokeh_type[4])
+                layout.label(text="Special thanks to Prof. Dr. Matt Gunn for the Bokeh textures.")
+                layout.operator("superadvancedcamera.apply_effect_bokeh", icon="SEQ_CHROMA_SCOPE")
 
-                elif settings.Effects_Bokeh_Type == "CUSTOM":
-                    layout.label(text="Custom Bokeh")
-                    bokeh_image = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Custom_Image"]
-                    layout.template_ID(bokeh_image, "image", open="image.open")
-                    layout.prop(settings, "Effects_Bokeh_Rotation")
+            elif settings.Effects_Bokeh_Type == "CUSTOM":
+                layout.label(text="Custom Bokeh")
+                bokeh_image = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Custom_Image"]
+                layout.template_ID(bokeh_image, "image", open="image.open")
+                layout.prop(settings, "Effects_Bokeh_Rotation")
 
-                elif settings.Effects_Bokeh_Type == "PROCEDURAL":
-                    layout.label(text="Procedural Bokeh")
-                    layout.prop(settings, "Effects_Bokeh_Procedural_Flaps")
-                    layout.prop(settings, "Effects_Bokeh_Procedural_Angle")
-                    layout.prop(settings, "Effects_Bokeh_Procedural_Rounding")
-                    layout.prop(settings, "Effects_Bokeh_Procedural_Catadioptric")
-                    layout.prop(settings, "Effects_Bokeh_Procedural_Shift")
+            elif settings.Effects_Bokeh_Type == "PROCEDURAL":
+                layout.label(text="Procedural Bokeh")
+                layout.prop(settings, "Effects_Bokeh_Procedural_Flaps")
+                layout.prop(settings, "Effects_Bokeh_Procedural_Angle")
+                layout.prop(settings, "Effects_Bokeh_Procedural_Rounding")
+                layout.prop(settings, "Effects_Bokeh_Procedural_Catadioptric")
+                layout.prop(settings, "Effects_Bokeh_Procedural_Shift")
 
-            # Chromatic Aberration
-            elif item.EffectGroup == "SAC_CHROMATICABERRATION":
-                layout.prop(settings, "Effects_ChromaticAberration_Amount")
-            # Duotone
-            elif item.EffectGroup == "SAC_DUOTONE":
-                layout.prop(settings, "Effects_Duotone_Color1")
-                layout.prop(settings, "Effects_Duotone_Color2")
-                layout.prop(settings, "Effects_Duotone_Blend")
-            # Emboss
-            elif item.EffectGroup == "SAC_EMBOSS":
-                layout.prop(settings, "Effects_Emboss_Strength")
-            # Film Grain
-            elif item.EffectGroup == "SAC_FILMGRAIN":
-                layout.prop(settings, "Filmgrain_strength")
-                layout.prop(settings, "Filmgrain_dustproportion")
-                layout.prop(settings, "Filmgrain_size")
-            # Fish Eye
-            elif item.EffectGroup == "SAC_FISHEYE":
-                layout.prop(settings, "Effects_Fisheye")
-            # Fog Glow
-            elif item.EffectGroup == "SAC_FOGGLOW":
-                layout.prop(settings, "Effects_FogGlow_Strength")
-                layout.prop(settings, "Effects_FogGlow_Threshold")
-                layout.prop(settings, "Effects_FogGlow_Size")
-            # Ghost
-            elif item.EffectGroup == "SAC_GHOST":
-                layout.prop(settings, "Effects_Ghosts_Strength")
-                layout.prop(settings, "Effects_Ghosts_Threshold")
-                layout.prop(settings, "Effects_Ghosts_Count")
-                layout.prop(settings, "Effects_Ghosts_Distortion")
-            # Gradient Map
-            elif item.EffectGroup == "SAC_GRADIENTMAP":
-                gradient_map_node = bpy.data.node_groups[node_group_name].nodes["SAC Effects_GradientMap"]
-                layout.template_color_ramp(gradient_map_node, "color_ramp")
-                layout.prop(settings, "Effects_GradientMap_blend")
-            # Halftone
-            elif item.EffectGroup == "SAC_HALFTONE":
-                layout.prop(settings, "Effects_Halftone_value")
-                layout.prop(settings, "Effects_Halftone_delta")
-                layout.prop(settings, "Effects_Halftone_size")
-            # Infrared
-            elif item.EffectGroup == "SAC_INFRARED":
-                layout.prop(settings, "Effects_Infrared_Blend")
-                layout.prop(settings, "Effects_Infrared_Offset")
-            # ISO Noise
-            elif item.EffectGroup == "SAC_ISONOISE":
-                layout.prop(settings, "ISO_strength")
-                layout.prop(settings, "ISO_size")
-            # Mosaic
-            elif item.EffectGroup == "SAC_MOSAIC":
-                layout.prop(settings, "Effects_Pixelate_PixelSize")
-            # Negative
-            elif item.EffectGroup == "SAC_NEGATIVE":
-                layout.prop(settings, "Effects_Negative")
-            # Overlay
-            elif item.EffectGroup == "SAC_OVERLAY":
-                overlay_texture = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Overlay_Texture"]
-                layout.template_ID(overlay_texture, "image", open="image.open")
-                layout.prop(settings, "Effects_Overlay_Strength")
-            # Perspective Shift
-            elif item.EffectGroup == "SAC_PERSPECTIVESHIFT":
-                layout.prop(settings, "Effects_PerspectiveShift_Horizontal")
-                layout.prop(settings, "Effects_PerspectiveShift_Vertical")
-            # Posterize
-            elif item.EffectGroup == "SAC_POSTERIZE":
-                layout.prop(settings, "Effects_Posterize_Steps")
-            # Streaks
-            elif item.EffectGroup == "SAC_STREAKS":
-                layout.prop(settings, "Effects_Streaks_Strength")
-                layout.prop(settings, "Effects_Streaks_Threshold")
-                layout.prop(settings, "Effects_Streaks_Count")
-                layout.prop(settings, "Effects_Streaks_Length")
-                layout.prop(settings, "Effects_Streaks_Fade")
-                layout.prop(settings, "Effects_Streaks_Angle")
-                layout.prop(settings, "Effects_Streaks_Distortion")
-            # Vignette
-            elif item.EffectGroup == "SAC_VIGNETTE":
-                layout.prop(settings, "Effects_Vignette_Intensity")
-                layout.prop(settings, "Effects_Vignette_Roundness")
-                layout.prop(settings, "Effects_Vignette_Feather")
-                layout.prop(settings, "Effects_Vignette_Midpoint")
-            # Warp
-            elif item.EffectGroup == "SAC_WARP":
-                layout.prop(settings, "Effects_Warp")
-            # Error
-            else:
-                layout.label(text="Oops, that's not supposed to happen.")
-                layout.label(text=f"Effect: {item.EffectGroup} was selected.")
-                layout.label(text="Please report this to us.")
-                layout.operator("wm.url_open", text="Our Discord", icon="URL").url = "https://discord.gg/cnFdGQP"
+        # Chromatic Aberration
+        elif item.EffectGroup == "SAC_CHROMATICABERRATION":
+            layout.prop(settings, "Effects_ChromaticAberration_Amount")
+        # Duotone
+        elif item.EffectGroup == "SAC_DUOTONE":
+            layout.prop(settings, "Effects_Duotone_Color1")
+            layout.prop(settings, "Effects_Duotone_Color2")
+            layout.prop(settings, "Effects_Duotone_Blend")
+        # Emboss
+        elif item.EffectGroup == "SAC_EMBOSS":
+            layout.prop(settings, "Effects_Emboss_Strength")
+        # Film Grain
+        elif item.EffectGroup == "SAC_FILMGRAIN":
+            layout.prop(settings, "Filmgrain_strength")
+            layout.prop(settings, "Filmgrain_dustproportion")
+            layout.prop(settings, "Filmgrain_size")
+        # Fish Eye
+        elif item.EffectGroup == "SAC_FISHEYE":
+            layout.prop(settings, "Effects_Fisheye")
+        # Fog Glow
+        elif item.EffectGroup == "SAC_FOGGLOW":
+            layout.prop(settings, "Effects_FogGlow_Strength")
+            layout.prop(settings, "Effects_FogGlow_Threshold")
+            layout.prop(settings, "Effects_FogGlow_Size")
+        # Ghost
+        elif item.EffectGroup == "SAC_GHOST":
+            layout.prop(settings, "Effects_Ghosts_Strength")
+            layout.prop(settings, "Effects_Ghosts_Threshold")
+            layout.prop(settings, "Effects_Ghosts_Count")
+            layout.prop(settings, "Effects_Ghosts_Distortion")
+        # Gradient Map
+        elif item.EffectGroup == "SAC_GRADIENTMAP":
+            gradient_map_node = bpy.data.node_groups[node_group_name].nodes["SAC Effects_GradientMap"]
+            layout.template_color_ramp(gradient_map_node, "color_ramp")
+            layout.prop(settings, "Effects_GradientMap_blend")
+        # Halftone
+        elif item.EffectGroup == "SAC_HALFTONE":
+            layout.prop(settings, "Effects_Halftone_value")
+            layout.prop(settings, "Effects_Halftone_delta")
+            layout.prop(settings, "Effects_Halftone_size")
+        # Infrared
+        elif item.EffectGroup == "SAC_INFRARED":
+            layout.prop(settings, "Effects_Infrared_Blend")
+            layout.prop(settings, "Effects_Infrared_Offset")
+        # ISO Noise
+        elif item.EffectGroup == "SAC_ISONOISE":
+            layout.prop(settings, "ISO_strength")
+            layout.prop(settings, "ISO_size")
+        # Mosaic
+        elif item.EffectGroup == "SAC_MOSAIC":
+            layout.prop(settings, "Effects_Pixelate_PixelSize")
+        # Negative
+        elif item.EffectGroup == "SAC_NEGATIVE":
+            layout.prop(settings, "Effects_Negative")
+        # Overlay
+        elif item.EffectGroup == "SAC_OVERLAY":
+            overlay_texture = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Overlay_Texture"]
+            layout.template_ID(overlay_texture, "image", open="image.open")
+            layout.prop(settings, "Effects_Overlay_Strength")
+        # Perspective Shift
+        elif item.EffectGroup == "SAC_PERSPECTIVESHIFT":
+            layout.prop(settings, "Effects_PerspectiveShift_Horizontal")
+            layout.prop(settings, "Effects_PerspectiveShift_Vertical")
+        # Posterize
+        elif item.EffectGroup == "SAC_POSTERIZE":
+            layout.prop(settings, "Effects_Posterize_Steps")
+        # Streaks
+        elif item.EffectGroup == "SAC_STREAKS":
+            layout.prop(settings, "Effects_Streaks_Strength")
+            layout.prop(settings, "Effects_Streaks_Threshold")
+            layout.prop(settings, "Effects_Streaks_Count")
+            layout.prop(settings, "Effects_Streaks_Length")
+            layout.prop(settings, "Effects_Streaks_Fade")
+            layout.prop(settings, "Effects_Streaks_Angle")
+            layout.prop(settings, "Effects_Streaks_Distortion")
+        # Vignette
+        elif item.EffectGroup == "SAC_VIGNETTE":
+            layout.prop(settings, "Effects_Vignette_Intensity")
+            layout.prop(settings, "Effects_Vignette_Roundness")
+            layout.prop(settings, "Effects_Vignette_Feather")
+            layout.prop(settings, "Effects_Vignette_Midpoint")
+        # Warp
+        elif item.EffectGroup == "SAC_WARP":
+            layout.prop(settings, "Effects_Warp")
+        # Error
         else:
-            layout.label(text="No item selected.")
+            layout.label(text="Oops, that's not supposed to happen.")
+            layout.label(text=f"Effect: {item.EffectGroup} was selected.")
+            layout.label(text="Please report this to us.")
+            layout.operator("wm.url_open", text="Our Discord", icon="URL").url = "https://discord.gg/cnFdGQP"
 
 
 # endregion Effects
+
 
 # region Camera
 # Camera
@@ -442,50 +479,61 @@ class SAC_PT_CAMERA_Panel(SAC_PT_Panel, Panel):
 
     def draw(self, context: Context):
         layout = self.layout
+        settings = context.scene.sac_settings
+        layout.prop(settings, "selected_camera")
+        if settings.selected_camera == "None":
+            layout.label(text="No camera found in scene.")
+            layout.label(text="Please add a camera to the scene.")
+            return
 
 
 # Tilt Shift
 class SAC_PT_CAMERA_TiltShift_Panel(SAC_PT_Panel, Panel):
-    bl_label = "Lens Settings"
+    bl_label = ""
     bl_parent_id = "SAC_PT_CAMERA_Panel"
 
     def draw_header(self, context: Context):
         layout = self.layout
-        layout.label(text="", icon="MOD_LATTICE")
+        settings = context.scene.sac_settings
+
+        layout.label(text="Lens Settings", icon="MOD_LATTICE")
+        if settings.selected_camera == "None":
+            layout.enabled = False
+            return
 
     def draw(self, context: Context):
         layout = self.layout
         settings = context.scene.sac_settings
 
-        active_obj = bpy.context.view_layer.objects.active
-        if active_obj and active_obj.type == 'CAMERA':
-            camera = active_obj
-            camera_object = bpy.data.objects[camera.name]
-            camera_data = bpy.data.cameras[camera_object.data.name]
+        if settings.selected_camera == "None":
+            layout.label(text="No camera in scene.")
+            layout.enabled = False
+            return
 
-            if settings.Camera_TiltShift_KeepFrame == True:
-                shift_x_text = "Vertical Tilt Shift"
-                shift_y_text = "Horizontal Tilt Shift"
-            else:
-                shift_x_text = "Vertical Lens Shift"
-                shift_y_text = "Horizontal Lens Shift"
+        camera_object = bpy.data.objects[settings.selected_camera]
+        camera_data = bpy.data.cameras[camera_object.data.name]
 
-            layout_shift = layout.column(align=False)
-            layout_shift.prop(settings, "Camera_TiltShift_AmountX", text=shift_x_text)
-            layout_shift.prop(settings, "Camera_TiltShift_AmountY", text=shift_y_text)
-            layout_shift.prop(settings, "Camera_TiltShift_KeepFrame")
-            layout.separator()
-
-            layout_focal = layout.column(align=True)
-            layout_focal.prop(camera_data, "lens")
-            layout_focal.prop(camera_data, "angle")
-            layout.separator()
-
-            layout_clip = layout.column(align=True)
-            layout_clip.prop(camera_data, "clip_start", text="Min. Visible Distance")
-            layout_clip.prop(camera_data, "clip_end", text="Max. Visible Distance")
+        if settings.Camera_TiltShift_KeepFrame == True:
+            shift_x_text = "Vertical Tilt Shift"
+            shift_y_text = "Horizontal Tilt Shift"
         else:
-            layout.label(text="No camera selected.")
+            shift_x_text = "Vertical Lens Shift"
+            shift_y_text = "Horizontal Lens Shift"
+
+        layout_shift = layout.column(align=False)
+        layout_shift.prop(settings, "Camera_TiltShift_AmountX", text=shift_x_text)
+        layout_shift.prop(settings, "Camera_TiltShift_AmountY", text=shift_y_text)
+        layout_shift.prop(settings, "Camera_TiltShift_KeepFrame")
+        layout.separator()
+
+        layout_focal = layout.column(align=True)
+        layout_focal.prop(camera_data, "lens")
+        layout_focal.prop(camera_data, "angle")
+        layout.separator()
+
+        layout_clip = layout.column(align=True)
+        layout_clip.prop(camera_data, "clip_start", text="Min. Visible Distance")
+        layout_clip.prop(camera_data, "clip_end", text="Max. Visible Distance")
 
 
 # Bokeh
@@ -496,21 +544,31 @@ class SAC_PT_CAMERA_Bokeh_Panel(SAC_PT_Panel, Panel):
     bl_parent_id = "SAC_PT_CAMERA_Panel"
 
     def draw_header(self, context: Context):
-        active_obj = bpy.context.view_layer.objects.active
-        if active_obj and active_obj.type == 'CAMERA':
-            camera = active_obj
-            camera_object = bpy.data.objects[camera.name]
-            camera_data = bpy.data.cameras[camera_object.data.name]
-
+        settings = context.scene.sac_settings
         layout = self.layout
-        layout.prop(camera_data.dof, "use_dof", text="Bokeh", icon="SEQ_CHROMA_SCOPE")
+
+        layout.label(text="Use Bokeh", icon="SEQ_CHROMA_SCOPE")
+
+        if settings.selected_camera == "None":
+            layout.enabled = False
+            return
+
+        camera_object = bpy.data.objects[settings.selected_camera]
+        camera_data = bpy.data.cameras[camera_object.data.name]
+
+        layout.prop(camera_data.dof, "use_dof", text="")
 
     def draw(self, context: Context):
-        active_obj = bpy.context.view_layer.objects.active
-        if active_obj and active_obj.type == 'CAMERA':
-            camera = active_obj
-            camera_object = bpy.data.objects[camera.name]
-            camera_data = bpy.data.cameras[camera_object.data.name]
+        settings = context.scene.sac_settings
+
+        if settings.selected_camera == "None":
+            layout = self.layout
+            layout.label(text="No camera in scene.")
+            layout.enabled = False
+            return
+
+        camera_object = bpy.data.objects[settings.selected_camera]
+        camera_data = bpy.data.cameras[camera_object.data.name]
 
         layout = self.layout
         layout.active = camera_data.dof.use_dof
@@ -523,7 +581,7 @@ class SAC_PT_CAMERA_Bokeh_Panel(SAC_PT_Panel, Panel):
 
         layout.operator("superadvancedcamera.apply_camera_bokeh", icon="SEQ_CHROMA_SCOPE")
         try:
-            plane_object = bpy.data.objects[f"{camera.name}_Bokeh_Plane"]
+            plane_object = bpy.data.objects[f"{settings.selected_camera}_Bokeh_Plane"]
         except:
             layout.label(text="No Bokeh Plane found.")
             layout.label(text="Please apply Bokeh first.")
@@ -555,13 +613,14 @@ class SAC_PT_CAMERA_Bokeh_Panel(SAC_PT_Panel, Panel):
             layout.prop(settings, "Camera_Bokeh_Scale")
             layout.prop(settings, "Camera_Bokeh_Rotation")
             layout.prop(settings, "Camera_Bokeh_Curves")
+
         elif settings.Camera_Bokeh_Type == "PROCEDURAL":
             layout.prop(camera_data.dof, "aperture_blades")
             layout.prop(camera_data.dof, "aperture_rotation")
             layout.prop(camera_data.dof, "aperture_ratio")
-        elif settings.Camera_Bokeh_Type == "CUSTOM":
 
-            material = bpy.data.materials[f".{camera.name}_Bokeh_Plane_Material"]
+        elif settings.Camera_Bokeh_Type == "CUSTOM":
+            material = bpy.data.materials[f".{settings.selected_camera}_Bokeh_Plane_Material"]
             material_node_tree = material.node_tree
 
             bokeh_image = material_node_tree.nodes["SAC Camera_Bokeh_Custom_Texture"]
@@ -569,11 +628,37 @@ class SAC_PT_CAMERA_Bokeh_Panel(SAC_PT_Panel, Panel):
             layout.prop(settings, "Camera_Bokeh_Scale")
             layout.prop(settings, "Camera_Bokeh_Rotation")
             layout.prop(settings, "Camera_Bokeh_Curves")
+
 # endregion Camera
+
+# Socials
+
+
+class SAC_PT_SOCIALS_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Our Socials"
+    bl_parent_id = "SAC_PT_SAC_Panel"
+
+    def draw_header(self, context):
+        layout = self.layout
+        layout.label(text="", icon="FUND")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("wm.url_open", text="Join our Discord!", icon_value=custom_icons["Discord"].icon_id).url = "https://discord.gg/cnFdGQP"
+        layout.operator("wm.url_open", text="Submit your requests", icon="TEXT").url = "https://go.pidgeontools.com/2023-08-29-sac-survey"
+        row = layout.row()
+        row.operator("wm.url_open", text="YouTube", icon_value=custom_icons["Youtube"].icon_id).url = "https://www.youtube.com/channel/UCgLo3l_ZzNZ2BCQMYXLiIOg"
+        row.operator("wm.url_open", text="BlenderMarket", icon_value=custom_icons["BlenderMarket"].icon_id).url = "https://blendermarket.com/creators/kevin-lorengel"
+        row.operator("wm.url_open", text="Instagram", icon_value=custom_icons["Instagram"].icon_id).url = "https://www.instagram.com/pidgeontools/"
+        row.operator("wm.url_open", text="Twitter", icon_value=custom_icons["Twitter"].icon_id).url = "https://twitter.com/PidgeonTools"
+        layout.operator("wm.url_open", text="Support and Feedback!", icon="HELP").url = "https://discord.gg/cnFdGQP"
 
 
 classes = (
     SAC_PT_SAC_Panel,
+    SAC_PT_CAMERA_Panel,
+    SAC_PT_CAMERA_TiltShift_Panel,
+    SAC_PT_CAMERA_Bokeh_Panel,
     SAC_PT_COLORGRADE_Panel,
     SAC_PT_COLORGRADE_Color_Panel,
     SAC_PT_COLORGRADE_Light_Panel,
@@ -582,10 +667,8 @@ classes = (
     SAC_PT_COLORGRADE_Colorwheels_Panel,
     SAC_PT_EFFECTS_Panel,
     SAC_PT_List,
-    SAC_PT_EFFECTS_Color_Panel,
-    SAC_PT_CAMERA_Panel,
-    SAC_PT_CAMERA_TiltShift_Panel,
-    SAC_PT_CAMERA_Bokeh_Panel,
+    SAC_PT_EFFECTS_Properties_Panel,
+    SAC_PT_SOCIALS_Panel
 )
 
 
@@ -601,3 +684,5 @@ def unregister_function():
                 bpy.utils.unregister_class(cls)
             except (RuntimeError, Exception) as e:
                 print(f"Failed to unregister {cls}: {e}")
+
+    bpy.utils.previews.remove(custom_icons)

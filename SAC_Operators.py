@@ -195,8 +195,8 @@ class SAC_OT_AddEffect(Operator):
         # If the item is in array "slow", set the warning to True
         item.warn = new_effect_type in settings.slow_effects
 
-        context.scene.sac_effect_list_index = len(context.scene.sac_effect_list) - 1
         connect_renderLayer_node()
+        context.scene.sac_effect_list_index = len(context.scene.sac_effect_list) - 1
         return {'FINISHED'}
 
 
@@ -209,12 +209,12 @@ class SAC_OT_RemoveEffect(Operator):
         return context.scene.sac_effect_list
 
     def execute(self, context):
-        list = context.scene.sac_effect_list
+        list_data = context.scene.sac_effect_list
         index = context.scene.sac_effect_list_index
 
-        list.remove(index)
-        context.scene.sac_effect_list_index = min(max(0, index - 1), len(list) - 1)
+        list_data.remove(index)
         connect_renderLayer_node()
+        context.scene.sac_effect_list_index = min(max(0, index - 1), len(list_data) - 1)
         return {'FINISHED'}
 
 

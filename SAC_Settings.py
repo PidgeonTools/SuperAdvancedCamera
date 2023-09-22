@@ -39,6 +39,23 @@ from bpy.props import (
 
 class SAC_Settings(PropertyGroup):
 
+    def get_camera_items(self, context):
+        camera = []
+        i = 0
+        for cam in bpy.context.scene.objects:
+            if cam.type == 'CAMERA':
+                camera.extend([(cam.name, cam.name, "", "CAMERA_DATA", i)])
+                i += 1
+        if camera == []:
+            camera = [("None", "No Camera", "", "ERROR", 0)]
+        return camera
+
+    selected_camera: EnumProperty(
+        name="Camera",
+        description="Select a camera from the list",
+        items=get_camera_items,
+    )
+
     # EffectTypes
     effect_types = [
         # Bokeh

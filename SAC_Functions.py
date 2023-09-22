@@ -131,7 +131,10 @@ def mute_update(self, context):
 
 def active_effect_update(self, context):
     settings = context.scene.sac_settings
-    item = context.scene.sac_effect_list[self.sac_effect_list_index]
+    try:
+        item = context.scene.sac_effect_list[self.sac_effect_list_index]
+    except IndexError:
+        return
     node_name = f"{item.EffectGroup}_{item.ID}"
     node_group_name = f".{node_name}"
     # Bokeh
@@ -153,7 +156,6 @@ def active_effect_update(self, context):
                 settings.Effects_Bokeh_Type = "CUSTOM"
             else:
                 settings.Effects_Bokeh_Type = "CAMERA"
-
     # Chromatic Aberration
     elif item.EffectGroup == "SAC_CHROMATICABERRATION":
         settings.Effects_ChromaticAberration_Amount = bpy.data.node_groups[node_group_name].nodes["SAC Effects_ChromaticAberration"].inputs[2].default_value
