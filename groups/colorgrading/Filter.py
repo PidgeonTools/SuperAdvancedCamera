@@ -133,10 +133,13 @@ def create_filter_group() -> NodeTree:
 
     red_channel = sac_filter_group.nodes.new("CompositorNodeCurveRGB")
     red_channel.name = "SAC Colorgrade_Filter_Red"
+    red_channel.mapping.extend = "HORIZONTAL"
     green_channel = sac_filter_group.nodes.new("CompositorNodeCurveRGB")
     green_channel.name = "SAC Colorgrade_Filter_Green"
+    green_channel.mapping.extend = "HORIZONTAL"
     blue_channel = sac_filter_group.nodes.new("CompositorNodeCurveRGB")
     blue_channel.name = "SAC Colorgrade_Filter_Blue"
+    blue_channel.mapping.extend = "HORIZONTAL"
 
     filter_channels = get_filter("Default")
     channels = [red_channel, green_channel, blue_channel]

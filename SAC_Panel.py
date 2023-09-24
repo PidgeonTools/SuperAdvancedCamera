@@ -140,8 +140,8 @@ class SAC_PT_CAMERA_CameraSettings_Panel(SAC_PT_Panel, Panel):
 
         col.label(text="Resolution")
         row = col.row(align=True)
-        row.prop(context.scene.render, "resolution_x", text="Height")
-        row.prop(context.scene.render, "resolution_y", text="Width")
+        row.prop(context.scene.render, "resolution_x", text="Width")
+        row.prop(context.scene.render, "resolution_y", text="Height")
         col.prop(context.scene.render, "resolution_percentage", text="Scale")
         col.separator()
 
@@ -218,6 +218,12 @@ class SAC_PT_CAMERA_TiltShift_Panel(SAC_PT_Panel, Panel):
     def draw(self, context: Context):
         settings = context.scene.sac_settings
 
+        layout = self.layout
+        if settings.selected_camera == "None":
+            layout.label(text="No camera in scene.")
+            layout.enabled = False
+            return
+
         camera_object = bpy.data.objects[settings.selected_camera]
         camera_data = bpy.data.cameras[camera_object.data.name]
 
@@ -227,12 +233,6 @@ class SAC_PT_CAMERA_TiltShift_Panel(SAC_PT_Panel, Panel):
         else:
             shift_x_text = "Vertical Lens Shift"
             shift_y_text = "Horizontal Lens Shift"
-
-        layout = self.layout
-        if settings.selected_camera == "None":
-            layout.label(text="No camera in scene.")
-            layout.enabled = False
-            return
 
         col_shift = layout.column(align=False)
         col_shift.label(text="Tilt Shift / Lens Shift")
@@ -257,13 +257,13 @@ class SAC_PT_CAMERA_Bokeh_Panel(SAC_PT_Panel, Panel):
 
     def draw_header(self, context: Context):
         settings = context.scene.sac_settings
+        layout = self.layout
+
+        layout.label(text="Use Bokeh", icon="SEQ_CHROMA_SCOPE")
 
         if settings.selected_camera == "None":
             layout.enabled = False
             return
-
-        layout = self.layout
-        layout.label(text="Use Bokeh", icon="SEQ_CHROMA_SCOPE")
 
         camera_object = bpy.data.objects[settings.selected_camera]
         camera_data = bpy.data.cameras[camera_object.data.name]
@@ -455,6 +455,7 @@ class SAC_PT_COLORGRADE_Presets_Panel(SAC_PT_Panel, Panel):
 
         col.operator("superadvancedcamera.apply_filter", icon="BRUSHES_ALL")
         col.prop(settings, "Colorgrade_Filter_Mix")
+        col.prop(settings, "Colorgrade_Filter_Extension")
         col.separator()
         col.prop(settings, "Colorgrade_Presets_Sharpen")
         col.prop(settings, "Colorgrade_Presets_Vibrance")

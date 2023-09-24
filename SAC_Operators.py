@@ -49,7 +49,7 @@ class SAC_OT_Initialize(Operator):
 class SAC_OT_PreviousFilter(Operator):
     bl_idname = "superadvancedcamera.previous_filter"
     bl_label = ""
-    bl_description = ""
+    bl_description = "Sets the previous filter as the active filter"
 
     def execute(self, context: Context):
         settings: SAC_Settings = context.scene.sac_settings
@@ -75,7 +75,7 @@ class SAC_OT_PreviousFilter(Operator):
 class SAC_OT_NextFilter(Operator):
     bl_idname = "superadvancedcamera.next_filter"
     bl_label = ""
-    bl_description = ""
+    bl_description = "Set the next filter as the active filter"
 
     def execute(self, context: Context):
         settings: SAC_Settings = context.scene.sac_settings
@@ -101,7 +101,7 @@ class SAC_OT_NextFilter(Operator):
 class SAC_OT_ApplyFilter(Operator):
     bl_idname = "superadvancedcamera.apply_filter"
     bl_label = "Apply Filter"
-    bl_description = ""
+    bl_description = "Sets the current filter as the active filter"
 
     def execute(self, context: Context):
         bpy.data.node_groups[".SAC Colorgrade"].nodes["SAC Filter"].mute = False
@@ -120,6 +120,8 @@ class SAC_OT_ApplyFilter(Operator):
                 for point, filter_point in enumerate(reversed(filter_curve)):
                     channel_mapping.points[point].location = (point/(len(filter_curve)-1), filter_point)
             channel_node.mapping.update()
+
+        bpy.data.node_groups[".SAC Filter"].nodes["SAC Colorgrade_Filter_Mix"].inputs[0].default_value += 0
 
         return {'FINISHED'}
 

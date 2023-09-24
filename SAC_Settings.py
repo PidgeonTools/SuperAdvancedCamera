@@ -778,6 +778,27 @@ class SAC_Settings(PropertyGroup):
         update=update_Colorgrade_Filter_Mix
     )
 
+    # Extension
+    def update_Colorgrade_Filter_Extension(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+
+        if settings.Colorgrade_Filter_Extension:
+            extend = "HORIZONTAL"
+        else:
+            extend = "EXTRAPOLATED"
+
+        bpy.data.node_groups[".SAC Filter"].nodes["SAC Colorgrade_Filter_Blue"].mapping.extend = extend
+        bpy.data.node_groups[".SAC Filter"].nodes["SAC Colorgrade_Filter_Green"].mapping.extend = extend
+        bpy.data.node_groups[".SAC Filter"].nodes["SAC Colorgrade_Filter_Red"].mapping.extend = extend
+
+    Colorgrade_Filter_Extension: BoolProperty(
+        name="Extreme Value Correction",
+        description="The filter may run into issues at high/low brightness values (above 1 or below 0).\nThis setting eliminates that by clamping the brightness",
+        default=True,
+        update=update_Colorgrade_Filter_Extension
+    )
+
     # Sharpen
 
     def update_Colorgrade_Presets_Sharpen(self, context):
@@ -2559,7 +2580,7 @@ class SAC_Settings(PropertyGroup):
         name="Presets",
         description="Presets for the frame stretching effect",
         items=(
-            ('SlOWMO_2', 'Ultra-Slow-Motion (4x slower)', 'Quadruples the frame rate, allows for ultra-slow-motion'),
+            ('SLOWMO_2', 'Ultra-Slow-Motion (4x slower)', 'Quadruples the frame rate, allows for ultra-slow-motion'),
             ('SLOWMO_1', 'Slow-Motion (2x slower)', 'Doubles the frame rate, allows for slow-motion'),
             ('ORIGINAL', 'Original', '1:1 mapping, your frame rate will be unchanged'),
             ('TIMELAPSE_1', 'Time-Lapse (2x faster)', 'Halves the frame rate, allows for time-lapse'),
