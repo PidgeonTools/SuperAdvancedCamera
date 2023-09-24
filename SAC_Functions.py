@@ -22,6 +22,7 @@
 
 import bpy
 import os
+import math
 from .SAC_Settings import SAC_Settings
 
 
@@ -56,6 +57,17 @@ def load_filter_previews():
         pcoll_filter.load(item_type, icon_path, 'IMAGE')
 
     return pcoll_filter
+
+
+def load_gradient_previews():
+    pcoll_gradient = bpy.utils.previews.new()
+    my_icons_dir = os.path.join(os.path.dirname(__file__), "gradients")
+
+    for item_type, _ in SAC_Settings.gradient_types:
+        icon_path = os.path.join(my_icons_dir, f"{item_type}.png")
+        pcoll_gradient.load(item_type, icon_path, 'IMAGE')
+
+    return pcoll_gradient
 
 
 def enum_previews_from_directory_effects(self, context):
@@ -98,6 +110,21 @@ def enum_previews_from_directory_filter(self, context):
     pcoll_filter = bpy.types.Scene.filter_previews
     for i, (item_type, name) in enumerate(SAC_Settings.filter_types):
         icon = pcoll_filter[item_type].icon_id
+        enum_items.append((item_type, name, "", icon, i))
+
+    return enum_items
+
+
+def enum_previews_from_directory_gradient(self, context):
+    """Dynamic list of available previews."""
+    enum_items = []
+
+    if context is None:
+        return enum_items
+
+    pcoll_gradient = bpy.types.Scene.gradient_previews
+    for i, (item_type, name) in enumerate(SAC_Settings.gradient_types):
+        icon = pcoll_gradient[item_type].icon_id
         enum_items.append((item_type, name, "", icon, i))
 
     return enum_items
@@ -250,3 +277,23 @@ def active_effect_update(self, context):
     # Warp
     elif item.EffectGroup == "SAC_WARP":
         settings.Effects_Warp = bpy.data.node_groups[node_group_name].nodes["SAC Effects_Warp"].zoom
+
+
+def frames_to_time(frames, fps):
+    frames_abs = math.ceil(abs(frames))
+    total_seconds = frames_abs // fps
+    minutes = total_seconds // 60
+    seconds = total_seconds % 60
+    excess_frames = int(frames_abs % fps)
+
+    if frames >= 0:
+        return f"{minutes:02}m:{seconds:02}s+{excess_frames:02}f"
+    return f"-{minutes:02}m:{seconds:02}s+{excess_frames:02}f"
+
+
+def hex_to_rgb(value):
+    value = value.lstrip('#')
+    r = round(int(value[0:2], 16)/255, 3)
+    g = round(int(value[2:4], 16)/255, 3)
+    b = round(int(value[4:6], 16)/255, 3)
+    return (r, g, b, 1.0)

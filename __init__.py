@@ -37,7 +37,7 @@ from . import (
 bl_info = {
     "name": "Super Advanced Camera (SAC)",
     "author": "Kevin Lorengel, Slinc",
-    "version": (0, 1, 6),
+    "version": (0, 1, 7),
     "blender": (3, 6, 0),
     "description": "Adds plenty of new features to the camera and compositor",
     "warning": "",
@@ -57,6 +57,9 @@ bpy.types.Scene.new_camera_bokeh_type = bpy.props.EnumProperty(
 bpy.types.Scene.new_filter_type = bpy.props.EnumProperty(
     items=SAC_Functions.enum_previews_from_directory_filter)
 
+bpy.types.Scene.new_gradient_type = bpy.props.EnumProperty(
+    items=SAC_Functions.enum_previews_from_directory_gradient)
+
 
 def register():
 
@@ -72,6 +75,7 @@ def register():
     bpy.types.Scene.effect_previews = SAC_Functions.load_effect_previews()
     bpy.types.Scene.bokeh_previews = SAC_Functions.load_bokeh_previews()
     bpy.types.Scene.filter_previews = SAC_Functions.load_filter_previews()
+    bpy.types.Scene.gradient_previews = SAC_Functions.load_gradient_previews()
 
 
 def unregister():
@@ -88,6 +92,7 @@ def unregister():
     bpy.utils.previews.remove(bpy.types.Scene.effect_previews)
     bpy.utils.previews.remove(bpy.types.Scene.bokeh_previews)
     bpy.utils.previews.remove(bpy.types.Scene.filter_previews)
+    bpy.utils.previews.remove(bpy.types.Scene.gradient_previews)
 
 
 if __name__ == "__main__":

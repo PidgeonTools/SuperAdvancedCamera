@@ -39,23 +39,6 @@ from bpy.props import (
 
 class SAC_Settings(PropertyGroup):
 
-    def get_camera_items(self, context):
-        camera = []
-        i = 0
-        for cam in bpy.context.scene.objects:
-            if cam.type == 'CAMERA':
-                camera.extend([(cam.name, cam.name, "", "CAMERA_DATA", i)])
-                i += 1
-        if camera == []:
-            camera = [("None", "No Camera", "", "ERROR", 0)]
-        return camera
-
-    selected_camera: EnumProperty(
-        name="Camera",
-        description="Select a camera from the list",
-        items=get_camera_items,
-    )
-
     # EffectTypes
     effect_types = [
         # Bokeh
@@ -108,6 +91,49 @@ class SAC_Settings(PropertyGroup):
         ('SAC_SKETCH', 'Sketch', 'GREASEPENCIL'),
         # Watercolor
         ('SAC_WATERCOLOR', 'Watercolor', 'BRUSHES_ALL'),
+    ]
+
+    gradient_types = [
+        ("Platinum", "Platinum"),
+        ("Selenium 1", "Selenium 1"),
+        ("Selenium 2", "Selenium 2"),
+        ("Sepia 1", "Sepia 1"),
+        ("Sepia 2", "Sepia 2"),
+        ("Sepia 3", "Sepia 3"),
+        ("Sepia 4", "Sepia 4"),
+        ("Sepia 5", "Sepia 5"),
+        ("Sepia 6", "Sepia 6"),
+        ("Sepia Highlights 1", "Sepia Highlights 1"),
+        ("Sepia Highlights 2", "Sepia Highlights 2"),
+        ("Sepia Midtones", "Sepia Midtones"),
+        ("Gold 1", "Gold 1"),
+        ("Gold 2", "Gold 2"),
+        ("Blue 1", "Blue 1"),
+        ("Blue 2", "Blue 2"),
+        ("Cyanotype", "Cyanotype"),
+        ("Copper 1", "Copper 1"),
+        ("Copper 2", "Copper 2"),
+        ("Sepia-Selenium 1", "Sepia-Selenium 1"),
+        ("Sepia-Selenium 2", "Sepia-Selenium 2"),
+        ("Sepia-Selenium 3", "Sepia-Selenium 3"),
+        ("Sepia-Cyan", "Sepia-Cyan"),
+        ("Sepia-Blue 1", "Sepia-Blue 1"),
+        ("Sepia-Blue 2", "Sepia-Blue 2"),
+        ("Gold-Sepia", "Gold-Sepia"),
+        ("Gold-Selenium 1", "Gold-Selenium 1"),
+        ("Gold-Selenium 2", "Gold-Selenium 2"),
+        ("Gold-Copper", "Gold-Copper"),
+        ("Gold-Blue", "Gold-Blue"),
+        ("Blue-Selenium 1", "Blue-Selenium 1"),
+        ("Blue-Selenium 2", "Blue-Selenium 2"),
+        ("Cyan-Selenium", "Cyan-Selenium"),
+        ("Cyan-Sepia", "Cyan-Sepia"),
+        ("Copper-Sepia", "Copper-Sepia"),
+        ("Cobalt-Iron 1", "Cobalt-Iron 1"),
+        ("Cobalt-Iron 2", "Cobalt-Iron 2"),
+        ("Cobalt-Iron 3", "Cobalt-Iron 3"),
+        ("Hard", "Hard"),
+        ("Skies", "Skies"),
     ]
 
     # Slow Effects
@@ -2161,7 +2187,7 @@ class SAC_Settings(PropertyGroup):
         bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Procedural"].flaps = settings.Effects_Bokeh_Procedural_Flaps
 
     Effects_Bokeh_Procedural_Flaps: IntProperty(
-        name="Flaps",
+        name="Blades",
         description="Adjusts the number of flaps in the bokeh effect",
         default=6,
         max=24,
@@ -2184,7 +2210,7 @@ class SAC_Settings(PropertyGroup):
         bpy.data.node_groups[node_group_name].nodes["SAC Effects_Bokeh_Procedural"].angle = settings.Effects_Bokeh_Procedural_Angle
 
     Effects_Bokeh_Procedural_Angle: FloatProperty(
-        name="Angle",
+        name="Rotation",
         description="Adjusts the angle of the bokeh effect",
         default=0.0785398,
         max=(math.pi*2),
@@ -2309,7 +2335,25 @@ class SAC_Settings(PropertyGroup):
 
 # endregion Effects
 
-    # region Camera
+# region Camera
+
+
+    def get_camera_items(self, context):
+        camera = []
+        i = 0
+        for cam in bpy.context.scene.objects:
+            if cam.type == 'CAMERA':
+                camera.extend([(cam.name, cam.name, "", "CAMERA_DATA", i)])
+                i += 1
+        if camera == []:
+            camera = [("None", "No Camera", "", "ERROR", 0)]
+        return camera
+
+    selected_camera: EnumProperty(
+        name="Camera",
+        description="Select a camera from the list",
+        items=get_camera_items,
+    )
 
     # Tilt Shift
     # Keep frame
@@ -2328,19 +2372,17 @@ class SAC_Settings(PropertyGroup):
 
     def set_Camera_Shift_AmountX(self, tilt_shift_amount):
         # OnBeforeSetData Trigger
+        settings: SAC_Settings = bpy.context.scene.sac_settings
 
-        active_obj = bpy.context.view_layer.objects.active
-        if active_obj and active_obj.type == 'CAMERA':
-            camera = active_obj
-            camera_object = bpy.data.objects[camera.name]
-            camera_data = bpy.data.cameras[camera_object.data.name]
+        camera_object = bpy.data.objects[settings.selected_camera]
+        camera_data = bpy.data.cameras[camera_object.data.name]
 
         if self.Camera_TiltShift_KeepFrame:
-            old_rotation_x = camera.rotation_euler.x
+            old_rotation_x = camera_object.rotation_euler.x
             cur_rotation_x = old_rotation_x - math.atan(self.Camera_TiltShift_AmountX / (camera_data.lens/36))
             new_rotation_x = cur_rotation_x + math.atan(tilt_shift_amount / (camera_data.lens/36))
 
-            camera.rotation_euler.x = new_rotation_x
+            camera_object.rotation_euler.x = new_rotation_x
 
         camera_data.shift_y = -tilt_shift_amount
 
@@ -2367,21 +2409,19 @@ class SAC_Settings(PropertyGroup):
 
     def set_Camera_Shift_AmountY(self, tilt_shift_amount):
         # OnBeforeSetData Trigger
+        settings: SAC_Settings = bpy.context.scene.sac_settings
 
-        active_obj = bpy.context.view_layer.objects.active
-        if active_obj and active_obj.type == 'CAMERA':
-            camera = active_obj
-            camera_object = bpy.data.objects[camera.name]
-            camera_data = bpy.data.cameras[camera_object.data.name]
+        camera_object = bpy.data.objects[settings.selected_camera]
+        camera_data = bpy.data.cameras[camera_object.data.name]
 
         if self.Camera_TiltShift_KeepFrame:
 
-            old_rotation = camera.rotation_euler.to_matrix().to_euler("YZX")
+            old_rotation = camera_object.rotation_euler.to_matrix().to_euler("YZX")
             new_rotation = old_rotation
             cur_rotation_y = old_rotation.y - math.atan(self.Camera_TiltShift_AmountY / (camera_data.lens/36))
             new_rotation.y = cur_rotation_y + math.atan(tilt_shift_amount / (camera_data.lens/36))
 
-            camera.rotation_euler = new_rotation.to_matrix().to_euler(camera.rotation_mode)
+            camera_object.rotation_euler = new_rotation.to_matrix().to_euler(camera_object.rotation_mode)
 
         camera_data.shift_x = tilt_shift_amount
 
@@ -2406,18 +2446,14 @@ class SAC_Settings(PropertyGroup):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
 
-        active_obj = bpy.context.view_layer.objects.active
-        if active_obj and active_obj.type == 'CAMERA':
-            camera = active_obj
-
-        material = bpy.data.materials[f".{camera.name}_Bokeh_Plane_Material"]
+        material = bpy.data.materials[f".SAC_Bokeh_{settings.selected_camera}_Material"]
         material_node_tree = material.node_tree
         material_node_tree.nodes["SAC Camera_Bokeh_Scale"].inputs["Scale"].default_value = settings.Camera_Bokeh_Scale
 
     Camera_Bokeh_Scale: FloatProperty(
         name="Scale",
         description="Adjusts the scale of the bokeh effect",
-        default=2,
+        default=10,
         soft_max=30,
         min=0,
         subtype="FACTOR",
@@ -2428,11 +2464,7 @@ class SAC_Settings(PropertyGroup):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
 
-        active_obj = bpy.context.view_layer.objects.active
-        if active_obj and active_obj.type == 'CAMERA':
-            camera = active_obj
-
-        material = bpy.data.materials[f".{camera.name}_Bokeh_Plane_Material"]
+        material = bpy.data.materials[f".SAC_Bokeh_{settings.selected_camera}_Material"]
         material_node_tree = material.node_tree
         material_node_tree.nodes["SAC Camera_Bokeh_Rotate"].inputs["Angle"].default_value = settings.Camera_Bokeh_Rotation
 
@@ -2448,11 +2480,7 @@ class SAC_Settings(PropertyGroup):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
 
-        active_obj = bpy.context.view_layer.objects.active
-        if active_obj and active_obj.type == 'CAMERA':
-            camera = active_obj
-
-        material = bpy.data.materials[f".{camera.name}_Bokeh_Plane_Material"]
+        material = bpy.data.materials[f".SAC_Bokeh_{settings.selected_camera}_Material"]
         material_node_tree = material.node_tree
         material_node_tree.nodes["SAC Camera_Bokeh_Curves"].inputs[0].default_value = settings.Camera_Bokeh_Curves
 
@@ -2470,16 +2498,13 @@ class SAC_Settings(PropertyGroup):
         scene = bpy.context.scene
         settings: SAC_Settings = scene.sac_settings
 
-        active_obj = bpy.context.view_layer.objects.active
-        if active_obj and active_obj.type == 'CAMERA':
-            camera = active_obj
-            camera_object = bpy.data.objects[camera.name]
-            camera_data = bpy.data.cameras[camera_object.data.name]
+        camera_object = bpy.data.objects[settings.selected_camera]
+        camera_data = bpy.data.cameras[camera_object.data.name]
 
-        material = bpy.data.materials[f".{camera.name}_Bokeh_Plane_Material"]
+        material = bpy.data.materials[f".SAC_Bokeh_{settings.selected_camera}_Material"]
         material_node_tree = material.node_tree
 
-        bokeh_plane = bpy.data.objects[f"{camera.name}_Bokeh_Plane"]
+        bokeh_plane = bpy.data.objects[f"SAC_Bokeh_{settings.selected_camera}"]
 
         bokeh_plane.hide_viewport = False
         bokeh_plane.hide_render = False
@@ -2500,24 +2525,48 @@ class SAC_Settings(PropertyGroup):
         name="Bokeh Type",
         description="The type of bokeh to use",
         items=(
-            (
-                'CAMERA',
-                'Camera',
-                'A real camera bokeh image',
-            ),
-            (
-                'PROCEDURAL',
-                'Procedural',
-                'A procedurally generated bokeh',
-            ),
-            (
-                'CUSTOM',
-                'Custom',
-                'A custom bokeh image of your choice',
-            ),
+            ('CAMERA', 'Camera', 'A real camera bokeh image'),
+            ('PROCEDURAL', 'Procedural', 'A procedurally generated bokeh'),
+            ('CUSTOM', 'Custom', 'A custom bokeh image of your choice')
         ),
         default='CAMERA',
         update=update_Camera_Bokeh_Type
+    )
+
+    # Frame Stretching
+
+    def update_Camera_FrameStretching(self, context):
+        scene = bpy.context.scene
+        settings: SAC_Settings = scene.sac_settings
+
+        if settings.Camera_FrameStretching == 'ORIGINAL':
+            scene.render.frame_map_old = 1
+            scene.render.frame_map_new = 1
+        elif settings.Camera_FrameStretching == 'SLOWMO_1':
+            scene.render.frame_map_old = 1
+            scene.render.frame_map_new = 2
+        elif settings.Camera_FrameStretching == 'SLOWMO_2':
+            scene.render.frame_map_old = 1
+            scene.render.frame_map_new = 4
+        elif settings.Camera_FrameStretching == 'TIMELAPSE_1':
+            scene.render.frame_map_old = 2
+            scene.render.frame_map_new = 1
+        elif settings.Camera_FrameStretching == 'TIMELAPSE_2':
+            scene.render.frame_map_old = 4
+            scene.render.frame_map_new = 1
+
+    Camera_FrameStretching: EnumProperty(
+        name="Presets",
+        description="Presets for the frame stretching effect",
+        items=(
+            ('SlOWMO_2', 'Ultra-Slow-Motion (4x slower)', 'Quadruples the frame rate, allows for ultra-slow-motion'),
+            ('SLOWMO_1', 'Slow-Motion (2x slower)', 'Doubles the frame rate, allows for slow-motion'),
+            ('ORIGINAL', 'Original', '1:1 mapping, your frame rate will be unchanged'),
+            ('TIMELAPSE_1', 'Time-Lapse (2x faster)', 'Halves the frame rate, allows for time-lapse'),
+            ('TIMELAPSE_2', 'Ultra-Time-Lapse (4x faster)', 'Quarters the frame rate, allows for ultra-time-lapse'),
+        ),
+        default='ORIGINAL',
+        update=update_Camera_FrameStretching
     )
     # endregion Camera
 

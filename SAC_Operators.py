@@ -29,8 +29,9 @@ from bpy.types import (
 )
 from .groups.SuperAdvancedCamera import connect_renderLayer_node
 from .SAC_Settings import SAC_Settings
-from .SAC_Functions import link_nodes, load_image_once, create_dot_texture
+from .SAC_Functions import link_nodes, load_image_once, create_dot_texture, hex_to_rgb
 from .filters.filter import get_filter
+from .gradients.gradients import get_gradient
 
 
 class SAC_OT_Initialize(Operator):
@@ -398,6 +399,7 @@ class SAC_OT_ApplyCameraBokeh(Operator):
     bl_description = ""
 
     def execute(self, context: Context):
+        settings: SAC_Settings = context.scene.sac_settings
 
         bokeh_dir = os.path.join(os.path.dirname(__file__), "bokeh")
         image_name = f"{bpy.context.scene.new_camera_bokeh_type}.jpg"
@@ -405,17 +407,10 @@ class SAC_OT_ApplyCameraBokeh(Operator):
 
         image = load_image_once(image_path, image_name)
 
-        # get the currently selected camera
-        active_obj = bpy.context.view_layer.objects.active
-        # if nothing is selected, give an error message
-        if active_obj is None:
-            self.report({'ERROR'}, "No camera selected")
-            return {'CANCELLED'}
-        if active_obj and active_obj.type == 'CAMERA':
-            camera_object = bpy.data.objects[active_obj.name]
-            camera_data = bpy.data.cameras[camera_object.data.name]
+        camera_object = bpy.data.objects[settings.selected_camera]
+        camera_data = bpy.data.cameras[camera_object.data.name]
 
-        plane_name = f"{active_obj.name}_Bokeh_Plane"
+        plane_name = f"SAC_Bokeh_{settings.selected_camera}"
 
         camera_location = camera_object.location
         camera_rotation = camera_object.rotation_euler
@@ -428,32 +423,39 @@ class SAC_OT_ApplyCameraBokeh(Operator):
         plane_location = camera_location + scaled_forward_vector
 
         try:
-            bpy.data.objects[plane_name]
+            bokeh_plane = bpy.data.objects[plane_name]
 
         except KeyError:
-            bpy.ops.mesh.primitive_plane_add(size=0.04, enter_editmode=False, align='WORLD', location=plane_location, rotation=camera_rotation)
+            bpy.ops.mesh.primitive_plane_add(size=0.2, enter_editmode=False, align='WORLD', location=plane_location, rotation=camera_rotation)
             bpy.context.view_layer.objects.active.name = plane_name
+            bokeh_plane = bpy.data.objects[plane_name]
             bpy.ops.object.select_all(action='DESELECT')
-            bpy.data.objects[plane_name].select_set(True)
-            bpy.data.objects[active_obj.name].select_set(True)
-            bpy.context.view_layer.objects.active = bpy.data.objects[active_obj.name]
+            bokeh_plane.select_set(True)
+            bpy.data.objects[settings.selected_camera].select_set(True)
+            bpy.context.view_layer.objects.active = bpy.data.objects[settings.selected_camera]
             bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
-            bpy.data.objects[plane_name].hide_select = True
+            bokeh_plane.hide_select = True
+            bokeh_plane.visible_diffuse = False
+            bokeh_plane.visible_glossy = False
+            bokeh_plane.visible_transmission = False
+            bokeh_plane.visible_volume_scatter = False
+            bokeh_plane.visible_shadow = False
+            bokeh_plane.display_type = 'BOUNDS'
+            bokeh_plane.cycles.use_motion_blur = False
 
-        # create the material named f".{active_obj.name}_Bokeh_Plane_Material" and assign it to the plane
         material_name = f".{plane_name}_Material"
         try:
             material = bpy.data.materials[material_name]
             material_node_tree = material.node_tree
             material_node_tree.nodes["SAC Camera_Bokeh_Image"].image = image
 
-            for material_slot in bpy.data.objects[plane_name].material_slots:
-                bpy.data.objects[plane_name].data.materials.clear()
-            bpy.data.objects[plane_name].data.materials.append(material)
+            for material_slot in bokeh_plane.material_slots:
+                bokeh_plane.data.materials.clear()
+            bokeh_plane.data.materials.append(material)
 
         except KeyError:
             material = bpy.data.materials.new(name=material_name)
-            bpy.data.objects[plane_name].data.materials.append(material)
+            bokeh_plane.data.materials.append(material)
             material.use_nodes = True
             material_node_tree = material.node_tree
 
@@ -472,7 +474,7 @@ class SAC_OT_ApplyCameraBokeh(Operator):
 
             vector_scale_node = material_node_tree.nodes.new(type='ShaderNodeVectorMath')
             vector_scale_node.operation = 'SCALE'
-            vector_scale_node.inputs["Scale"].default_value = 2
+            vector_scale_node.inputs["Scale"].default_value = 10
             vector_scale_node.name = "SAC Camera_Bokeh_Scale"
 
             vector_add_node = material_node_tree.nodes.new(type='ShaderNodeVectorMath')
@@ -519,6 +521,124 @@ class SAC_OT_ApplyCameraBokeh(Operator):
         return {'FINISHED'}
 
 
+class SAC_OT_SetStartFrame(Operator):
+    bl_idname = "superadvancedcamera.set_start_frame"
+    bl_label = "Set Start Frame"
+    bl_description = "Sets the current frame as the start frame"
+
+    def execute(self, context: Context):
+        scene = context.scene
+        if scene.use_preview_range:
+            scene.frame_preview_start = scene.frame_current
+        else:
+            scene.frame_start = scene.frame_current
+
+        return {'FINISHED'}
+
+
+class SAC_OT_SetEndFrame(Operator):
+    bl_idname = "superadvancedcamera.set_end_frame"
+    bl_label = "Set End Frame"
+    bl_description = "Sets the current frame as the end frame"
+
+    def execute(self, context: Context):
+        scene = context.scene
+        if scene.use_preview_range:
+            scene.frame_preview_end = scene.frame_current
+        else:
+            scene.frame_end = scene.frame_current
+
+        return {'FINISHED'}
+
+
+class SAC_OT_PreviousGradient(Operator):
+    bl_idname = "superadvancedcamera.previous_gradient"
+    bl_label = ""
+    bl_description = ""
+
+    def execute(self, context: Context):
+        settings: SAC_Settings = context.scene.sac_settings
+
+        gradients = []
+        gradient_type_list = settings.gradient_types
+        for index, gradient_type in enumerate(gradient_type_list):
+            gradients.append(gradient_type[0])
+
+        current_gradient = context.scene.new_gradient_type
+        index = gradients.index(current_gradient)
+
+        if index == 0:
+            context.scene.new_gradient_type = gradients[len(gradients)-1]
+        else:
+            context.scene.new_gradient_type = gradients[index-1]
+
+        try:
+            bpy.ops.superadvancedcamera.apply_gradient()
+        except:
+            print("No camera selected")
+
+        return {'FINISHED'}
+
+
+class SAC_OT_NextGradient(Operator):
+    bl_idname = "superadvancedcamera.next_gradient"
+    bl_label = ""
+    bl_description = ""
+
+    def execute(self, context: Context):
+        settings: SAC_Settings = context.scene.sac_settings
+
+        gradients = []
+        gradient_type_list = settings.gradient_types
+        for index, gradient_type in enumerate(gradient_type_list):
+            gradients.append(gradient_type[0])
+
+        current_gradient = context.scene.new_gradient_type
+        index = gradients.index(current_gradient)
+
+        if index == len(gradients)-1:
+            context.scene.new_gradient_type = gradients[0]
+        else:
+            context.scene.new_gradient_type = gradients[index+1]
+
+        try:
+            bpy.ops.superadvancedcamera.apply_gradient()
+        except:
+            print("No camera selected")
+
+        return {'FINISHED'}
+
+
+class SAC_OT_ApplyGradient(Operator):
+    bl_idname = "superadvancedcamera.apply_gradient"
+    bl_label = "Apply Gradient"
+    bl_description = ""
+
+    def execute(self, context: Context):
+        settings: SAC_Settings = context.scene.sac_settings
+        index = context.scene.sac_effect_list_index
+        item = context.scene.sac_effect_list[index] if context.scene.sac_effect_list else None
+        node_group_name = f".{item.EffectGroup}_{item.ID}"
+        node = bpy.data.node_groups[node_group_name].nodes["SAC Effects_GradientMap"]
+
+        # print(context.scene.new_gradient_type)
+        while len(node.color_ramp.elements) > 1:
+            node.color_ramp.elements.remove(node.color_ramp.elements[1])
+
+        gradient_elements = get_gradient(context.scene.new_gradient_type)
+        # for every element in the gradient, except the first
+        for element in gradient_elements[1:]:
+            # add a new element
+            new_element = node.color_ramp.elements.new(element[0])
+            # set the color of the new element
+            new_element.color = hex_to_rgb(element[1])
+
+        node.color_ramp.elements[0].position = gradient_elements[0][0]
+        node.color_ramp.elements[0].color = hex_to_rgb(gradient_elements[0][1])
+
+        return {'FINISHED'}
+
+
 classes = (
     SAC_OT_Initialize,
     SAC_OT_PreviousFilter,
@@ -535,7 +655,12 @@ classes = (
     SAC_OT_ApplyBokeh,
     SAC_OT_NextCameraBokeh,
     SAC_OT_PreviousCameraBokeh,
-    SAC_OT_ApplyCameraBokeh
+    SAC_OT_ApplyCameraBokeh,
+    SAC_OT_SetStartFrame,
+    SAC_OT_SetEndFrame,
+    SAC_OT_PreviousGradient,
+    SAC_OT_NextGradient,
+    SAC_OT_ApplyGradient,
 )
 
 
