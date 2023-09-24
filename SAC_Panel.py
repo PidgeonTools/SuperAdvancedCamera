@@ -460,8 +460,10 @@ class SAC_PT_COLORGRADE_Presets_Panel(SAC_PT_Panel, Panel):
         col.prop(settings, "Colorgrade_Presets_Sharpen")
         col.prop(settings, "Colorgrade_Presets_Vibrance")
         col.prop(settings, "Colorgrade_Presets_Saturation")
-        col.prop(settings, "Colorgrade_Presets_HighlightTint")
-        col.prop(settings, "Colorgrade_Presets_ShadowTint")
+        row = col.row(align=True)
+        row.prop(settings, "Colorgrade_Presets_HighlightTint")
+        row = col.row(align=True)
+        row.prop(settings, "Colorgrade_Presets_ShadowTint")
 
 
 # Colorgrade - Curves
