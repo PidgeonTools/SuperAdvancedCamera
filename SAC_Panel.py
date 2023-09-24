@@ -683,8 +683,10 @@ class SAC_PT_EFFECTS_Properties_Panel(SAC_PT_Panel, Panel):
             col.prop(settings, "Effects_ChromaticAberration_Amount")
         # Duotone
         elif item.EffectGroup == "SAC_DUOTONE":
-            col.prop(settings, "Effects_Duotone_Color1")
-            col.prop(settings, "Effects_Duotone_Color2")
+            row = col.row(align=True)
+            row.prop(settings, "Effects_Duotone_Color1")
+            row = col.row(align=True)
+            row.prop(settings, "Effects_Duotone_Color2")
             col.prop(settings, "Effects_Duotone_Blend")
         # Emboss
         elif item.EffectGroup == "SAC_EMBOSS":
