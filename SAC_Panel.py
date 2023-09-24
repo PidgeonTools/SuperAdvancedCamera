@@ -66,6 +66,20 @@ class SAC_PT_SAC_Panel(SAC_PT_Panel, Panel):
         col = layout.column(align=True)
         col.operator("superadvancedcamera.superadvancedcamerainit", icon="SHADERFX")
 
+
+# Info
+class SAC_PT_Info_Panel(SAC_PT_Panel, Panel):
+    bl_label = "Info"
+    bl_parent_id = "SAC_PT_SAC_Panel"
+
+    def draw_header(self, context: Context):
+        layout = self.layout
+        layout.label(text="", icon="INFO")
+
+    def draw(self, context: Context):
+        layout = self.layout
+        col = layout.column(align=True)
+
         found = False
 
         for node in bpy.context.scene.node_tree.nodes:
@@ -79,6 +93,7 @@ class SAC_PT_SAC_Panel(SAC_PT_Panel, Panel):
                 else:
                     col.label(text="Super Advanced Camera is enabled.", icon="CHECKMARK")
                     col.label(text="You can now use the Super Advanced Camera.", icon="INFO")
+                    col.label(text="Make sure to enable the viewport compositor.", icon="INFO")
                 break
 
         if not found:
@@ -808,6 +823,7 @@ classes = (
     SAC_PT_EFFECTS_Panel,
     SAC_PT_List,
     SAC_PT_EFFECTS_Properties_Panel,
+    SAC_PT_Info_Panel,
     SAC_PT_SOCIALS_Panel
 )
 
